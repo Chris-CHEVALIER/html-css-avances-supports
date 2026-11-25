@@ -1,0 +1,14 @@
+/* Bibliothèque fictive « Slidy » : des sélecteurs très spécifiques */
+.slidy .slidy__track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+/* Spécificité (0,3,1) : difficile à surcharger hors couche */
+.slidy .slidy__track button.btn {
+  border: 2px solid #999;
+  border-radius: 0;
+  color: #333;
+  background: #ccc;
+}

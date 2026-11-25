@@ -1,0 +1,36 @@
+// Premier fichier chargé : il fixe l'ordre des couches.
+// Une couche déclarée plus loin l'emporte, quelle que soit
+// la spécificité de ses sélecteurs.
+@layer reset, tokens, base, layout, components, utilities;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  figure,
+  ul {
+    margin: 0;
+  }
+
+  img {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

@@ -1,0 +1,75 @@
+/* Des mises en page qui s'adaptent à leur contenu et à la
+   place disponible, sans aucune media query */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 60rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Stack : un espacement régulier entre enfants */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stack > * {
+  margin-block: 0;
+}
+
+/* Cluster : des éléments de largeur variable qui passent
+   à la ligne */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Sidebar : la barre garde 12rem, le contenu prend le reste
+   et passe dessous s'il descend sous 50 % de la largeur */
+.with-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.with-sidebar > .sidebar {
+  flex-basis: 12rem;
+  flex-grow: 1;
+}
+
+.with-sidebar > :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: 50%;
+}
+
+/* Switcher : tout sur une ligne au-delà de 40rem, tout
+   empilé en dessous, jamais d'état intermédiaire */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.switcher > * {
+  flex-basis: calc((40rem - 100%) * 999);
+  flex-grow: 1;
+}
+
+.box {
+  margin: 0;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 0.75rem;
+}

@@ -1,0 +1,55 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+.artist {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+
+  /* Sans & : un descendant (.artist img) */
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  /* & colle le sélecteur : .artist:hover, .artist:focus-within */
+  &:hover,
+  &:focus-within {
+    border-color: #2ec4b6;
+  }
+
+  /* .artist.artist--headliner */
+  &.artist--headliner {
+    border-width: 4px;
+  }
+
+  /* & à la fin : .is-closed .artist */
+  .is-closed & {
+    opacity: 0.5;
+  }
+
+  /* Une media query imbriquée s'applique à .artist */
+  @media (width >= 40rem) {
+    grid-template-columns: 10rem 1fr;
+    align-items: center;
+  }
+}

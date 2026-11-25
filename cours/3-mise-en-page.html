@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mise en page – HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal .lien-demo { display: inline-block; margin-top: 6px; font-size: .78em; font-weight: 700; }
+    .reveal .lien-demo::before { content: "↗ "; color: var(--accent-texte); }
+    .reveal .baseline { display: inline-block; font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent-clair); color: var(--accent-texte); vertical-align: middle; margin-left: 10px; font-family: var(--police); }
+    .reveal .corps .colonnes.code-texte ul > li { font-size: .8em; margin-bottom: 10px; }
+    .reveal table.serre td code { white-space: nowrap; }
+    .reveal .exercice { border: 3px dashed var(--corail); border-radius: 14px; padding: 18px 24px; background: var(--corail-clair); }
+    .reveal .exercice h3 { color: var(--corail-texte); margin-bottom: 10px; }
+  </style>
+</head>
+<body data-pied="HTML & CSS avancés · Cours 3 · Mise en page">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Mise en page</h1>
+    <div class="sous-titre">
+      <span class="code-module">Cours 3</span> – Flexbox, Grid, container queries et mise en page fluide<br>
+      Chris CHEVALIER
+    </div>
+    <aside class="notes">
+      Créneau S4 (mercredi 8h). Environ 1h de théorie et deux mini-exercices dans les DevTools.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Flexbox, au-delà des bases</li>
+      <li>Grid : zones, lignes nommées et subgrid</li>
+      <li>Les container queries</li>
+      <li>Une mise en page fluide et intrinsèque</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>Flexbox, au-delà des bases</h2>
+    <div class="sous-titre">Une dimension, le contenu d'abord</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le raccourci <code>flex</code></h2>
+    <div class="corps">
+      <div class="colonnes" style="grid-template-columns: 1.35fr 1fr;">
+        <div>
+          <p><a href="https://developer.mozilla.org/fr/docs/Web/CSS/flex" target="_blank"><code>flex</code></a> regroupe trois propriétés : <code>flex-grow</code> (prendre la place libre), <code>flex-shrink</code> (rétrécir) et <code>flex-basis</code> (taille de départ).</p>
+          <table class="serre">
+            <tr><th>Valeur</th><th>Équivaut à</th><th>Usage</th></tr>
+            <tr><td><code>flex: 1</code></td><td><code>1 1 0%</code></td><td>parts égales</td></tr>
+            <tr><td><code>flex: auto</code></td><td><code>1 1 auto</code></td><td>selon le contenu</td></tr>
+            <tr><td><code>flex: none</code></td><td><code>0 0 auto</code></td><td>taille figée</td></tr>
+            <tr><td><code>flex: 0 0 10rem</code></td><td></td><td>colonne fixe</td></tr>
+            <tr><td><code>flex: 1 1 15rem</code></td><td></td><td>au moins 15rem, sinon à la ligne</td></tr>
+          </table>
+        </div>
+        <ul>
+          <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/gap" target="_blank"><code>gap</code></a> espace les éléments sans marge sur les bords <span class="baseline">2021</span></li>
+          <li><code>flex-wrap: wrap</code> combiné à une <code>flex-basis</code> crée du responsive sans media query</li>
+          <li><code>margin-inline-start: auto</code> pousse un élément au bout de la ligne</li>
+          <li><code>justify-content</code> aligne sur l'axe principal, <code>align-items</code> sur l'axe secondaire</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une fiche artiste</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/flex/index.html" data-titre="flex/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Flexbox – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;header class="site-header"&gt;
+      &lt;a class="logo" href="#accueil"&gt;Contrepoint&lt;/a&gt;
+      &lt;nav aria-label="Navigation principale"&gt;
+        &lt;ul class="menu"&gt;
+          &lt;li&gt;&lt;a href="#programme"&gt;Programme&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="#artistes"&gt;Artistes&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="#infos"&gt;Infos pratiques&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+      &lt;a class="button" href="#billetterie"&gt;Billetterie&lt;/a&gt;
+    &lt;/header&gt;
+    &lt;main class="container"&gt;
+      &lt;h1 id="accueil"&gt;Les Ondes&lt;/h1&gt;
+      &lt;ul class="tags" aria-label="Genres"&gt;
+        &lt;li&gt;Rock&lt;/li&gt;
+        &lt;li&gt;Post-punk&lt;/li&gt;
+        &lt;li&gt;Grande scène&lt;/li&gt;
+        &lt;li&gt;Samedi 22h&lt;/li&gt;
+        &lt;li&gt;Tête d'affiche&lt;/li&gt;
+      &lt;/ul&gt;
+      &lt;div class="media"&gt;
+        &lt;img
+          src="https://picsum.photos/id/158/240/240"
+          alt="La foule devant la scène des Ondes, sous les projecteurs"
+          width="240"
+          height="240"
+        &gt;
+        &lt;p&gt;
+          Quatre musiciens nantais, deux albums et une tournée
+          européenne : Les Ondes referment le samedi soir.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>Un en-tête avec logo, menu et bouton de billetterie</li>
+            <li>Une liste d'étiquettes de longueur variable</li>
+            <li>Un bloc « média » : une image et son texte</li>
+            <li>Les trois sont des cas typiques de Flexbox : des éléments alignés sur <strong>une</strong> ligne, qui passent à la suivante si besoin</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Trois usages de Flexbox</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/flex/css/style.css" data-titre="flex/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+a {
+  color: inherit;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: center;
+  padding: 1rem 2rem;
+  color: #fff;
+  background: #1b1e3c;
+}
+
+.logo {
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* La marge automatique pousse le bouton tout à droite */
+.button {
+  margin-inline-start: auto;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  text-decoration: none;
+  background: #2ec4b6;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.container {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Des étiquettes qui passent à la ligne, espacées par gap */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 0.2em 0.8em;
+  border-radius: 999px;
+  background: #e2f7f4;
+}
+
+/* L'image garde sa taille, le texte prend la place restante
+   et passe dessous quand il dispose de moins de 15rem */
+.media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.media img {
+  flex: 0 0 10rem;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.media p {
+  flex: 1 1 15rem;
+  margin: 0;
+}</code></pre>
+        <div>
+          <ul>
+            <li>L'en-tête passe à la ligne sur un écran étroit au lieu de déborder</li>
+            <li><code>flex: 0 0 10rem</code> fige l'image, <code>flex: 1 1 15rem</code> laisse le texte s'étirer puis passer dessous</li>
+            <li>Aucune media query dans tout le fichier</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/flex/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Redimensionner la fenêtre devant les étudiants. Montrer l'inspecteur Flexbox de Chrome (badge « flex » dans l'onglet Éléments).
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>Grid</h2>
+    <div class="sous-titre">Deux dimensions, la mise en page d'abord</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le vocabulaire de Grid</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <ul class="dense">
+          <li><strong>Ligne</strong> : la séparation numérotée entre deux pistes (de 1 à n + 1, ou de -1 en partant de la fin)</li>
+          <li><strong>Piste</strong> : une colonne ou une rangée</li>
+          <li><strong>Zone</strong> : un rectangle de cellules, nommé avec <a href="https://developer.mozilla.org/fr/docs/Web/CSS/grid-template-areas" target="_blank"><code>grid-template-areas</code></a></li>
+          <li><strong><code>fr</code></strong> : une fraction de la place restante</li>
+          <li><strong>Grille explicite</strong> : les pistes que vous déclarez. <strong>Implicite</strong> : celles que le navigateur ajoute quand des éléments débordent (taille réglée par <code>grid-auto-rows</code>)</li>
+        </ul>
+        <div>
+          <table class="serre">
+            <tr><th></th><th>Flexbox</th><th>Grid</th></tr>
+            <tr><td>Dimensions</td><td>une (ligne ou colonne)</td><td>deux à la fois</td></tr>
+            <tr><td>Logique</td><td>le contenu impose la taille</td><td>la grille impose la place</td></tr>
+            <tr><td>Cas typique</td><td>menu, étiquettes, boutons</td><td>page, galerie, programme</td></tr>
+          </table>
+          <p class="petit muet" style="margin-top: 12px;">Les deux se combinent : une grille de cartes dont chaque carte est en Flexbox.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La page d'infos pratiques</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/mise-en-page/index.html" data-titre="mise-en-page/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Grid et zones nommées – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body class="page"&gt;
+    &lt;header class="page__header"&gt;Contrepoint · Infos pratiques&lt;/header&gt;
+    &lt;main class="page__main"&gt;
+      &lt;h1&gt;Venir au festival&lt;/h1&gt;
+      &lt;p&gt;
+        Le site ouvre à 16h. Les navettes partent de la gare toutes
+        les vingt minutes.
+      &lt;/p&gt;
+      &lt;figure class="full-bleed"&gt;
+        &lt;img
+          src="https://picsum.photos/id/1015/1600/500"
+          alt="La rivière qui borde le site du festival"
+          width="1600"
+          height="500"
+        &gt;
+      &lt;/figure&gt;
+      &lt;p&gt;
+        Le parking vélo se trouve à l'entrée nord. Le site est
+        accessible en fauteuil roulant.
+      &lt;/p&gt;
+    &lt;/main&gt;
+    &lt;aside class="page__aside"&gt;
+      &lt;h2&gt;En bref&lt;/h2&gt;
+      &lt;p&gt;3 au 5 juillet · Parc des Rives&lt;/p&gt;
+    &lt;/aside&gt;
+    &lt;footer class="page__footer"&gt;© Contrepoint, festival fictif&lt;/footer&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>Les zones suivent l'ordre logique de lecture : en-tête, contenu, encart, pied</li>
+            <li>Le CSS seul les place à l'écran</li>
+            <li>Gardez l'ordre visuel proche de l'ordre du HTML : le clavier et le lecteur d'écran suivent le HTML (<a href="https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence" target="_blank">WCAG 1.3.2</a>)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Zones nommées et lignes nommées</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/mise-en-page/css/style.css" data-titre="mise-en-page/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+/* Mobile d'abord : une colonne, zones empilées.
+   Chaque ligne du dessin est suivie de sa hauteur. */
+.page {
+  display: grid;
+  grid-template:
+    "header" auto
+    "main" 1fr
+    "aside" auto
+    "footer" auto;
+  min-height: 100vh;
+}
+
+.page__header {
+  grid-area: header;
+  padding: 1rem 2rem;
+  color: #fff;
+  background: #1b1e3c;
+}
+
+.page__aside {
+  grid-area: aside;
+  padding: 1rem 2rem;
+  background: #e2f7f4;
+}
+
+.page__footer {
+  grid-area: footer;
+  padding: 1rem 2rem;
+  background: #f2f3f9;
+}
+
+/* Sur grand écran, on redessine les zones sans toucher au HTML */
+@media (width &gt;= 60rem) {
+  .page {
+    grid-template:
+      "header header" auto
+      "main   aside" 1fr
+      "footer footer" auto
+      / 1fr 18rem;
+  }
+}
+
+/* Lignes nommées : une colonne de lecture centrée et
+   une zone pleine largeur, dans la même grille */
+.page__main {
+  display: grid;
+  grid-area: main;
+  align-content: start;
+  grid-template-columns:
+    [full-start] minmax(1rem, 1fr)
+    [content-start] minmax(0, 40rem)
+    [content-end] minmax(1rem, 1fr)
+    [full-end];
+}
+
+.page__main &gt; * {
+  grid-column: content;
+}
+
+.page__main &gt; .full-bleed {
+  grid-column: full;
+  margin: 0;
+}
+
+.full-bleed img {
+  display: block;
+  width: 100%;
+  height: auto;
+}</code></pre>
+        <div>
+          <ul>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/grid-template" target="_blank"><code>grid-template</code></a> dessine les zones, la hauteur de chaque rangée puis, après <code>/</code>, les colonnes</li>
+            <li>Sur grand écran, on redessine les zones sans toucher au HTML</li>
+            <li>Les <strong>lignes nommées</strong> <code>[content-start]</code>… créent une colonne de lecture et une image pleine largeur dans la même grille</li>
+            <li><code>grid-column: content</code> vise les lignes <code>content-start</code> à <code>content-end</code></li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/mise-en-page/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Mini-exercice : inspecter une grille</h2>
+    <div class="corps">
+      <div class="exercice">
+        <h3>Dans la démo « infos pratiques »</h3>
+        <ol class="dense">
+          <li>Ouvrez les DevTools de Chrome, onglet <strong>Éléments</strong>, et cliquez sur le badge <code>grid</code> de <code>&lt;body&gt;</code>. Activez « Afficher les noms des zones »</li>
+          <li>Faites de même sur <code>&lt;main&gt;</code> et activez « Afficher les noms des lignes ». Repérez <code>full-start</code> et <code>content-start</code></li>
+          <li>Dans le panneau Styles, modifiez le <code>grid-template</code> du grand écran pour placer l'encart <strong>à gauche</strong> du contenu</li>
+          <li>Passez la fenêtre sous 60rem : où l'encart se place-t-il ? Pourquoi ?</li>
+        </ol>
+      </div>
+      <p class="petit muet" style="margin-top: 16px;">Documentation : <a href="https://developer.chrome.com/docs/devtools/css/grid" target="_blank">inspecter une grille dans Chrome</a>. Firefox propose un inspecteur équivalent.</p>
+    </div>
+    <aside class="notes">
+      Réponse : "aside main" sur la 2e ligne, colonnes inversées (18rem 1fr). Sous 60rem, la media query ne s'applique plus : l'encart repasse sous le contenu, ordre de la grille mobile.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La grille du programme</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/programme/index.html" data-titre="programme/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Grille du programme – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main class="container"&gt;
+      &lt;h1&gt;Programme&lt;/h1&gt;
+      &lt;ul class="program"&gt;
+        &lt;li class="concert concert--featured"&gt;
+          &lt;h2&gt;Les Ondes&lt;/h2&gt;
+          &lt;p&gt;Rock post-punk nantais pour clore le samedi.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Samedi 22h · Grande scène&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li class="concert"&gt;
+          &lt;h2&gt;Malo Rive&lt;/h2&gt;
+          &lt;p&gt;Piano jazz.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Dimanche 18h · Parc&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li class="concert"&gt;
+          &lt;h2&gt;Kiss Kiss Orchestra&lt;/h2&gt;
+          &lt;p&gt;Fanfare électro qui déambule entre les scènes.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Samedi 17h · Allées&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li class="concert"&gt;
+          &lt;h2&gt;DJ Pollen&lt;/h2&gt;
+          &lt;p&gt;House.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Vendredi 23h · Club&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li class="concert concert--featured"&gt;
+          &lt;h2&gt;Nova Lune&lt;/h2&gt;
+          &lt;p&gt;Pop électronique.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Vendredi 21h · Grande scène&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li class="concert"&gt;
+          &lt;h2&gt;Duo Brume&lt;/h2&gt;
+          &lt;p&gt;Folk à deux voix, harpe et violoncelle.&lt;/p&gt;
+          &lt;p class="concert__meta"&gt;Dimanche 15h · Chapiteau&lt;/p&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>Une liste <code>&lt;ul&gt;</code> de concerts : une liste reste une liste, même affichée en grille</li>
+            <li>Des textes de longueurs différentes : sans précaution, les dates ne s'alignent pas d'une carte à l'autre</li>
+            <li>Deux têtes d'affiche, plus larges</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2><code>auto-fill</code>, <code>dense</code> et <code>subgrid</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/programme/css/style.css" data-titre="programme/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Autant de colonnes de 15rem minimum que la place le permet,
+   sans media query. dense comble les trous laissés. */
+.program {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-auto-flow: dense;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Chaque carte occupe 3 lignes de la grille parente et
+   reprend ses pistes : titres, textes et méta s'alignent
+   d'une carte à l'autre */
+.concert {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+}
+
+.concert h2,
+.concert p {
+  margin: 0;
+}
+
+.concert__meta {
+  align-self: end;
+  font-weight: 700;
+  color: #0b7a70;
+}
+
+/* Les têtes d'affiche prennent deux colonnes */
+.concert--featured {
+  grid-column: span 2;
+  border-color: #2ec4b6;
+  background: #e2f7f4;
+}
+
+/* Sur une seule colonne, span 2 créerait une colonne
+   implicite : on l'annule */
+@media (width &lt; 34rem) {
+  .concert--featured {
+    grid-column: auto;
+  }
+}</code></pre>
+        <div>
+          <ul>
+            <li><code>repeat(auto-fill, minmax(15rem, 1fr))</code> : autant de colonnes que la place le permet</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/grid-auto-flow" target="_blank"><code>grid-auto-flow: dense</code></a> remonte les petites cartes dans les trous. L'ordre visuel s'écarte alors du HTML : à réserver aux contenus sans ordre de lecture</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_grid_layout/Subgrid" target="_blank"><code>subgrid</code></a> : la carte reprend les rangées de la grille parente, ses trois blocs s'alignent avec ceux des voisines <span class="baseline">2023</span></li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/programme/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Comparer auto-fill et auto-fit : avec peu d'éléments, auto-fit étire les colonnes existantes, auto-fill garde des colonnes vides. Retirer subgrid dans les DevTools pour montrer le désalignement.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>Les container queries</h2>
+    <div class="sous-titre">Un composant qui s'adapte à sa place, pas à l'écran</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Media query ou container query ?</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte">
+          <h3><code>@media (width &gt;= 50rem)</code></h3>
+          Interroge la taille de la <strong>fenêtre</strong>. Une carte placée dans une colonne étroite d'un grand écran se croit sur un grand écran.
+        </div>
+        <div class="carte accent">
+          <h3><code>@container (width &gt; 30rem)</code></h3>
+          Interroge la taille de son <strong>conteneur</strong>. La même carte s'adapte à la colonne qui l'accueille : un vrai composant réutilisable. <span class="baseline">Baseline 2023</span>
+        </div>
+      </div>
+      <ul style="margin-top: 24px;">
+        <li>Le parent se déclare conteneur : <a href="https://developer.mozilla.org/fr/docs/Web/CSS/container-type" target="_blank"><code>container-type: inline-size</code></a> (ou le raccourci <code>container: nom / inline-size</code>)</li>
+        <li>Unités relatives au conteneur : <code>cqi</code> (1 % de sa largeur), <code>cqb</code> (de sa hauteur)</li>
+        <li>Un élément ne peut pas interroger sa propre taille, seulement celle d'un ancêtre</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une carte, deux contextes</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/carte-artiste/index.html" data-titre="carte-artiste/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Container queries – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class="layout"&gt;
+      &lt;main class="card-zone"&gt;
+        &lt;h1&gt;À la une&lt;/h1&gt;
+        &lt;article class="artist-card"&gt;
+          &lt;img
+            src="https://picsum.photos/id/453/600/600"
+            alt="Nova Lune sur scène, guitare à la main, sous les projecteurs"
+            width="600"
+            height="600"
+          &gt;
+          &lt;div class="artist-card__body"&gt;
+            &lt;h2&gt;Nova Lune&lt;/h2&gt;
+            &lt;p&gt;Pop électronique, vendredi 21h, grande scène.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/main&gt;
+      &lt;aside class="card-zone"&gt;
+        &lt;h2&gt;Ne manquez pas&lt;/h2&gt;
+        &lt;article class="artist-card"&gt;
+          &lt;img
+            src="https://picsum.photos/id/1082/600/600"
+            alt="Les mains de Malo Rive sur le clavier d'un piano"
+            width="600"
+            height="600"
+          &gt;
+          &lt;div class="artist-card__body"&gt;
+            &lt;h2&gt;Malo Rive&lt;/h2&gt;
+            &lt;p&gt;Piano jazz, dimanche 18h, scène du parc.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/aside&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>La même carte <code>.artist-card</code> dans la zone principale et dans l'encart</li>
+            <li>Le HTML des deux cartes est identique : seule leur place change</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La carte interroge sa zone</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/carte-artiste/css/style.css" data-titre="carte-artiste/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.layout {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+@media (width &gt;= 50rem) {
+  .layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Chaque zone devient un conteneur interrogeable
+   sur sa largeur (axe inline) */
+.card-zone {
+  container: card-zone / inline-size;
+}
+
+/* La même carte, empilée par défaut */
+.artist-card {
+  display: grid;
+  overflow: hidden;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+}
+
+.artist-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.artist-card__body {
+  padding: 1rem;
+}
+
+.artist-card h2 {
+  margin: 0;
+
+  /* 1cqi = 1 % de la largeur du conteneur */
+  font-size: clamp(1.25rem, 5cqi, 2.5rem);
+}
+
+/* Quand SA zone dépasse 30rem, la carte passe à l'horizontale,
+   quelle que soit la taille de l'écran */
+@container card-zone (width &gt; 30rem) {
+  .artist-card {
+    grid-template-columns: 2fr 3fr;
+    align-items: center;
+  }
+
+  .artist-card img {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+}</code></pre>
+        <div>
+          <ul>
+            <li><code>container: card-zone / inline-size</code> nomme le conteneur et l'interroge sur sa largeur</li>
+            <li>Dans la grande zone, la carte passe à l'horizontale. Dans l'encart, elle reste empilée, sur le même écran</li>
+            <li>Le titre suit la largeur de la carte grâce à <code>5cqi</code>, borné par <code>clamp()</code></li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/carte-artiste/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Mini-exercice : la bonne requête</h2>
+    <div class="corps">
+      <div class="exercice">
+        <h3>Media query ou container query ?</h3>
+        <p class="dense">Pour chaque besoin, choisissez avec votre voisin et justifiez :</p>
+        <ol class="dense">
+          <li>Le menu passe en bouton « burger » sur téléphone</li>
+          <li>Une carte produit s'affiche dans une grille, un carrousel et une barre latérale</li>
+          <li>La page passe de une à deux colonnes</li>
+          <li>Un tableau de prix réduit ses colonnes quand il est placé dans une modale</li>
+          <li>Les animations sont coupées pour l'utilisateur qui le demande</li>
+        </ol>
+      </div>
+    </div>
+    <aside class="notes">
+      Réponses : 1 media (la page entière), 2 container, 3 media, 4 container, 5 media (prefers-reduced-motion n'est pas une question de taille).
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">04</div>
+    <h2>Fluide et intrinsèque</h2>
+    <div class="sous-titre">Moins de points de rupture, plus de règles qui s'adaptent</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une typographie fluide avec <code>clamp()</code></h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><a href="https://developer.mozilla.org/fr/docs/Web/CSS/clamp" target="_blank"><code>clamp(min, préférée, max)</code></a> : la valeur préférée suit la fenêtre, sans jamais sortir des bornes.</p>
+          <p>Exemple : <code>clamp(2rem, 1.2rem + 4vw, 4.5rem)</code></p>
+          <ul class="dense">
+            <li><strong>2rem</strong> : la taille minimale, sur un petit écran</li>
+            <li><strong>1.2rem + 4vw</strong> : la valeur préférée, qui grandit avec la fenêtre</li>
+            <li><strong>4.5rem</strong> : la taille maximale, sur un grand écran</li>
+          </ul>
+          <p class="petit muet">Générateur d'échelles : <a href="https://utopia.fyi/type/calculator/" target="_blank">Utopia</a>.</p>
+        </div>
+        <ul>
+          <li>Une taille en <code>vw</code> seul ne grossit pas avec le zoom du navigateur : c'est un défaut d'accessibilité (<a href="https://www.w3.org/WAI/WCAG22/Understanding/resize-text" target="_blank">WCAG 1.4.4</a>)</li>
+          <li><code>rem + vw</code> garde une part sensible au zoom</li>
+          <li>Les mêmes échelles servent aux espacements : marges et gouttières respirent sur grand écran</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Un bandeau fluide</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/fluide/css/style.css" data-titre="fluide/css/style.css"><code class="language-css" data-line-numbers="">/* Échelle fluide : minimum, valeur préférée, maximum.
+   La partie en rem garde le zoom du navigateur efficace. */
+:root {
+  --step-0: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --step-3: clamp(2rem, 1.2rem + 4vw, 4.5rem);
+  --space-m: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  font-size: var(--step-0);
+  line-height: 1.5;
+}
+
+/* Un bandeau au ratio fixe, image en fond qui ne se
+   déforme jamais */
+.hero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  aspect-ratio: 16 / 9;
+  max-block-size: 90vh;
+  color: #fff;
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Propriétés logiques : « inline » suit le sens de lecture,
+   « block » l'empilement. Elles s'adaptent à l'arabe ou
+   au japonais vertical sans rien réécrire. */
+.hero__content {
+  position: relative;
+  max-inline-size: 40rem;
+  padding-block: var(--space-m);
+  padding-inline: var(--space-m);
+  background: linear-gradient(to top, #1b1e3ccc, transparent);
+}
+
+.hero h1 {
+  margin-block: 0 var(--space-m);
+  font-size: var(--step-3);
+  line-height: 1.1;
+}
+
+.hero__dates {
+  margin-block: 0 0.5rem;
+  font-weight: 700;
+}
+
+.hero__cta {
+  display: inline-block;
+  padding-block: 0.6em;
+  padding-inline: 1.2em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  text-decoration: none;
+  background: #2ec4b6;
+}</code></pre>
+        <div>
+          <ul>
+            <li>Trois variables d'échelle, réutilisées partout</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/aspect-ratio" target="_blank"><code>aspect-ratio</code></a> réserve la place du bandeau avant le chargement de l'image <span class="baseline">2021</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/object-fit" target="_blank"><code>object-fit: cover</code></a> recadre l'image au lieu de la déformer</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_logical_properties_and_values" target="_blank">Propriétés logiques</a> : <code>inset</code>, <code>padding-inline</code>, <code>max-inline-size</code></li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/fluide/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      L'image décorative a un alt vide : le titre suffit. Zoomer à 200 % pour montrer que le texte grossit.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La mise en page intrinsèque</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/intrinseque/css/style.css" data-titre="intrinseque/css/style.css"><code class="language-css" data-line-numbers="">/* Des mises en page qui s'adaptent à leur contenu et à la
+   place disponible, sans aucune media query */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 60rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Stack : un espacement régulier entre enfants */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stack &gt; * {
+  margin-block: 0;
+}
+
+/* Cluster : des éléments de largeur variable qui passent
+   à la ligne */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Sidebar : la barre garde 12rem, le contenu prend le reste
+   et passe dessous s'il descend sous 50 % de la largeur */
+.with-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.with-sidebar &gt; .sidebar {
+  flex-basis: 12rem;
+  flex-grow: 1;
+}
+
+.with-sidebar &gt; :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: 50%;
+}
+
+/* Switcher : tout sur une ligne au-delà de 40rem, tout
+   empilé en dessous, jamais d'état intermédiaire */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.switcher &gt; * {
+  flex-basis: calc((40rem - 100%) * 999);
+  flex-grow: 1;
+}
+
+.box {
+  margin: 0;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 0.75rem;
+}</code></pre>
+        <div>
+          <ul>
+            <li>Des motifs réutilisables, inspirés d'<a href="https://every-layout.dev/" target="_blank">Every Layout</a> : Stack, Cluster, Sidebar, Switcher</li>
+            <li>Chacun s'adapte à son contenu et à sa place, sans media query</li>
+            <li>Le Switcher bascule d'un coup : <code>(40rem - 100%) * 999</code> donne une base énorme ou négative</li>
+            <li>Ce sont de bons candidats pour la couche <code>layout</code> de votre framework</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours3/intrinseque/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Quel outil pour quel besoin ?</h2>
+    <div class="corps">
+      <table class="serre">
+        <tr><th>Besoin</th><th>Outil</th></tr>
+        <tr><td>Aligner des éléments sur une ligne, passer à la ligne</td><td>Flexbox, <code>flex-wrap</code>, <code>gap</code></td></tr>
+        <tr><td>Découper une page en zones</td><td>Grid, <code>grid-template</code> et zones nommées</td></tr>
+        <tr><td>Une galerie qui remplit la largeur</td><td>Grid, <code>repeat(auto-fill, minmax())</code></td></tr>
+        <tr><td>Aligner l'intérieur de cartes voisines</td><td><code>subgrid</code></td></tr>
+        <tr><td>Un composant qui dépend de sa place</td><td>container query, unités <code>cqi</code></td></tr>
+        <tr><td>Changer la structure de la page</td><td>media query, en <code>rem</code></td></tr>
+        <tr><td>Des tailles qui suivent la fenêtre</td><td><code>clamp()</code> avec <code>rem + vw</code></td></tr>
+        <tr><td>Un support multilingue (arabe, japonais)</td><td>propriétés logiques</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>À retenir</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <ul>
+          <li>Flexbox pour une dimension, Grid pour deux. Les deux se combinent</li>
+          <li>Les zones nommées rendent la mise en page lisible et facile à redessiner</li>
+          <li><code>subgrid</code> aligne le contenu de cartes voisines</li>
+        </ul>
+        <ul>
+          <li>Les container queries font des composants vraiment réutilisables</li>
+          <li><code>clamp()</code> et les motifs intrinsèques remplacent la plupart des points de rupture</li>
+          <li>L'ordre visuel doit rester celui du HTML</li>
+        </ul>
+      </div>
+      <div class="encadre" style="margin-top: 20px;">
+        Dans le TP2, vous intégrez une maquette avec ces outils, puis un test Playwright compare votre page à la maquette.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chevalier@chris-freelance.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

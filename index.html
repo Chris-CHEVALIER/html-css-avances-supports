@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Supports HTML &amp; CSS avancés</title>
+  <meta name="description" content="Supports du module Langages HTML et CSS avancés : cours, démos, énoncés de TP et projet.">
+  <link rel="stylesheet" href="positionnement/positionnement.css">
+  <style>
+    .supports { display: flex; flex-direction: column; gap: 0; }
+    .support { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--bordure); }
+    .support:first-of-type { border-top: 0; }
+    .support .nom { font-weight: 600; }
+    .support .detail { grid-column: 1; color: var(--texte-doux); font-size: 15px; }
+    .liens { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .liens a { font-weight: 600; font-size: 15px; color: var(--texte); text-decoration: none; border: 2px solid var(--accent); border-radius: 8px; padding: 5px 12px; }
+    .liens a.pdf { border-color: var(--bordure); }
+    .liens a:hover, .liens a:focus-visible { background: var(--accent-clair); }
+  </style>
+</head>
+<body>
+
+<header class="bandeau">
+  <div class="interieur">
+    <div class="sur-titre">Bachelor 3 · Architecture du Web</div>
+    <h1>Langages HTML &amp; CSS avancés</h1>
+    <p>Supports du module : cours, démos, énoncés de TP et projet. Chris CHEVALIER · chevalier@chris-freelance.com</p>
+  </div>
+</header>
+
+<main>
+  <section class="bloc">
+    <h2>Premier cours</h2>
+    <div class="supports">
+      <div class="support">
+        <span class="nom">Test de positionnement</span>
+        <span class="detail">Anonyme et non noté, à faire en début de module</span>
+        <span class="liens"><a href="positionnement/index.html">Répondre</a></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc">
+    <h2>Cours</h2>
+    <div class="supports">
+      <div class="support">
+        <span class="nom">0 · Organisation du module</span>
+        <span class="detail">Programme, calendrier, projet et évaluation</span>
+        <span class="liens"><a href="cours/0-organisation-du-module.html">Présentation</a><a class="pdf" href="pdf/0-organisation-du-module.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">1 · HTML sémantique, accessibilité et SEO</span>
+        <span class="detail">Structure, formulaires, WCAG 2.2 et RGAA, ARIA, tests, SEO technique</span>
+        <span class="liens"><a href="cours/1-html-semantique-accessibilite.html">Présentation</a><a class="pdf" href="pdf/1-html-semantique-accessibilite.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">2 · La cascade moderne</span>
+        <span class="detail">Couches, spécificité, @scope, nesting, :has(), custom properties, couleurs</span>
+        <span class="liens"><a href="cours/2-cascade-moderne.html">Présentation</a><a class="pdf" href="pdf/2-cascade-moderne.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">3 · Mise en page</span>
+        <span class="detail">Flexbox, Grid et subgrid, container queries, typographie fluide</span>
+        <span class="liens"><a href="cours/3-mise-en-page.html">Présentation</a><a class="pdf" href="pdf/3-mise-en-page.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">4 · Sass, design tokens et qualité</span>
+        <span class="detail">Sass moderne, tokens, architecture d'un framework, Stylelint, Playwright, GitHub Actions</span>
+        <span class="liens"><a href="cours/4-sass-design-tokens.html">Présentation</a><a class="pdf" href="pdf/4-sass-design-tokens.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">5 · Composants interactifs et performance</span>
+        <span class="detail">dialog, Popover, anchor positioning, View Transitions, Web Components, Core Web Vitals</span>
+        <span class="liens"><a href="cours/5-composants-interactifs.html">Présentation</a><a class="pdf" href="pdf/5-composants-interactifs.pdf">PDF</a></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc">
+    <h2>TP et projet</h2>
+    <div class="supports">
+      <div class="support">
+        <span class="nom">Sujet du projet</span>
+        <span class="detail">Un framework CSS et trois pages d'une maquette Figma, en groupe, du 7 au 13 décembre</span>
+        <span class="liens"><a href="tp/projet.html">Sujet</a><a class="pdf" href="pdf/projet.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">TP1 · La médiathèque des Tilleuls</span>
+        <span class="detail">Individuel, non noté : audit et refonte accessible</span>
+        <span class="liens"><a href="tp/tp1.html">Énoncé</a><a class="pdf" href="pdf/tp1.pdf">PDF</a></span>
+      </div>
+      <div class="support">
+        <span class="nom">TP2 · La Brûlerie Ardoise</span>
+        <span class="detail">Individuel, non noté : intégration d'une maquette et comparaison visuelle</span>
+        <span class="liens"><a href="tp/tp2.html">Énoncé</a><a class="pdf" href="pdf/tp2.pdf">PDF</a></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

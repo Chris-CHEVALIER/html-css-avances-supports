@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 36rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Contour de focus au clavier seulement, jamais supprimé */
+:focus-visible {
+  outline: 3px solid #ff7a59;
+  outline-offset: 3px;
+}
+
+.lineup {
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.5rem;
+  }
+
+  /* Tous sauf le dernier et sauf les concerts annulés */
+  li:not(:last-child, .is-cancelled) {
+    border-block-end: 1px solid #d9dcea;
+  }
+
+  /* Une tête d'affiche sur deux, comptée parmi elles seules */
+  li:nth-child(2n of .is-headliner) {
+    background: #e2f7f4;
+  }
+
+  .is-cancelled {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+}
+
+.newsletter {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.field--check {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+input[type="email"] {
+  padding: 0.5rem;
+  border: 2px solid #5a5f80;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+.field__error {
+  display: none;
+  margin: 0;
+  color: #b42318;
+}
+
+/* :user-invalid attend que l'utilisateur ait modifié le
+   champ : pas d'erreur rouge dès l'ouverture de la page */
+input:user-invalid {
+  border-color: #b42318;
+}
+
+/* :has() : le parent réagit à l'état d'un enfant */
+.field:has(input:user-invalid) .field__error {
+  display: block;
+}
+
+button {
+  justify-self: start;
+  padding: 0.6em 1.2em;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  color: #1b1e3c;
+  background: #2ec4b6;
+}
+
+/* Le bouton signale un formulaire incomplet */
+.newsletter:has(:invalid) button {
+  opacity: 0.7;
+}

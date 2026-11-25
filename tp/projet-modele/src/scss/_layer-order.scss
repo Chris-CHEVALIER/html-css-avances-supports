@@ -1,0 +1,3 @@
+// Ordre des couches : une couche plus basse dans la liste
+// l'emporte sur les précédentes, quelle que soit la spécificité.
+@layer reset, tokens, base, layout, components, utilities;

@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Autant de colonnes de 15rem minimum que la place le permet,
+   sans media query. dense comble les trous laissés. */
+.program {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-auto-flow: dense;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Chaque carte occupe 3 lignes de la grille parente et
+   reprend ses pistes : titres, textes et méta s'alignent
+   d'une carte à l'autre */
+.concert {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+}
+
+.concert h2,
+.concert p {
+  margin: 0;
+}
+
+.concert__meta {
+  align-self: end;
+  font-weight: 700;
+  color: #0b7a70;
+}
+
+/* Les têtes d'affiche prennent deux colonnes */
+.concert--featured {
+  grid-column: span 2;
+  border-color: #2ec4b6;
+  background: #e2f7f4;
+}
+
+/* Sur une seule colonne, span 2 créerait une colonne
+   implicite : on l'annule */
+@media (width < 34rem) {
+  .concert--featured {
+    grid-column: auto;
+  }
+}

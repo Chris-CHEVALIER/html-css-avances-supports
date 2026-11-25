@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP2 – Intégration 1 – HTML &amp; CSS avancés</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+  <style>
+    .maquettes { display: grid; grid-template-columns: 3fr 1fr; gap: 16px; align-items: start; margin: 16px 0; }
+    .maquettes figure { margin: 0; }
+    .maquettes img { display: block; width: 100%; max-height: 520px; object-fit: cover; object-position: top; border: 1px solid var(--bordure); border-radius: 8px; }
+    .maquettes figcaption { font-size: 14px; margin-top: 4px; }
+    .pastille { display: inline-block; width: 18px; height: 18px; border-radius: 4px; vertical-align: -3px; border: 1px solid rgba(0,0,0,.15); margin-right: 6px; }
+    @media (max-width: 640px) { .maquettes { grid-template-columns: 1fr; } }
+    @media print { .maquettes img { max-height: 300px; } }
+  </style>
+</head>
+<body>
+
+<header class="entete">
+  <div class="titre">
+    <h1>TP2 – La Brûlerie Ardoise</h1>
+    <p><span class="code-module">HTML &amp; CSS avancés</span> · TP individuel · Intégration 1</p>
+  </div>
+</header>
+
+<main>
+
+  <p>
+    La Brûlerie Ardoise, une brûlerie de café de quartier, veut une page d'accueil fidèle à sa maquette, sur ordinateur comme sur téléphone.
+    Vous l'intégrez en HTML et CSS, sans framework. Un test automatique compare votre page à la maquette, pixel par pixel. Un second test audite son accessibilité.
+  </p>
+
+  <div class="encadre marine">
+    <span class="intitule">Ce TP en bref</span>
+    <ul>
+      <li><strong>Objectifs</strong> : structurer une page en HTML sémantique, traduire une maquette en tokens, la mettre en page avec Grid et Flexbox, la rendre responsive avec <code>clamp()</code> et les container queries, puis la vérifier avec Playwright et axe.</li>
+      <li><strong>Individuel et non noté</strong>. C'est l'entraînement de l'épreuve sur machine : travaillez comme le jour J.</li>
+      <li>L'IA est autorisée, à une condition : <strong>comprendre chaque ligne</strong> que vous gardez. L'épreuve se fera sans IA.</li>
+      <li>Ouvrez votre page dans Chrome à côté de la maquette et comparez souvent.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#etape-0"><span class="n">Étape 0</span><br>Le projet de départ</a>
+    <a href="#maquette"><span class="n">La maquette</span><br>Fiche de spécifications</a>
+    <a href="#etape-1"><span class="n">Étape 1</span><br>La structure sémantique</a>
+    <a href="#etape-2"><span class="n">Étape 2</span><br>Les tokens et les couches</a>
+    <a href="#etape-3"><span class="n">Étape 3</span><br>La mise en page</a>
+    <a href="#etape-4"><span class="n">Étape 4</span><br>Le responsive</a>
+    <a href="#etape-5"><span class="n">Étape 5</span><br>La comparaison visuelle</a>
+    <a href="#etape-6"><span class="n">Étape 6</span><br>L'accessibilité</a>
+    <a href="#bonus"><span class="n">Bonus</span><br>Pour aller plus loin</a>
+    <a href="#validation"><span class="n">Checklist</span><br>Vérifier votre travail</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-0">
+    <h2><span class="num">0</span> Le projet de départ</h2>
+    <div class="meta"><span class="etiquette clair">Node.js · Playwright</span></div>
+
+    <ol>
+      <li>Téléchargez <a href="tp2-depart.zip" download>le projet de départ</a>, décompressez-le puis ouvrez le dossier <code>tp2-depart</code> dans votre éditeur.</li>
+      <li>Installez les outils puis lancez les tests :
+        <pre data-titre="Terminal"><code class="language-bash">
+          npm install
+          npx playwright install chromium
+          npm test
+        </code></pre>
+        Les deux tests de comparaison échouent : votre page est vide. C'est normal, votre objectif est de les faire passer.
+      </li>
+      <li>Lancez le serveur local avec <code>npm run serve</code>, puis ouvrez <a href="http://localhost:4173" target="_blank">localhost:4173</a> dans Chrome.</li>
+      <li>Créez un dépôt Git et faites un premier commit. Commitez à chaque étape.</li>
+    </ol>
+
+    <table>
+      <tr><th>Fichier ou dossier</th><th>Contenu</th></tr>
+      <tr><td><code>index.html</code></td><td>La page, à écrire. Seul le <code>&lt;head&gt;</code> est fourni</td></tr>
+      <tr><td><code>css/style.css</code></td><td>Vos styles, à écrire</td></tr>
+      <tr><td><code>css/fonts.css</code></td><td>La police <a href="https://fonts.google.com/specimen/Outfit" target="_blank">Outfit</a> (licence libre), hébergée dans <code>fonts/</code></td></tr>
+      <tr><td><code>contenu.md</code></td><td>Tous les textes de la page et les textes alternatifs</td></tr>
+      <tr><td><code>img/</code></td><td>Les photos, avec leurs dimensions dans <code>contenu.md</code></td></tr>
+      <tr><td><code>maquette/</code></td><td>Les PNG de la maquette, qui servent aussi de référence aux tests</td></tr>
+      <tr><td><code>tests/maquette.spec.js</code></td><td>Les tests Playwright : comparaison visuelle et audit axe</td></tr>
+    </table>
+
+    <details>
+      <summary>Je n'ai pas Node.js</summary>
+      <p>Installez <a href="https://nodejs.org/fr/download" target="_blank">Node.js</a> en version LTS puis relancez votre terminal. Vérifiez avec <code>node -v</code>.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="maquette">
+    <h2><span class="num">M</span> La maquette</h2>
+    <div class="meta"><span class="etiquette clair">Spécifications</span></div>
+
+    <div class="maquettes">
+      <figure>
+        <a href="tp2-maquette/accueil-ordinateur.png" target="_blank"><img src="tp2-maquette/accueil-ordinateur.png" alt="Maquette ordinateur de la page d'accueil de la Brûlerie Ardoise"></a>
+        <figcaption>Ordinateur, 1440 px de large (cliquez pour l'image entière)</figcaption>
+      </figure>
+      <figure>
+        <a href="tp2-maquette/accueil-mobile.png" target="_blank"><img src="tp2-maquette/accueil-mobile.png" alt="Maquette mobile de la page d'accueil de la Brûlerie Ardoise"></a>
+        <figcaption>Mobile, 390 px</figcaption>
+      </figure>
+    </div>
+
+    <h3>Couleurs</h3>
+    <table>
+      <tr><th>Nom</th><th>Valeur</th><th>Usage</th></tr>
+      <tr><td><span class="pastille" style="background:#2b1d16"></span>Espresso</td><td><code>#2b1d16</code></td><td>Texte, fond de la newsletter</td></tr>
+      <tr><td><span class="pastille" style="background:#f7f1e8"></span>Crème</td><td><code>#f7f1e8</code></td><td>Fond de la page, texte sur fond sombre</td></tr>
+      <tr><td><span class="pastille" style="background:#eadfcf"></span>Latte</td><td><code>#eadfcf</code></td><td>Bande de la torréfaction, filets, étiquette</td></tr>
+      <tr><td><span class="pastille" style="background:#9a4321"></span>Cuivre</td><td><code>#9a4321</code></td><td>Boutons, surtitre, numéros, ombre de la photo</td></tr>
+      <tr><td><span class="pastille" style="background:#7e3519"></span>Cuivre foncé</td><td><code>#7e3519</code></td><td>Survol des boutons</td></tr>
+      <tr><td><span class="pastille" style="background:#5c4a3f"></span>Cacao</td><td><code>#5c4a3f</code></td><td>Textes secondaires</td></tr>
+      <tr><td><span class="pastille" style="background:#3f5a4a"></span>Sauge</td><td><code>#3f5a4a</code></td><td>Anneau de focus</td></tr>
+      <tr><td><span class="pastille" style="background:#e8a27c"></span>Abricot</td><td><code>#e8a27c</code></td><td>Bouton et focus sur fond espresso</td></tr>
+    </table>
+    <p class="muet">Tous les couples texte et fond de la maquette respectent un contraste d'au moins 4,5:1 (<a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" target="_blank">WCAG 1.4.3</a>).</p>
+
+    <h3>Typographie</h3>
+    <table>
+      <tr><th>Élément</th><th>Taille</th><th>Graisse</th><th>Autres réglages</th></tr>
+      <tr><td>Texte courant</td><td>17 px (<code>1.0625rem</code>)</td><td>400</td><td>Interligne 1,6</td></tr>
+      <tr><td>Titre <code>h1</code></td><td>de 40 px (mobile) à 68 px (ordinateur)</td><td>800</td><td>Interligne 1,15, lettres resserrées de 0,02 em</td></tr>
+      <tr><td>Titres <code>h2</code></td><td>de 30 px à 44 px</td><td>700</td><td>Interligne 1,15</td></tr>
+      <tr><td>Titres <code>h3</code> et légende du tableau</td><td>22 px</td><td>700</td><td></td></tr>
+      <tr><td>Surtitre</td><td>14 px</td><td>700</td><td>Majuscules, espacement 0,12 em</td></tr>
+      <tr><td>Texte d'introduction</td><td>19 px</td><td>400</td><td>Cacao, 34 em de large au plus</td></tr>
+      <tr><td>Origine des cafés, unité du prix, pied de page</td><td>15 px</td><td>400</td><td>Cacao</td></tr>
+      <tr><td>Prix</td><td>20 px</td><td>700</td><td></td></tr>
+      <tr><td>Logo</td><td>22 px</td><td>800</td><td>« Ardoise » en cuivre</td></tr>
+    </table>
+
+    <h3>Espacements, formes et états</h3>
+    <ul>
+      <li><strong>Échelle d'espacement</strong> : 4, 8, 12, 16, 24, 32, 48 et 64 px. Les sections ont une marge verticale de 48 px sur mobile à 96 px sur ordinateur.</li>
+      <li><strong>Conteneur</strong> : 1200 px de large au plus, 16 px de marge de chaque côté sur mobile.</li>
+      <li><strong>Rayons</strong> : 12 px pour les cartes et la photo, boutons et champ entièrement arrondis.</li>
+      <li><strong>Boutons</strong> : 14 px × 28 px de marge intérieure, bordure de 2 px. Le bouton « Commander » de l'en-tête est plus petit (10 px × 20 px). Le bouton secondaire a un fond transparent et un texte cuivre.</li>
+      <li><strong>Cartes</strong> : fond blanc, ombre <code>0 2px 12px</code> espresso à 8 %, photos au format 4/3, contenu à 24 px des bords.</li>
+      <li><strong>Photo d'accueil</strong> : format 4/3, ombre cuivre décalée de 8 px (mobile) à 16 px (ordinateur), sans flou.</li>
+      <li><strong>Survol</strong> : les boutons passent au cuivre foncé. Le bouton secondaire se remplit de cuivre. Les liens de navigation passent en cuivre et se soulignent.</li>
+      <li><strong>Focus clavier</strong> (absent de la maquette, mais obligatoire) : anneau de 3 px en sauge, décalé de 3 px. En abricot sur le fond espresso.</li>
+      <li><strong>Points de rupture</strong> : la mise en page passe sur deux colonnes à partir de 900 px. La carte du mois passe à l'horizontale quand <strong>sa propre largeur</strong> atteint 700 px.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-1">
+    <h2><span class="num">1</span> La structure sémantique</h2>
+    <div class="meta"><span class="etiquette clair">HTML · sémantique · accessibilité</span></div>
+
+    <p>Écrivez tout le contenu de <code>index.html</code> à partir de <code>contenu.md</code>, <strong>avant tout CSS</strong>. Votre page doit déjà se lire correctement sans style.</p>
+    <ul>
+      <li>Les zones de la page : <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> (avec un <code>aria-label</code>), <code>&lt;main&gt;</code> et <code>&lt;footer&gt;</code>.</li>
+      <li>Un seul <code>&lt;h1&gt;</code>, puis un <code>&lt;h2&gt;</code> par section et des <code>&lt;h3&gt;</code> pour les cartes et les étapes. Chaque <code>&lt;section&gt;</code> est nommée par son titre avec <code>aria-labelledby</code>.</li>
+      <li>Les cafés forment une <strong>liste</strong> d'<code>&lt;article&gt;</code>. Les trois étapes forment une liste <strong>ordonnée</strong>.</li>
+      <li>L'adresse dans un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/address" target="_blank"><code>&lt;address&gt;</code></a>. Les horaires dans un vrai tableau, avec <code>&lt;caption&gt;</code> et des <code>&lt;th scope="row"&gt;</code>.</li>
+      <li>Le champ e-mail a un <code>&lt;label&gt;</code> relié par <code>for</code>, le bon <code>type</code> et un <code>autocomplete</code>.</li>
+      <li>Chaque image a ses attributs <code>width</code> et <code>height</code> (ils évitent les sauts de mise en page) et le texte alternatif indiqué dans <code>contenu.md</code>.</li>
+      <li>Un <strong>lien d'évitement</strong> « Aller au contenu » en tout premier élément de <code>&lt;body&gt;</code>, qui mène à <code>&lt;main&gt;</code>.</li>
+    </ul>
+    <p>Vérifiez avec <code>npm run lint</code> : html-validate ne doit rien signaler.</p>
+
+    <details>
+      <summary>Comment nommer une section par son titre ?</summary>
+      <p>Donnez un <code>id</code> au titre et reprenez-le sur la section : <code>&lt;section aria-labelledby="cafes-titre"&gt;</code> puis <code>&lt;h2 id="cafes-titre"&gt;</code>. Le lecteur d'écran annonce alors « Nos cafés du moment, région ».</p>
+    </details>
+    <details>
+      <summary>Les photos des cafés ont un texte alternatif vide : est-ce une erreur ?</summary>
+      <p>Non. Elles illustrent sans informer : le nom du café est juste à côté. Un <code>alt=""</code> les fait ignorer par les lecteurs d'écran. Ne supprimez jamais l'attribut <code>alt</code> : sans lui, le lecteur annonce le nom du fichier.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-2">
+    <h2><span class="num">2</span> Les tokens et les couches</h2>
+    <div class="meta"><span class="etiquette clair">custom properties · @layer</span></div>
+
+    <ol>
+      <li>En tête de <code>css/style.css</code>, déclarez l'ordre de vos couches : <code>reset</code>, <code>tokens</code>, <code>base</code>, <code>layout</code> et <code>components</code>.</li>
+      <li>Dans la couche <code>tokens</code>, traduisez la fiche de spécifications en <a href="https://developer.mozilla.org/fr/docs/Web/CSS/Using_CSS_custom_properties" target="_blank">custom properties</a> sur <code>:root</code> : couleurs, police, échelle d'espacement, rayons, largeur du conteneur.</li>
+      <li>Dans la couche <code>reset</code> : <code>box-sizing</code>, marges des titres et paragraphes, images en bloc et fluides, police héritée par les champs et les boutons.</li>
+      <li>Dans la couche <code>base</code> : police, couleurs et tailles des éléments HTML nus (<code>body</code>, titres, liens, <code>:focus-visible</code>).</li>
+    </ol>
+    <p>À partir d'ici, aucune valeur de couleur ou d'espacement ne doit apparaître en dur dans vos composants : seulement des <code>var(--…)</code>.</p>
+
+    <details>
+      <summary>Comment nommer mes tokens ?</summary>
+      <p>Par catégorie puis par nom : <code>--color-copper</code>, <code>--space-l</code>, <code>--radius-card</code>. Restez cohérents : la même échelle partout.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-3">
+    <h2><span class="num">3</span> La mise en page</h2>
+    <div class="meta"><span class="etiquette clair">Grid · Flexbox</span></div>
+
+    <p>Travaillez d'abord pour l'<strong>ordinateur</strong> (1440 px), section par section, en comparant avec la maquette.</p>
+    <ul>
+      <li><strong>Conteneur</strong> : une classe <code>.container</code> centrée, de 1200 px au plus, qui garde 16 px de marge de chaque côté. Une seule déclaration de largeur suffit avec <a href="https://developer.mozilla.org/fr/docs/Web/CSS/min" target="_blank"><code>min()</code></a>.</li>
+      <li><strong>En-tête</strong> : logo à gauche, navigation et bouton à droite, alignés verticalement (Flexbox).</li>
+      <li><strong>Bandeau</strong> : deux colonnes (texte un peu plus large que la photo), centrées verticalement (Grid).</li>
+      <li><strong>Cafés</strong> : une grille de colonnes d'au moins 300 px, dont le nombre s'adapte à la place disponible. La carte du mois occupe toute la première ligne.</li>
+      <li><strong>Cartes</strong> : le bouton reste collé en bas, même quand les textes ont des longueurs différentes.</li>
+      <li><strong>Étapes</strong> : trois colonnes, numérotées « 01 », « 02 », « 03 » par un <a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_counter_styles/Using_CSS_counters" target="_blank">compteur CSS</a>, sans écrire les numéros dans le HTML.</li>
+      <li><strong>Atelier</strong> et <strong>newsletter</strong> : deux colonnes égales.</li>
+    </ul>
+
+    <details>
+      <summary>Une grille dont le nombre de colonnes s'adapte</summary>
+      <p><code>repeat(auto-fit, minmax(300px, 1fr))</code> crée autant de colonnes de 300 px au moins que la largeur le permet. Pour qu'un élément occupe toute la ligne : <code>grid-column: 1 / -1</code>.</p>
+    </details>
+    <details>
+      <summary>Coller le bouton en bas de la carte</summary>
+      <p>Faites du contenu de la carte une colonne Flexbox, puis donnez au bouton <code>margin-block-start: auto</code>. Pour que toutes les cartes d'une ligne aient la même hauteur, pensez à la hauteur de la carte et à ses rangées de grille.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-4">
+    <h2><span class="num">4</span> Le responsive</h2>
+    <div class="meta"><span class="etiquette clair">clamp() · container queries · media queries</span></div>
+
+    <ol>
+      <li>Rendez les tailles des titres et les marges des sections <strong>fluides</strong> avec <a href="https://developer.mozilla.org/fr/docs/Web/CSS/clamp" target="_blank"><code>clamp()</code></a>, entre les valeurs mobile et ordinateur de la fiche.</li>
+      <li>Écrivez votre CSS pour le mobile par défaut, puis ajoutez les deux colonnes dans une requête <code>@media (width &gt;= 900px)</code>. Sur mobile, la navigation passe sous le logo.</li>
+      <li>Faites de chaque élément de la liste des cafés un <strong>conteneur</strong> (<a href="https://developer.mozilla.org/fr/docs/Web/CSS/container-type" target="_blank"><code>container-type: inline-size</code></a>). Avec une <a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_containment/Container_queries" target="_blank">container query</a>, la carte passe à l'horizontale (photo à gauche) quand elle dispose d'au moins 700 px.</li>
+      <li>Testez à 390, 768, 1024 et 1440 px avec le <a href="https://developer.chrome.com/docs/devtools/device-mode?hl=fr" target="_blank">mode appareil</a> de Chrome. Rien ne doit déborder horizontalement.</li>
+    </ol>
+    <div class="encadre">
+      <span class="intitule">Pourquoi une container query ici ?</span>
+      La carte du mois et les petites cartes sont le <strong>même composant</strong>. Ce n'est pas la largeur de l'écran qui décide de leur disposition, mais la place que la grille leur donne.
+    </div>
+
+    <details>
+      <summary>Calculer un clamp()</summary>
+      <p>La forme <code>clamp(min, valeur fluide, max)</code> : une valeur fluide comme <code>1.6rem + 3.6vw</code> grandit avec la largeur de la fenêtre. Ajustez les deux nombres jusqu'à obtenir 40 px vers 390 px de large et 68 px vers 1440 px.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-5">
+    <h2><span class="num">5</span> La comparaison visuelle</h2>
+    <div class="meta"><span class="etiquette clair">Playwright · toHaveScreenshot</span></div>
+
+    <ol>
+      <li>Lancez <code>npm test</code>. Chaque test capture votre page entière (1440 px puis 390 px) et la compare au PNG de <code>maquette/</code>.</li>
+      <li>En cas d'échec, ouvrez le rapport : il montre la maquette, votre page et les pixels différents en rouge.
+        <pre data-titre="Terminal"><code class="language-bash">
+          npx playwright show-report
+        </code></pre>
+      </li>
+      <li>Commencez par la <strong>hauteur totale</strong> : tant qu'elle diffère, toute la suite est décalée. Corrigez ensuite section par section, de haut en bas.</li>
+      <li>Le test tolère 3 % de pixels différents (réglé dans <code>playwright.config.js</code>), car les polices sont lissées différemment selon les systèmes. Visez le vert, mais une différence d'un pixel sur un texte n'est pas une erreur.</li>
+    </ol>
+    <div class="encadre marine">
+      <span class="intitule">Ne lancez jamais <code>--update-snapshots</code> dans ce TP</span>
+      Cette option remplace les captures de référence par votre page. Vous effaceriez la maquette et le test passerait toujours.
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-6">
+    <h2><span class="num">6</span> L'accessibilité</h2>
+    <div class="meta"><span class="etiquette clair">axe · clavier · lecteur d'écran</span></div>
+
+    <ol>
+      <li>Le troisième test lance <a href="https://github.com/dequelabs/axe-core" target="_blank">axe</a> sur votre page selon WCAG 2.2 AA. Il doit passer.</li>
+      <li><strong>Au clavier</strong> : rechargez la page, appuyez sur <kbd>Tab</kbd>. Le lien d'évitement apparaît. Parcourez toute la page : chaque élément interactif reçoit un focus visible, dans l'ordre de lecture.</li>
+      <li><strong>Au lecteur d'écran</strong> : avec <a href="https://support.apple.com/fr-fr/guide/voiceover/welcome/mac" target="_blank">VoiceOver</a> (<kbd>Cmd</kbd> + <kbd>F5</kbd> sur macOS) ou <a href="https://www.nvaccess.org/download/" target="_blank">NVDA</a> (Windows), affichez la liste des titres puis celle des régions. La structure de la page doit s'y lire.</li>
+      <li>Activez <strong>Réduire les animations</strong> dans les réglages de votre système et vérifiez que les transitions disparaissent si vous en avez ajouté.</li>
+    </ol>
+    <details>
+      <summary>Le lien d'évitement est toujours visible</summary>
+      <p>Placez-le en position absolue et sortez-le de l'écran avec une translation. Il revient quand il reçoit le focus (<code>:focus-visible</code>). Ne le masquez pas avec <code>display: none</code> : il ne pourrait plus recevoir le focus.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="bonus">
+    <h2><span class="num">+</span> Pour aller plus loin</h2>
+    <ul>
+      <li>Convertissez les photos en <a href="https://developer.mozilla.org/fr/docs/Web/Media/Formats/Image_types#avif_image" target="_blank">AVIF</a> et servez-les avec <code>&lt;picture&gt;</code>, <code>srcset</code> et <code>sizes</code>. Ajoutez <code>loading="lazy"</code> aux photos sous la ligne de flottaison seulement.</li>
+      <li>Lancez un audit <a href="https://developer.chrome.com/docs/lighthouse/overview?hl=fr" target="_blank">Lighthouse</a> dans les DevTools : visez 100 en accessibilité et en bonnes pratiques.</li>
+      <li>Proposez un thème sombre avec <code>prefers-color-scheme</code>, en ne modifiant que vos tokens.</li>
+      <li>Remplacez vos requêtes <code>@media</code> par l'imbrication native : écrivez-les à l'intérieur de la règle qu'elles modifient.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="validation">
+    <h2><span class="num">✓</span> Vérifier votre travail</h2>
+    <ul class="checklist">
+      <li><code>npm run lint</code> ne signale rien (Stylelint et html-validate).</li>
+      <li>Les trois tests de <code>npm test</code> passent.</li>
+      <li>La page se lit correctement sans CSS : titres hiérarchisés, listes, tableau, formulaire.</li>
+      <li>Aucune couleur ni aucun espacement en dur hors de la couche <code>tokens</code>.</li>
+      <li>Toute la page se parcourt au clavier avec un focus visible.</li>
+      <li>Rien ne déborde horizontalement entre 320 et 1440 px.</li>
+    </ul>
+    <div class="encadre marine">
+      <span class="intitule">Correction</span>
+      Je publie le corrigé après la séance. L'épreuve sur machine suit la même démarche, avec une autre maquette et sans IA.
+    </div>
+  </section>
+
+</main>
+
+<footer class="pied">HTML &amp; CSS avancés · TP2 · Chris CHEVALIER · Photos : Unsplash via picsum.photos</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

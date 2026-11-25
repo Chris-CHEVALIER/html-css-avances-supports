@@ -1,0 +1,18 @@
+{
+  "name": "tp2-brulerie-ardoise",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "http-server -p 4173 -c-1 .",
+    "test": "playwright test",
+    "lint": "stylelint \"css/**/*.css\" && html-validate index.html"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
+    "@playwright/test": "^1.65.1",
+    "html-validate": "^11.22.1",
+    "http-server": "^14.1.1",
+    "stylelint": "^18.1.0",
+    "stylelint-config-standard": "^41.1.0"
+  }
+}

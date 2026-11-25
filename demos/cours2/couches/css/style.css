@@ -1,0 +1,81 @@
+/* 1. L'ordre des couches, déclaré une seule fois en tête :
+   en cas de conflit, la dernière couche gagne */
+@layer reset, vendor, base, components, utilities;
+
+/* 2. La bibliothèque tierce est rangée dans sa couche */
+@import url("vendor.css") layer(vendor);
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  /* !important inversé : la PREMIÈRE couche l'emporte.
+     Personne ne pourra réactiver les animations. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+    color: #1b1e3c;
+  }
+}
+
+@layer components {
+  .container {
+    max-width: 60rem;
+    margin-inline: auto;
+    padding: 2rem;
+  }
+
+  .card {
+    flex: 0 0 16rem;
+    padding: 1rem;
+    border: 2px solid #d9dcea;
+    border-radius: 1rem;
+  }
+
+  /* (0,1,0) mais couche « components » : gagne contre
+     le (0,3,1) de la couche « vendor » */
+  .btn {
+    padding: 0.6em 1.2em;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    color: #1b1e3c;
+    background: #2ec4b6;
+    transition: background-color 0.2s;
+  }
+
+  .btn:hover {
+    background: #ff7a59;
+  }
+}
+
+@layer utilities {
+  .card--sold-out {
+    opacity: 0.6;
+  }
+}
+
+/* Hors couche : bat toutes les couches (à réserver aux
+   correctifs temporaires) */
+.btn:disabled {
+  cursor: not-allowed;
+}

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP1 – Audit et refonte d'une page – HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="titre">
+    <h1>TP1 – La médiathèque des Tilleuls</h1>
+    <p><span class="code-module">HTML & CSS avancés</span> · TP individuel · Sémantique, accessibilité et SEO</p>
+  </div>
+</header>
+
+<main>
+
+  <p>
+    La médiathèque des Tilleuls, à Toulouse, a fait réaliser sa page d'accueil à petit prix. Elle s'affiche correctement à l'écran,
+    mais une usagère aveugle signale qu'elle ne peut ni naviguer ni s'inscrire à un atelier. La médiathèque, service public, doit être conforme au RGAA.
+    Vous <strong>auditez</strong> la page puis vous la <strong>refondez</strong> pour qu'elle soit sémantique, accessible et bien décrite aux moteurs de recherche.
+  </p>
+
+  <div class="encadre neutre">
+    <span class="intitule">Ce TP en bref</span>
+    <ul>
+      <li><strong>Objectifs</strong> : repérer des défauts d'accessibilité avec des outils et à la main, les relier aux critères WCAG et RGAA, puis les corriger avec du HTML natif.</li>
+      <li><strong>Individuel et non noté</strong>. Il prépare le projet et l'épreuve sur machine.</li>
+      <li>L'IA est autorisée, à une condition : <strong>comprendre chaque ligne</strong> que vous gardez. L'épreuve sur machine se fera sans IA.</li>
+      <li>L'apparence générale de la page doit rester la même : ce TP porte sur le HTML, le CSS ne change que pour l'accessibilité.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#etape-0"><span class="n">Étape 0</span><br>La page de départ</a>
+    <a href="#etape-1"><span class="n">Étape 1</span><br>L'audit automatique</a>
+    <a href="#etape-2"><span class="n">Étape 2</span><br>L'audit manuel</a>
+    <a href="#etape-3"><span class="n">Étape 3</span><br>La structure sémantique</a>
+    <a href="#etape-4"><span class="n">Étape 4</span><br>Le formulaire</a>
+    <a href="#etape-5"><span class="n">Étape 5</span><br>Le CSS d'accessibilité</a>
+    <a href="#etape-6"><span class="n">Étape 6</span><br>Le SEO technique</a>
+    <a href="#validation"><span class="n">Checklist</span><br>Vérifier votre travail</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-0">
+    <h2><span class="num">0</span> La page de départ</h2>
+    <div class="meta"><span class="etiquette clair">Git · serveur local</span></div>
+
+    <ol>
+      <li>Téléchargez l'<a href="tp1-depart.zip" download>archive de la page de départ</a> et décompressez-la. Vous pouvez aussi <a href="tp1-depart/" target="_blank">l'ouvrir en ligne</a> pour la découvrir.</li>
+      <li>Ouvrez le dossier dans VS Code et servez-le avec un serveur local : l'extension <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer" target="_blank">Live Server</a> ou la commande ci-dessous, puis ouvrez l'adresse affichée dans Chrome.
+        <pre data-titre="Terminal"><code class="language-bash">
+          npx serve tp1-depart
+        </code></pre>
+      </li>
+      <li>Sur GitHub, <a href="https://github.com/new" target="_blank">créez un dépôt</a> <strong>privé</strong> nommé <code>html-css-tp1-nom-prenom</code>, poussez la page de départ telle quelle dans un premier commit, puis commitez à chaque étape.</li>
+      <li>Installez l'extension <a href="https://chromewebstore.google.com/detail/axe-devtools-web-accessib/lhdoppojpmngadmnindnejefpokejbdd" target="_blank">axe DevTools</a> et l'extension <a href="https://chromewebstore.google.com/detail/headingsmap/flbjommegcjonpdmenkdiocclhjacmbi" target="_blank">HeadingsMap</a>, qui affiche le plan de titres.</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-1">
+    <h2><span class="num">1</span> L'audit automatique</h2>
+    <div class="meta"><span class="etiquette clair">axe · Lighthouse · html-validate</span></div>
+
+    <ol>
+      <li>Dans les DevTools, onglet <em>Lighthouse</em>, lancez un audit des catégories <strong>Accessibility</strong> et <strong>SEO</strong>. Notez les deux scores.</li>
+      <li>Onglet <em>axe DevTools</em>, lancez <em>Scan all of my page</em>. Notez le nombre de problèmes par gravité.</li>
+      <li>Validez le HTML :
+        <pre data-titre="Terminal"><code class="language-bash">
+          npx html-validate index.html
+        </code></pre>
+      </li>
+      <li>Créez le fichier <code>AUDIT.md</code> à la racine du dépôt et reportez-y les trois résultats.</li>
+    </ol>
+
+    <div class="encadre">
+      Gardez ces chiffres : vous les comparerez à ceux de la page refondue. Retenez aussi qu'un bon score ne prouve rien à lui seul.
+      Les outils ne voient pas qu'un texte alternatif est faux ou qu'un ordre de lecture est illogique.
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-2">
+    <h2><span class="num">2</span> L'audit manuel</h2>
+    <div class="meta"><span class="etiquette clair">clavier · lecteur d'écran · contrastes</span></div>
+
+    <ol>
+      <li><strong>Au clavier</strong>, sans souris : atteignez le menu, le bouton « Voir les ateliers », chaque champ du formulaire et le bouton « Envoyer ». Voyez-vous où se trouve le focus ?</li>
+      <li><strong>Au lecteur d'écran</strong> : <a href="https://support.apple.com/fr-fr/guide/voiceover/welcome/mac" target="_blank">VoiceOver</a> sur macOS (<code>Cmd+F5</code>, puis le rotor avec <code>Ctrl+Option+U</code>) ou <a href="https://www.nvaccess.org/download/" target="_blank">NVDA</a> sur Windows. Listez les titres, les liens et les régions de la page. Essayez de vous inscrire à un atelier.</li>
+      <li><strong>Le plan de titres</strong> avec HeadingsMap.</li>
+      <li><strong>Les contrastes</strong> : dans l'onglet <em>Elements</em>, l'infobulle de l'inspecteur et le sélecteur de couleur indiquent le ratio de contraste de chaque texte.</li>
+      <li><strong>À 320 px de large</strong> : passez en mode appareil (<code>Cmd+Maj+M</code> ou <code>Ctrl+Maj+M</code>) et réglez la largeur.</li>
+    </ol>
+
+    <p>Relevez chaque défaut dans le tableau de <code>AUDIT.md</code>, en le reliant au critère <a href="https://www.w3.org/WAI/WCAG22/quickref/?versions=2.2" target="_blank">WCAG 2.2</a> et, si vous le trouvez, au critère du <a href="https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/" target="_blank">RGAA</a>. Voici le début du tableau, à compléter :</p>
+
+    <pre data-titre="AUDIT.md"><code class="language-markdown">
+      # Audit de la page d'accueil
+
+      Lighthouse : accessibilité ../100, SEO ../100
+      axe DevTools : .. problèmes (.. critiques, .. sérieux)
+      html-validate : .. erreurs
+
+      | # | Défaut | Critère WCAG 2.2 (RGAA) | Gravité | Correction |
+      |---|---|---|---|---|
+      | 1 | Pas d'attribut lang | 3.1.1 (8.3) | Bloquant | lang="fr" sur html |
+      | 2 | Titre de page « Accueil » | 2.4.2 (8.6) | Majeur | Titre unique et descriptif |
+    </code></pre>
+
+    <div class="encadre marine">
+      <span class="intitule">Gravité</span>
+      <strong>Bloquant</strong> : une personne ne peut pas accomplir sa tâche (s'inscrire, naviguer). <strong>Majeur</strong> : elle y arrive difficilement. <strong>Mineur</strong> : gêne ou défaut de qualité.
+    </div>
+
+    <details>
+      <summary>Combien de défauts chercher ?</summary>
+      <p>Le corrigé en relève plus de vingt. Pensez aux éléments interactifs qui ne sont pas des liens ni des boutons, aux images, aux intitulés de liens, aux champs et à leurs groupes, aux messages d'erreur, au focus, aux couleurs et à la taille des cibles.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-3">
+    <h2><span class="num">3</span> La structure sémantique</h2>
+    <div class="meta"><span class="etiquette clair">landmarks · titres · liens · images</span></div>
+
+    <p>Dans <code>index.html</code>, réécrivez la structure de la page :</p>
+    <ul>
+      <li>les réglages de base du document : langue, titre descriptif, <code>meta viewport</code> ;</li>
+      <li>un lien d'évitement « Aller au contenu » en premier élément du <code>body</code> ;</li>
+      <li>les régions <code>header</code>, <code>nav</code> (nommée), <code>main</code> et <code>footer</code> ;</li>
+      <li>le menu en <strong>liste de liens</strong>, la page courante signalée par <code>aria-current="page"</code> ;</li>
+      <li>un seul <code>h1</code>, un <code>h2</code> par section, un <code>h3</code> par événement ;</li>
+      <li>chaque événement dans un <code>article</code>, sa date dans un <code>time</code> avec l'attribut <code>datetime</code> ;</li>
+      <li>des liens aux intitulés explicites, sans « Cliquez ici » ;</li>
+      <li>un texte alternatif pertinent pour chaque image, vide (<code>alt=""</code>) pour les images décoratives ;</li>
+      <li>les horaires et l'adresse en liste de définitions (<code>dl</code>) et <code>address</code> ;</li>
+      <li>« Plus d'infos » avec <code>details</code> et <code>summary</code>, sans JavaScript.</li>
+    </ul>
+
+    <details>
+      <summary>Le bouton « Voir les ateliers » : lien ou bouton ?</summary>
+      <p>Il amène ailleurs dans la page : c'est une <strong>navigation</strong>, donc un lien vers l'ancre <code>#ateliers</code>. Un <code>button</code> sert à une <strong>action</strong> (envoyer, ouvrir, filtrer). Le CSS peut donner au lien l'apparence d'un bouton.</p>
+    </details>
+    <details>
+      <summary>Les icônes des réseaux sociaux</summary>
+      <p>Elles doivent devenir des liens. Une image seule dans un lien porte le nom du lien : son <code>alt</code> dit donc la destination (« Mastodon »), pas l'apparence (« logo violet »).</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-4">
+    <h2><span class="num">4</span> Le formulaire</h2>
+    <div class="meta"><span class="etiquette clair">label · fieldset · autocomplete · erreurs</span></div>
+
+    <ol>
+      <li>Transformez le bloc en vrai <code>form</code>. Chaque champ reçoit un <code>label</code> visible, le bon <code>type</code>, un <code>autocomplete</code> et <code>required</code>.</li>
+      <li>Regroupez les ateliers dans un <code>fieldset</code> dont la <code>legend</code> est « Atelier ». Chaque bouton radio est dans son <code>label</code>.</li>
+      <li>Remplacez la fausse <code>div</code> « Envoyer » par un <code>button type="submit"</code>.</li>
+      <li>Dans <code>js/script.js</code>, réécrivez la validation : un message précis sous chaque champ en erreur, relié par <code>aria-describedby</code>, <code>aria-invalid="true"</code> sur le champ, focus sur le premier champ en erreur.</li>
+      <li>Remplacez l'<code>alert()</code> de succès par un paragraphe <code>role="status"</code>.</li>
+    </ol>
+
+    <details>
+      <summary>Une piste pour le script</summary>
+      <p>Ajoutez <code>novalidate</code> au formulaire pour garder la main sur les messages. Dans l'écouteur <code>submit</code>, appelez <code>event.preventDefault()</code>, puis testez <code>input.checkValidity()</code> ou <code>input.validity.valueMissing</code> pour chaque champ. Pour un groupe de boutons radio, <code>form.elements.atelier.value</code> vaut <code>""</code> si rien n'est coché.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-5">
+    <h2><span class="num">5</span> Le CSS d'accessibilité</h2>
+    <div class="meta"><span class="etiquette clair">focus · contrastes · cibles · 320 px</span></div>
+
+    <p>Dans <code>css/style.css</code> :</p>
+    <ul>
+      <li>supprimez <code>outline: none</code> et écrivez une règle <code>:focus-visible</code> bien contrastée ;</li>
+      <li>stylez le lien d'évitement pour qu'il n'apparaisse qu'au focus ;</li>
+      <li>corrigez chaque couleur pour atteindre 4,5:1 pour le texte et 3:1 pour les bordures de champ ;</li>
+      <li>donnez aux liens, boutons et icônes une cible d'au moins 24 × 24 px ;</li>
+      <li>faites passer les cartes d'événements à la ligne pour que la page tienne à 320 px de large ;</li>
+      <li>reproduisez l'apparence de l'ancien faux bouton sur le lien et sur le vrai bouton.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-6">
+    <h2><span class="num">6</span> Le SEO technique</h2>
+    <div class="meta"><span class="etiquette clair">meta · Open Graph · JSON-LD</span></div>
+
+    <ol>
+      <li>Ajoutez une <code>meta description</code> d'environ 150 caractères et un lien <code>canonical</code> vers <code>https://tilleuls.example/</code>.</li>
+      <li>Ajoutez les balises <a href="https://ogp.me/" target="_blank">Open Graph</a> <code>og:type</code>, <code>og:title</code>, <code>og:description</code>, <code>og:image</code> et <code>og:url</code>.</li>
+      <li>Décrivez la médiathèque en JSON-LD avec le type <a href="https://schema.org/Library" target="_blank"><code>Library</code></a> : nom, adresse (<code>PostalAddress</code>), horaires (<code>openingHours</code>).</li>
+      <li>Vérifiez le bloc avec le <a href="https://validator.schema.org/" target="_blank">validateur schema.org</a> (onglet « Extrait de code »).</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="bonus">
+    <h2><span class="num">+</span> Pour aller plus loin</h2>
+    <ul>
+      <li>Décrivez aussi chaque événement de l'agenda en JSON-LD (<code>Event</code>, avec <code>location</code> et <code>startDate</code>).</li>
+      <li>Ajoutez un thème sombre avec <code>prefers-color-scheme</code>, en gardant des contrastes conformes.</li>
+      <li>Testez la page avec <a href="https://wave.webaim.org/extension/" target="_blank">WAVE</a> et comparez ses résultats à ceux d'axe.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="validation">
+    <h2><span class="num">✓</span> Vérifier votre travail</h2>
+    <ul class="checklist">
+      <li><code>npx html-validate index.html</code> ne signale aucune erreur</li>
+      <li>axe DevTools ne signale aucun problème</li>
+      <li>Lighthouse donne au moins 95 en accessibilité et 100 en SEO</li>
+      <li>Toute la page se parcourt au clavier, le focus est toujours visible</li>
+      <li>Au lecteur d'écran, la liste des titres reflète le plan de la page et les régions sont annoncées</li>
+      <li>On peut s'inscrire à un atelier au clavier, chaque erreur est annoncée avec son message</li>
+      <li>La page tient à 320 px de large sans défilement horizontal</li>
+      <li><code>AUDIT.md</code> liste les défauts, leur critère et leur correction, avec les scores avant et après</li>
+      <li>Le travail est commité et poussé sur votre dépôt</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="pied">Chris CHEVALIER · chevalier@chris-freelance.com</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

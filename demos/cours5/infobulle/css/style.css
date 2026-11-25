@@ -1,0 +1,39 @@
+main {
+  padding-block-start: 6rem;
+}
+
+.hint-trigger {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 2px solid currentcolor;
+  border-radius: 50%;
+  font: inherit;
+  font-weight: 700;
+  background: none;
+  cursor: pointer;
+}
+
+/* Sans anchor positioning : popover centré (style par défaut) */
+.hint {
+  max-inline-size: 18rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  color: white;
+  background: var(--color-ink);
+}
+
+/* Avec anchor positioning : l'infobulle suit son bouton */
+@supports (anchor-name: --a) {
+  .hint-trigger {
+    anchor-name: --night-hint;
+  }
+
+  .hint {
+    position-anchor: --night-hint;
+    position-area: block-start;
+    position-try-fallbacks: flip-block;
+    inset: auto;
+    margin: 0.5rem;
+  }
+}

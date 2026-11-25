@@ -1,0 +1,54 @@
+/* La police web ; swap : le texte s'affiche tout de suite */
+@font-face {
+  font-family: Outfit;
+  src: url("../../../../assets/fonts/outfit-latin.woff2")
+    format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Police de repli ajustée à Outfit : pas de saut au swap (CLS) */
+@font-face {
+  font-family: "Outfit fallback";
+  src: local("Arial");
+  size-adjust: 102%;
+  ascent-override: 98%;
+  descent-override: 26%;
+}
+
+body {
+  max-inline-size: 60rem;
+  margin: 0 auto;
+  font-family: Outfit, "Outfit fallback", sans-serif;
+}
+
+/* width et height du HTML donnent le ratio : la place est
+   réservée avant le chargement de l'image */
+img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.hero h1 {
+  margin: 1rem;
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+main {
+  padding: 1rem;
+}
+
+.lineup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+/* Hors de l'écran : rendu différé, place estimée à 30rem */
+.archives {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 30rem;
+}

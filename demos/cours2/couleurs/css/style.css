@@ -1,0 +1,98 @@
+/* Une teinte de marque, les autres couleurs en découlent */
+:root {
+  color-scheme: light dark;
+
+  --brand-hue: 185deg;
+  --color-brand: oklch(72% 0.13 var(--brand-hue));
+  --color-accent: oklch(70% 0.17 35deg);
+
+  /* light-dark() : 1re valeur en clair, 2de en sombre */
+  --color-bg: light-dark(oklch(99% 0 0deg), oklch(22% 0.03 270deg));
+  --color-text: light-dark(
+    oklch(25% 0.05 270deg),
+    oklch(95% 0.01 270deg)
+  );
+
+  /* 20 % de la marque mélangés au fond */
+  --color-brand-soft: color-mix(
+    in oklch,
+    var(--color-brand) 20%,
+    var(--color-bg)
+  );
+}
+
+/* :has() sur la racine : réglages sans JavaScript */
+:root:has(#dark-mode:checked) {
+  color-scheme: dark;
+}
+
+:root:has(#hue-violet:checked) {
+  --brand-hue: 300deg;
+}
+
+/* Variable typée : le navigateur sait l'animer */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.container {
+  display: grid;
+  gap: 2rem;
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+.ticket {
+  padding: 1.5rem;
+  border: 6px solid transparent;
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(var(--color-brand-soft), var(--color-brand-soft))
+      padding-box,
+    conic-gradient(
+        from var(--angle),
+        var(--color-brand),
+        var(--color-accent),
+        var(--color-brand)
+      )
+      border-box;
+  animation: spin 4s linear infinite;
+}
+
+.ticket__price {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.ticket__cta {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: oklch(20% 0.03 270deg);
+  text-decoration: none;
+  background: var(--color-brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket {
+    animation: none;
+  }
+}

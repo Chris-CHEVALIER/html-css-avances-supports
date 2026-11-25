@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+a {
+  color: inherit;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: center;
+  padding: 1rem 2rem;
+  color: #fff;
+  background: #1b1e3c;
+}
+
+.logo {
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* La marge automatique pousse le bouton tout à droite */
+.button {
+  margin-inline-start: auto;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  text-decoration: none;
+  background: #2ec4b6;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.container {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Des étiquettes qui passent à la ligne, espacées par gap */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 0.2em 0.8em;
+  border-radius: 999px;
+  background: #e2f7f4;
+}
+
+/* L'image garde sa taille, le texte prend la place restante
+   et passe dessous quand il dispose de moins de 15rem */
+.media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.media img {
+  flex: 0 0 10rem;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.media p {
+  flex: 1 1 15rem;
+  margin: 0;
+}

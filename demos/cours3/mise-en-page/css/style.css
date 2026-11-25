@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+/* Mobile d'abord : une colonne, zones empilées.
+   Chaque ligne du dessin est suivie de sa hauteur. */
+.page {
+  display: grid;
+  grid-template:
+    "header" auto
+    "main" 1fr
+    "aside" auto
+    "footer" auto;
+  min-height: 100vh;
+}
+
+.page__header {
+  grid-area: header;
+  padding: 1rem 2rem;
+  color: #fff;
+  background: #1b1e3c;
+}
+
+.page__aside {
+  grid-area: aside;
+  padding: 1rem 2rem;
+  background: #e2f7f4;
+}
+
+.page__footer {
+  grid-area: footer;
+  padding: 1rem 2rem;
+  background: #f2f3f9;
+}
+
+/* Sur grand écran, on redessine les zones sans toucher au HTML */
+@media (width >= 60rem) {
+  .page {
+    grid-template:
+      "header header" auto
+      "main   aside" 1fr
+      "footer footer" auto
+      / 1fr 18rem;
+  }
+}
+
+/* Lignes nommées : une colonne de lecture centrée et
+   une zone pleine largeur, dans la même grille */
+.page__main {
+  display: grid;
+  grid-area: main;
+  align-content: start;
+  grid-template-columns:
+    [full-start] minmax(1rem, 1fr)
+    [content-start] minmax(0, 40rem)
+    [content-end] minmax(1rem, 1fr)
+    [full-end];
+}
+
+.page__main > * {
+  grid-column: content;
+}
+
+.page__main > .full-bleed {
+  grid-column: full;
+  margin: 0;
+}
+
+.full-bleed img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

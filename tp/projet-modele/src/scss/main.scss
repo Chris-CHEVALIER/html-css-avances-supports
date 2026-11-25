@@ -1,0 +1,9 @@
+// Point d'entrée : l'ordre des @use donne l'ordre de sortie.
+// L'ordre de priorité, lui, est fixé par _layers.scss.
+@use "layer-order";
+@use "layers/reset";
+@use "layers/tokens";
+@use "layers/base";
+@use "layers/layout";
+@use "components";
+@use "layers/utilities";

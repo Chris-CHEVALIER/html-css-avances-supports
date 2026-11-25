@@ -1,0 +1,28 @@
+@layer components {
+  // La carte s'adapte à la largeur de son conteneur,
+  // pas à celle de l'écran (container query).
+  .card {
+    container-type: inline-size;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-l);
+    background: var(--color-surface-alt);
+    overflow: hidden;
+
+    &__body {
+      display: grid;
+      gap: var(--space-s);
+      padding: var(--space-l);
+    }
+
+    &__title {
+      font-size: var(--font-size-l);
+    }
+
+    @container (width > 32rem) {
+      &__body {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+    }
+  }
+}

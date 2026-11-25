@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organisation du module – HTML &amp; CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal .frise.trois { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .reveal .frise.trois .etape { font-size: .8em; }
+  </style>
+</head>
+<body data-pied="HTML &amp; CSS avancés · Organisation du module">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Organisation du module</h1>
+    <div class="sous-titre">
+      <span class="code-module">Langages HTML &amp; CSS avancés</span> – Bachelor 3 AW<br>
+      Chris CHEVALIER · <a href="mailto:chevalier@chris-freelance.com" style="color: inherit;">chevalier@chris-freelance.com</a>
+    </div>
+    <aside class="notes">
+      Me présenter en deux minutes : formateur indépendant depuis 2020 (web full stack, programmation, gestion de projet).
+      Puis présenter le module, la semaine, le projet et l'évaluation. Enchaîner sur le test de positionnement.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Le module</li>
+      <li>La semaine</li>
+      <li>Le projet</li>
+      <li>L'évaluation</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>Le module</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>HTML et CSS, encore ? Oui, mais en 2026</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte">
+          <h3>Ce que l'IA fait bien</h3>
+          Une page qui « a l'air juste » en quelques secondes : des <code>div</code>, des marges au hasard, des classes utilitaires empilées
+        </div>
+        <div class="carte accent">
+          <h3>Ce qu'on attend de vous</h3>
+          Une page <strong>juste</strong> : sémantique, accessible au clavier et au lecteur d'écran, fidèle à la maquette, rapide, maintenable
+        </div>
+        <div class="carte corail">
+          <h3>Ce que vous allez prouver</h3>
+          Avec des <strong>outils</strong> : comparaison visuelle automatisée, audits d'accessibilité et de performance, intégration continue
+        </div>
+      </div>
+      <ul style="margin-top: 30px;">
+        <li>Le CSS a plus changé depuis 2022 qu'en dix ans : couches, <code>:has()</code>, container queries, nesting, anchor positioning, View Transitions</li>
+        <li>Ces nouveautés sont récentes. L'IA les connaît mal et vous les rencontrerez dans les projets que vous reprendrez</li>
+      </ul>
+    </div>
+    <aside class="notes">
+      Demander qui a déjà utilisé Sass, intégré une maquette Figma, testé un site au lecteur d'écran.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Objectifs du module</h2>
+    <div class="corps">
+      <p>À la fin du module, vous serez capables de :</p>
+      <ul>
+        <li><strong>Écrire un HTML sémantique et accessible</strong>, vérifié au clavier, au lecteur d'écran et avec <a href="https://www.deque.com/axe/devtools/" target="_blank">axe DevTools</a>, et optimisé pour le référencement</li>
+        <li><strong>Maîtriser la cascade moderne et les mises en page actuelles</strong> : couches, sélecteurs avancés, Grid, Flexbox, container queries</li>
+        <li><strong>Écrire et compiler du Sass moderne</strong> organisé autour de <em>design tokens</em></li>
+        <li><strong>Intégrer fidèlement une maquette Figma</strong> et le prouver par des tests automatisés</li>
+        <li><strong>Construire les composants d'un framework CSS</strong> en JavaScript natif et en Web Components</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Programme</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte">
+          <h3>Cours 1 · HTML</h3>
+          Sémantique, formulaires, accessibilité (WCAG 2.2, RGAA), SEO technique
+        </div>
+        <div class="carte">
+          <h3>Cours 2 · Cascade</h3>
+          Couches, spécificité, sélecteurs avancés, nesting, custom properties, couleurs modernes
+        </div>
+        <div class="carte">
+          <h3>Cours 3 · Mise en page</h3>
+          Grid et subgrid, Flexbox, container queries, typographie fluide
+        </div>
+        <div class="carte">
+          <h3>Cours 4 · Sass et qualité</h3>
+          Sass moderne, design tokens, architecture d'un framework, Stylelint, Playwright, GitHub Actions
+        </div>
+        <div class="carte">
+          <h3>Cours 5 · Composants</h3>
+          JavaScript natif, <code>dialog</code>, Popover, Web Components, View Transitions, performance
+        </div>
+        <div class="carte accent">
+          <h3>Pratique</h3>
+          Deux TP individuels corrigés, un projet en groupe et trois Kahoot
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 20px;">
+        Environ <strong>30 % de théorie</strong>. Chaque notion est montrée sur une démo complète, en ligne, puis appliquée le jour même.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>La semaine</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Trois jours intensifs</h2>
+    <div class="corps">
+      <div class="frise trois">
+        <div class="etape">
+          <div class="date">Lundi 7 déc. · 8h-13h</div>
+          <ul>
+            <li>Test de positionnement</li>
+            <li>Cours 1 · HTML</li>
+            <li>TP1 · refonte accessible</li>
+            <li>Cours 2 · Cascade</li>
+            <li>Groupes, maquette et dépôt</li>
+            <li>Kahoot 1</li>
+          </ul>
+        </div>
+        <div class="etape">
+          <div class="date">Mercredi 9 déc. · 8h-17h15</div>
+          <ul>
+            <li>Cours 3 · Mise en page</li>
+            <li>TP2 · intégration d'une maquette</li>
+            <li>Cours 4 · Sass et qualité</li>
+            <li>Projet tout l'après-midi</li>
+            <li>Kahoot 2</li>
+          </ul>
+        </div>
+        <div class="etape corail">
+          <div class="date">Jeudi 10 déc. · 9h45-19h</div>
+          <ul>
+            <li>Cours 5 · Composants · Kahoot 3</li>
+            <li><strong>11h30 : épreuve sur machine</strong></li>
+            <li>Projet et point d'étape</li>
+            <li><strong>17h30 : soutenances</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre neutre" style="margin-top: 24px;">
+        Le code final du projet est à pousser sur <code>main</code> le <strong>dimanche 13 décembre avant 23h59</strong>.
+      </div>
+    </div>
+    <aside class="notes">
+      13 créneaux de 1h30 : 3 le lundi, 5 le mercredi, 5 le jeudi. Le mardi est libre : c'est le moment de terminer le TP1 et de lire la documentation de la maquette choisie.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Votre environnement de travail</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><strong>À installer</strong></p>
+          <ul class="dense">
+            <li><a href="https://nodejs.org/fr/download" target="_blank"><strong>Node.js</strong> en version LTS</a> (Sass, Stylelint, Playwright)</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank"><strong>VS Code</strong></a> ou l'éditeur de votre choix</li>
+            <li><a href="https://git-scm.com/downloads" target="_blank"><strong>Git</strong></a> et un compte <a href="https://github.com/signup" target="_blank"><strong>GitHub</strong></a></li>
+            <li>Un compte <a href="https://www.figma.com/signup" target="_blank"><strong>Figma</strong></a> gratuit</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Dans le navigateur</strong></p>
+          <ul class="dense">
+            <li>Chrome ou Firefox récent, et ses outils de développement</li>
+            <li>L'extension <a href="https://www.deque.com/axe/devtools/" target="_blank"><strong>axe DevTools</strong></a> (audit d'accessibilité)</li>
+            <li>Le lecteur d'écran de votre système : <a href="https://support.apple.com/fr-fr/guide/voiceover/welcome/mac" target="_blank">VoiceOver</a> (macOS, <kbd>Cmd</kbd> + <kbd>F5</kbd>) ou <a href="https://www.nvaccess.org/download/" target="_blank">NVDA</a> (Windows, gratuit)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 14px;">
+        Tous les supports, les démos et les énoncés sont en ligne : <a href="https://chris-chevalier.github.io/html-css-avances-supports/" target="_blank">le site du module</a>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>Le projet</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Votre propre framework CSS, en groupe</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul>
+            <li>Par groupes de <strong>3</strong> (deux binômes pour une classe de 22)</li>
+            <li>Vous créez un <strong>mini-framework CSS</strong> : design tokens, Sass organisé en couches, composants documentés et accessibles</li>
+            <li>Avec lui, vous intégrez <strong>3 pages</strong> d'une maquette choisie sur <a href="https://www.figma.com/community/website-templates" target="_blank">Figma Community</a></li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>La qualité est <strong>prouvée par des outils</strong> en intégration continue : Stylelint, html-validate, comparaison visuelle Playwright, Lighthouse et axe</li>
+            <li>Le site est déployé sur <strong>GitHub Pages</strong></li>
+            <li>Le sujet complet et la grille sont sur le site du module</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre corail" style="margin-top: 14px;">
+        Le syllabus parle de jQuery. Je le remplace par le <strong>JavaScript natif</strong> et les <strong>Web Components</strong>, standards du navigateur que vous retrouverez sous React.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Dès ce lundi midi</h2>
+    <div class="corps">
+      <ol>
+        <li>Formez votre groupe et choisissez une maquette dans la liste du sujet (une maquette par groupe, premier arrivé, premier servi)</li>
+        <li>Un membre crée le dépôt GitHub à partir du dépôt modèle, puis invite les autres membres et <strong>Chris-CHEVALIER</strong></li>
+        <li>Chacun se répartit le travail et l'indique dans le README : chacun écrit une part réelle du framework et des pages</li>
+      </ol>
+      <div class="encadre neutre" style="margin-top: 20px;">
+        Les rendus ne passent pas par e-mail. L'invitation au dépôt suffit : je corrige le dernier commit poussé sur <code>main</code> le 13 décembre avant 23h59.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">04</div>
+    <h2>L'évaluation</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Modalités d'évaluation</h2>
+    <div class="corps">
+      <table>
+        <tr><th>Épreuve</th><th>Conditions</th><th class="num">Poids</th></tr>
+        <tr><td><strong>Note de projet</strong> <span class="etiquette accent">Groupe</span> <span class="etiquette">Individuel</span></td><td>Moyenne de deux notes sur 20 : la <strong>production</strong> du groupe et votre <strong>soutenance</strong> individuelle, le jeudi 10 décembre</td><td class="num"><strong>50 %</strong></td></tr>
+        <tr><td><strong>Épreuve sur machine</strong> <span class="etiquette">Individuel</span></td><td>Le jeudi 10 décembre à 11h30, 1h30, <strong>sans IA</strong> : intégrer une maquette fournie en HTML et CSS</td><td class="num"><strong>50 %</strong></td></tr>
+      </table>
+      <div class="encadre" style="margin-top: 22px;">
+        Une absence à une épreuve vaut 0, sans rattrapage possible.
+      </div>
+    </div>
+    <aside class="notes">
+      Règle ESGI : 50 % de contrôle continu et 50 % d'examen. Deux notes saisies sur MyGES, qui leur donne le même poids.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le jeudi 10 décembre</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte">
+          <h3>Épreuve sur machine · 1h30</h3>
+          <ul>
+            <li>Une maquette (ordinateur et mobile) et ses spécifications</li>
+            <li>Notée sur la <strong>sémantique</strong>, l'<strong>accessibilité</strong>, la <strong>fidélité</strong> mesurée par comparaison visuelle, le <strong>responsive</strong> et la qualité du CSS</li>
+            <li>Sans IA : votre ordinateur, votre éditeur et vous</li>
+          </ul>
+        </div>
+        <div class="carte">
+          <h3>Soutenance · 10 min par groupe</h3>
+          <ul>
+            <li>Démonstration : chacun présente ce qu'il a réalisé</li>
+            <li>Un extrait de <strong>votre</strong> code, que je choisis, à expliquer</li>
+            <li>Une question sur le travail d'un autre membre</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre neutre" style="margin-top: 18px;">
+        La production du groupe est notée sur une grille de 20 critères, dont une partie vérifiée par script. Un membre qui n'a pas contribué peut voir sa note réduite, jusqu'à 0.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'IA générative : autorisée en projet, pas à l'épreuve</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul>
+            <li>ChatGPT, Claude, Copilot… sont <strong>autorisés</strong> pour les TP et le projet</li>
+            <li>Vous devez <strong>comprendre votre code de bout en bout</strong> et pouvoir l'expliquer en soutenance</li>
+            <li>Déclarez votre usage dans le README : quels outils, pour quoi faire</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Une fonctionnalité non expliquée n'est pas comptée</strong></li>
+            <li>L'épreuve sur machine se fait <strong>sans IA</strong> : entraînez-vous à écrire votre CSS vous-mêmes pendant les TP</li>
+            <li>Le plagiat et la triche entraînent un 0 à l'épreuve concernée</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 8px;">
+        Conseil : utilisez l'IA comme un <strong>tuteur</strong> (expliquer une règle, relire votre code), pas comme un <strong>auteur</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Avant de commencer : le test de positionnement</h2>
+    <div class="corps">
+      <ul>
+        <li><strong>12 questions</strong>, anonymes et non notées, pour que j'adapte le cours à votre niveau</li>
+        <li>Répondez seuls, sans aide ni IA. « Je ne sais pas » est une réponse utile</li>
+        <li>Nous corrigeons ensemble à partir des résultats de la classe</li>
+      </ul>
+      <div class="encadre" style="margin-top: 24px; font-size: 1em;">
+        <a href="../positionnement/index.html" target="_blank"><strong>Ouvrir le test de positionnement</strong></a>
+      </div>
+    </div>
+    <aside class="notes">
+      Afficher les résultats en direct : positionnement/resultats.html. Copier le récapitulatif pour l'AP et le DP.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      <a href="mailto:chevalier@chris-freelance.com" style="color: inherit;">chevalier@chris-freelance.com</a>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

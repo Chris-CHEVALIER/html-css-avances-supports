@@ -1,0 +1,56 @@
+/* Transition entre deux pages du même site (les deux l'activent) */
+@view-transition {
+  navigation: auto;
+}
+
+.stage {
+  margin: 0 0 1rem;
+}
+
+.stage img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--radius);
+  view-transition-name: stage; /* animée à part du reste */
+}
+
+::view-transition-old(stage),
+::view-transition-new(stage) {
+  animation-duration: 0.4s;
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.thumbs button {
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+}
+
+.thumbs button[aria-current="true"] {
+  border-color: var(--color-primary);
+}
+
+.thumbs img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: calc(var(--radius) - 3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

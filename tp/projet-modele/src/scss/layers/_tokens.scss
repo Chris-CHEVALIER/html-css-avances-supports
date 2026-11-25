@@ -1,0 +1,26 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// Les tokens Sass deviennent des custom properties :
+// --color-primary, --space-m, --font-size-l, --radius-m…
+@layer tokens {
+  :root {
+    @each $name, $value in $colors {
+      --color-#{$name}: #{$value};
+    }
+
+    @each $name, $value in $spaces {
+      --space-#{$name}: #{$value};
+    }
+
+    @each $name, $value in $font-sizes {
+      --font-size-#{$name}: #{$value};
+    }
+
+    @each $name, $value in $radius {
+      --radius-#{$name}: #{$value};
+    }
+
+    --font-family: "Outfit", system-ui, sans-serif;
+  }
+}

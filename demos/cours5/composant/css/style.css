@@ -1,0 +1,23 @@
+main {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+/* Avant la définition du composant : rien ne clignote */
+cp-countdown:not(:defined) {
+  visibility: hidden;
+}
+
+/* ::part cible les éléments exposés par le composant */
+cp-countdown::part(label) {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+}
+
+/* Les custom properties traversent le Shadow DOM : un thème */
+.countdown--light {
+  --cp-surface: oklch(93% 0.05 185deg);
+  --cp-on-surface: var(--color-ink);
+  --cp-radius: 999px;
+}

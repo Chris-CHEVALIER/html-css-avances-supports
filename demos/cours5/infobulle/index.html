@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Les pass – Contrepoint</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Les pass</h1>
+      <p>
+        Le <strong>pass nuit</strong> ouvre les concerts après 23 h.
+        <button
+          type="button"
+          class="hint-trigger"
+          popovertarget="night-hint"
+          aria-label="En savoir plus sur le pass nuit"
+        >
+          ?
+        </button>
+      </p>
+      <!-- popover (auto) : Échap ou un clic ailleurs le ferme -->
+      <div id="night-hint" class="hint" popover>
+        Valable du vendredi au dimanche, de 23 h à 4 h. Navettes
+        gratuites vers la gare.
+      </div>
+    </main>
+  </body>
+</html>

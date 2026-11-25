@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Programme – Contrepoint</title>
+    <link rel="stylesheet" href="dist/ui.css">
+  </head>
+  <body>
+    <header class="container cluster mt-l">
+      <p><strong>Contrepoint</strong> · festival de musiques actuelles</p>
+      <a class="button button--ghost" href="#billets">Billetterie</a>
+    </header>
+
+    <main class="container stack mt-xl">
+      <h1>Le programme du samedi</h1>
+      <p class="card__meta">Trois scènes, de 16 h à 2 h du matin.</p>
+
+      <section class="grid-auto mt-l" aria-labelledby="scenes">
+        <h2 id="scenes" class="visually-hidden">Les scènes</h2>
+        <article class="card">
+          <h3 class="card__title">Scène du Canal</h3>
+          <p class="card__meta">18 h 30 · électro</p>
+          <p>Nina Arpège ouvre la soirée avec son nouvel album.</p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">Chapiteau</h3>
+          <p class="card__meta">20 h · rock</p>
+          <p>Les Ondes Courtes, quatre guitares et un orgue.</p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">Jardin</h3>
+          <p class="card__meta">22 h · jazz</p>
+          <p>Le trio Basse Continue joue jusqu'au bout de la nuit.</p>
+        </article>
+      </section>
+
+      <div id="billets" class="cluster mt-l">
+        <a class="button" href="#billets">Acheter un billet</a>
+        <a class="button button--accent" href="#billets">Pass 3 jours</a>
+      </div>
+    </main>
+  </body>
+</html>

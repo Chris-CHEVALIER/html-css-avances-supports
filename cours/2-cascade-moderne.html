@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La cascade moderne – HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal .lien-demo { display: inline-block; margin-top: 6px; font-size: .78em; font-weight: 700; }
+    .reveal .lien-demo::before { content: "↗ "; color: var(--accent-texte); }
+    .reveal .baseline { display: inline-block; font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent-clair); color: var(--accent-texte); vertical-align: middle; margin-left: 10px; font-family: var(--police); }
+    .reveal .baseline.recent { background: var(--corail-clair); color: var(--corail-texte); }
+    .reveal ol.cascade > li { margin-bottom: 9px; }
+    .reveal .corps .colonnes.code-texte ul > li { font-size: .8em; margin-bottom: 10px; }
+  </style>
+</head>
+<body data-pied="HTML & CSS avancés · Cours 2 · La cascade moderne">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>La cascade moderne</h1>
+    <div class="sous-titre">
+      <span class="code-module">Cours 2</span> – Couches, portées, sélecteurs avancés et couleurs<br>
+      Chris CHEVALIER
+    </div>
+    <aside class="notes">
+      Créneau S3, environ 45 min de théorie. Puis formation des groupes et choix de la maquette. Kahoot 1 15 min avant la fin.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Qui gagne ? L'algorithme de la cascade</li>
+      <li>Organiser ses styles : couches, portées, imbrication</li>
+      <li>Les sélecteurs avancés</li>
+      <li>Variables et couleurs modernes</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>Qui gagne ?</h2>
+    <div class="sous-titre">L'algorithme de la cascade</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'algorithme de la cascade</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p>Quand plusieurs déclarations visent la même propriété du même élément, le navigateur compare ces critères <strong>dans l'ordre</strong>. Le premier qui les départage décide.</p>
+          <ol class="cascade dense">
+            <li><strong>Origine et importance</strong> : navigateur, utilisateur, auteur, puis les <code>!important</code> en sens inverse</li>
+            <li><strong>Contexte</strong> : Shadow DOM d'un Web Component</li>
+            <li><strong>Attribut <code>style</code></strong> dans le HTML</li>
+            <li><strong>Couches</strong> (<code>@layer</code>)</li>
+            <li><strong>Spécificité</strong> du sélecteur</li>
+            <li><strong>Proximité de portée</strong> (<code>@scope</code>)</li>
+            <li><strong>Ordre d'apparition</strong> : la dernière déclaration gagne</li>
+          </ol>
+        </div>
+        <div>
+          <div class="encadre">
+            <p>La spécificité n'arrive qu'en 5<sup>e</sup> position. Les couches passent avant elle : c'est ce qui va nous permettre de ne plus jamais « gonfler » un sélecteur pour gagner.</p>
+          </div>
+          <div class="encadre neutre" style="margin-top: 18px;">
+            <p>L'<strong>héritage</strong> n'intervient qu'ensuite. Une valeur héritée du parent perd toujours contre une règle qui vise l'élément lui-même, même avec un sélecteur très faible.</p>
+          </div>
+          <p class="petit muet" style="margin-top: 14px;">Référence : <a href="https://developer.mozilla.org/fr/docs/Web/CSS/Cascade" target="_blank">la cascade sur MDN</a> et la <a href="https://www.w3.org/TR/css-cascade-6/" target="_blank">spécification Cascade 6</a>.</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Insister sur l'ordre : c'est la question n° 1 de l'épreuve quand un style « ne s'applique pas ». Montrer l'onglet « Calculé » des DevTools qui indique la règle gagnante.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La spécificité, <code>:is()</code> et <code>:where()</code></h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <table class="serre">
+            <tr><th>Sélecteur</th><th class="num">(id, classe, élément)</th></tr>
+            <tr><td><code>a</code></td><td class="num">(0, 0, 1)</td></tr>
+            <tr><td><code>.menu a</code></td><td class="num">(0, 1, 1)</td></tr>
+            <tr><td><code>.menu a[aria-current]</code></td><td class="num">(0, 2, 1)</td></tr>
+            <tr><td><code>#nav .menu a:hover</code></td><td class="num">(1, 2, 1)</td></tr>
+            <tr><td><code>:is(#nav, .menu) a</code></td><td class="num">(1, 0, 1)</td></tr>
+            <tr><td><code>:where(#nav, .menu) a</code></td><td class="num">(0, 0, 1)</td></tr>
+          </table>
+          <p class="petit muet">Les attributs et pseudo-classes comptent comme des classes, les pseudo-éléments comme des éléments.</p>
+        </div>
+        <ul>
+          <li>On compare colonne par colonne, de gauche à droite : un seul id bat cent classes</li>
+          <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:is" target="_blank"><code>:is()</code></a> prend la spécificité de son argument <strong>le plus fort</strong></li>
+          <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:where" target="_blank"><code>:where()</code></a> vaut toujours <strong>zéro</strong> : idéal pour des styles par défaut qu'on veut pouvoir surcharger</li>
+          <li>Les id servent aux ancres et aux formulaires, pas au style</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Faire calculer à voix haute la 4e ligne. Les deux pseudo-classes sont Baseline depuis 2021.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le bouton invisible</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="demos-etapes/cours2/specificite-1/specificite/css/style.css" data-titre="specificite/css/style.css"><code class="language-css" data-line-numbers="">/* AVANT : le bouton « Billetterie » est illisible (à corriger) */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+main {
+  padding: 2rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #1b1e3c;
+}
+
+.logo {
+  margin: 0;
+  font-weight: 800;
+  color: #fff;
+}
+
+.menu ul {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Spécificité (0,1,1) : une classe et un élément */
+.menu a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* (0,2,1) : la page courante */
+.menu a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* (0,1,0) : perd contre .menu a, le texte reste blanc */
+.button {
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  background: #fff;
+}</code></pre>
+        <div>
+          <ul>
+            <li><code>.button</code> (0,1,0) perd contre <code>.menu a</code> (0,1,1), alors qu'il est écrit plus bas</li>
+            <li>Le texte du bouton « Billetterie » reste blanc sur fond blanc</li>
+            <li>Le réflexe à éviter : <code>.menu a.button</code>, puis <code>!important</code>. Chaque correctif rend le suivant plus difficile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La correction avec <code>:where()</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/specificite/css/style.css" data-titre="specificite/css/style.css"><code class="language-css" data-line-numbers="1,37-38,43-44,49-52,54">/* APRÈS : :where() rend les styles du menu faciles à surcharger */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+main {
+  padding: 2rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #1b1e3c;
+}
+
+.logo {
+  margin: 0;
+  font-weight: 800;
+  color: #fff;
+}
+
+.menu ul {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* (0,0,1) : :where() compte pour zéro */
+:where(.menu) a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* (0,1,1) : seul l'attribut compte, :where() vaut zéro */
+:where(.menu) a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* (0,2,1) : :is() prend son argument le plus fort (.menu) */
+:is(.menu, .site-footer) a:hover {
+  text-decoration: underline;
+}
+
+/* (0,1,0) : gagne désormais contre :where(.menu) a */
+.button {
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  background: #fff;
+}</code></pre>
+        <div>
+          <ul>
+            <li>Les styles du menu tombent à (0,0,1) : n'importe quelle classe les surcharge</li>
+            <li><code>:is(.menu, .site-footer)</code> factorise deux listes de sélecteurs</li>
+            <li>Rien n'a changé dans le HTML</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/specificite/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>Organiser ses styles</h2>
+    <div class="sous-titre">Couches, portées et imbrication</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les couches de cascade <span class="baseline">Baseline 2022</span></h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte accent">
+          <h3>L'ordre des couches</h3>
+          <code>@layer reset, base, components;</code> déclare l'ordre une fois pour toutes. Entre deux couches, <strong>la dernière gagne</strong>, quelle que soit la spécificité.
+        </div>
+        <div class="carte">
+          <h3>Hors couche</h3>
+          Un style écrit hors de toute couche bat <strong>toutes</strong> les couches. Pratique pour un correctif rapide, dangereux comme habitude.
+        </div>
+        <div class="carte corail">
+          <h3><code>!important</code> inversé</h3>
+          Pour les déclarations importantes, l'ordre s'inverse : <strong>la première couche gagne</strong>. Une règle d'accessibilité placée dans <code>reset</code> devient intouchable.
+        </div>
+      </div>
+      <ul style="margin-top: 26px;">
+        <li>Une bibliothèque tierce s'importe dans sa couche : <code>@import url("vendor.css") layer(vendor);</code></li>
+        <li>On retrouve l'architecture <a href="https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/" target="_blank">ITCSS</a> (du plus générique au plus spécifique), garantie par le navigateur au lieu de la discipline de l'équipe</li>
+      </ul>
+    </div>
+    <aside class="notes">
+      Documentation : https://developer.mozilla.org/fr/docs/Web/CSS/@layer. Ce sera l'ossature du framework du projet.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une bibliothèque trop spécifique</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/couches/css/vendor.css" data-titre="couches/css/vendor.css"><code class="language-css" data-line-numbers="">/* Bibliothèque fictive « Slidy » : des sélecteurs très spécifiques */
+.slidy .slidy__track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+/* Spécificité (0,3,1) : difficile à surcharger hors couche */
+.slidy .slidy__track button.btn {
+  border: 2px solid #999;
+  border-radius: 0;
+  color: #333;
+  background: #ccc;
+}</code></pre>
+        <div>
+          <ul>
+            <li>Un cas réel : un carrousel ou un sélecteur de dates arrive avec ses propres styles</li>
+            <li>Son bouton pèse (0,3,1). Hors couche, il faudrait un sélecteur encore plus lourd pour le restyler</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Ranger chaque style dans sa couche</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/couches/css/style.css" data-titre="couches/css/style.css"><code class="language-css" data-line-numbers="">/* 1. L'ordre des couches, déclaré une seule fois en tête :
+   en cas de conflit, la dernière couche gagne */
+@layer reset, vendor, base, components, utilities;
+
+/* 2. La bibliothèque tierce est rangée dans sa couche */
+@import url("vendor.css") layer(vendor);
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  /* !important inversé : la PREMIÈRE couche l'emporte.
+     Personne ne pourra réactiver les animations. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+    color: #1b1e3c;
+  }
+}
+
+@layer components {
+  .container {
+    max-width: 60rem;
+    margin-inline: auto;
+    padding: 2rem;
+  }
+
+  .card {
+    flex: 0 0 16rem;
+    padding: 1rem;
+    border: 2px solid #d9dcea;
+    border-radius: 1rem;
+  }
+
+  /* (0,1,0) mais couche « components » : gagne contre
+     le (0,3,1) de la couche « vendor » */
+  .btn {
+    padding: 0.6em 1.2em;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    color: #1b1e3c;
+    background: #2ec4b6;
+    transition: background-color 0.2s;
+  }
+
+  .btn:hover {
+    background: #ff7a59;
+  }
+}
+
+@layer utilities {
+  .card--sold-out {
+    opacity: 0.6;
+  }
+}
+
+/* Hors couche : bat toutes les couches (à réserver aux
+   correctifs temporaires) */
+.btn:disabled {
+  cursor: not-allowed;
+}</code></pre>
+        <div>
+          <ul>
+            <li><code>.btn</code> (0,1,0) gagne contre la bibliothèque : sa couche est déclarée après <code>vendor</code></li>
+            <li>La réduction des animations est en <code>!important</code> dans la première couche. Aucune couche suivante ne peut la défaire</li>
+            <li><code>.btn:disabled</code>, hors couche, bat tout le reste</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/couches/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Dans les DevTools (onglet Éléments), les règles affichent leur couche. Activer « prefers-reduced-motion » dans le panneau Rendu pour montrer la règle importante.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les portées avec <code>@scope</code> <span class="baseline recent">Baseline 2025</span></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/scope/css/style.css" data-titre="scope/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  display: grid;
+  gap: 2rem;
+  max-width: 40rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Portée en « donut » : de .card jusqu'à .card__content,
+   sans entrer dans le contenu fourni par l'artiste */
+@scope (.card) to (.card__content) {
+  :scope {
+    overflow: hidden;
+    border: 2px solid #d9dcea;
+    border-radius: 1rem;
+  }
+
+  /* Touche l'image de la carte, pas le portrait de la bio */
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  h2 {
+    margin: 1rem 1rem 0;
+  }
+}
+
+.card__content {
+  padding: 0 1rem 1rem;
+}
+
+/* Proximité : le thème le plus proche du lien gagne,
+   quel que soit l'ordre des règles */
+@scope (.theme-light) {
+  :scope {
+    padding: 1rem;
+    color: #1b1e3c;
+    background: #fff;
+  }
+
+  a {
+    color: #0b7a70;
+  }
+}
+
+@scope (.theme-dark) {
+  :scope {
+    padding: 1rem;
+    color: #fff;
+    background: #1b1e3c;
+  }
+
+  a {
+    color: #7fe3d8;
+  }
+}</code></pre>
+        <div>
+          <ul>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@scope" target="_blank"><code>@scope (.card)</code></a> limite les règles aux descendants de <code>.card</code>, sans alourdir les sélecteurs</li>
+            <li><code>to (.card__content)</code> fixe une limite basse : le contenu de l'artiste n'est pas touché (portée en « donut »)</li>
+            <li>À spécificité égale, la <strong>racine la plus proche</strong> gagne : les thèmes imbriqués fonctionnent</li>
+            <li>Firefox ne le prend en charge que depuis la version 146 (fin 2025) : prévoir un repli pour les navigateurs anciens</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/scope/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'imbrication native <span class="baseline">Baseline 2023</span></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/nesting/css/style.css" data-titre="nesting/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+.artist {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+
+  /* Sans &amp; : un descendant (.artist img) */
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  /* &amp; colle le sélecteur : .artist:hover, .artist:focus-within */
+  &amp;:hover,
+  &amp;:focus-within {
+    border-color: #2ec4b6;
+  }
+
+  /* .artist.artist--headliner */
+  &amp;.artist--headliner {
+    border-width: 4px;
+  }
+
+  /* &amp; à la fin : .is-closed .artist */
+  .is-closed &amp; {
+    opacity: 0.5;
+  }
+
+  /* Une media query imbriquée s'applique à .artist */
+  @media (width &gt;= 40rem) {
+    grid-template-columns: 10rem 1fr;
+    align-items: center;
+  }
+}</code></pre>
+        <div>
+          <ul>
+            <li>Le <a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_nesting" target="_blank">nesting</a> du CSS natif, sans Sass</li>
+            <li>Sans <code>&amp;</code>, la règle vise un descendant. Avec <code>&amp;</code>, elle reprend le sélecteur parent : <code>&amp;:hover</code>, <code>&amp;.artist--headliner</code></li>
+            <li>Une media query peut s'imbriquer dans la règle</li>
+            <li>Au-delà de trois niveaux, la spécificité grimpe et le code devient illisible</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/nesting/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>Les sélecteurs avancés</h2>
+    <div class="sous-titre">Réagir à la structure et à l'état</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le formulaire de la newsletter</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/selecteurs/index.html" data-titre="selecteurs/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Sélecteurs avancés – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main class="container"&gt;
+      &lt;h1&gt;Programme du samedi&lt;/h1&gt;
+      &lt;ul class="lineup"&gt;
+        &lt;li class="is-headliner"&gt;Les Ondes&lt;/li&gt;
+        &lt;li&gt;Kiss Kiss Orchestra&lt;/li&gt;
+        &lt;li class="is-headliner"&gt;Nova Lune&lt;/li&gt;
+        &lt;li class="is-cancelled"&gt;Duo Brume (annulé)&lt;/li&gt;
+        &lt;li class="is-headliner"&gt;Malo Rive&lt;/li&gt;
+        &lt;li&gt;DJ Pollen&lt;/li&gt;
+      &lt;/ul&gt;
+
+      &lt;h2&gt;Newsletter&lt;/h2&gt;
+      &lt;form class="newsletter" action="#" method="post"&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="email"&gt;Adresse e-mail&lt;/label&gt;
+          &lt;input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            aria-describedby="email-error"
+          &gt;
+          &lt;p class="field__error" id="email-error"&gt;
+            Saisissez une adresse e-mail valide.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="field field--check"&gt;
+          &lt;input id="consent" name="consent" type="checkbox" required&gt;
+          &lt;label for="consent"&gt;
+            J'accepte de recevoir la newsletter
+          &lt;/label&gt;
+        &lt;/div&gt;
+        &lt;button type="submit"&gt;S'inscrire&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>Chaque champ a son <code>&lt;label&gt;</code> relié par <code>for</code></li>
+            <li>Le message d'erreur est relié au champ par <code>aria-describedby</code> : le lecteur d'écran le lit avec le champ</li>
+            <li><code>required</code> et <code>type="email"</code> déclenchent la validation du navigateur, que le CSS va mettre en forme</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2><code>:has()</code>, <code>:user-invalid</code> et <code>:nth-child(… of S)</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/selecteurs/css/style.css" data-titre="selecteurs/css/style.css"><code class="language-css" data-line-numbers="">body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  max-width: 36rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Contour de focus au clavier seulement, jamais supprimé */
+:focus-visible {
+  outline: 3px solid #ff7a59;
+  outline-offset: 3px;
+}
+
+.lineup {
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.5rem;
+  }
+
+  /* Tous sauf le dernier et sauf les concerts annulés */
+  li:not(:last-child, .is-cancelled) {
+    border-block-end: 1px solid #d9dcea;
+  }
+
+  /* Une tête d'affiche sur deux, comptée parmi elles seules */
+  li:nth-child(2n of .is-headliner) {
+    background: #e2f7f4;
+  }
+
+  .is-cancelled {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+}
+
+.newsletter {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.field--check {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+input[type="email"] {
+  padding: 0.5rem;
+  border: 2px solid #5a5f80;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+.field__error {
+  display: none;
+  margin: 0;
+  color: #b42318;
+}
+
+/* :user-invalid attend que l'utilisateur ait modifié le
+   champ : pas d'erreur rouge dès l'ouverture de la page */
+input:user-invalid {
+  border-color: #b42318;
+}
+
+/* :has() : le parent réagit à l'état d'un enfant */
+.field:has(input:user-invalid) .field__error {
+  display: block;
+}
+
+button {
+  justify-self: start;
+  padding: 0.6em 1.2em;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  color: #1b1e3c;
+  background: #2ec4b6;
+}
+
+/* Le bouton signale un formulaire incomplet */
+.newsletter:has(:invalid) button {
+  opacity: 0.7;
+}</code></pre>
+        <div>
+          <ul>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:has" target="_blank"><code>:has()</code></a> sélectionne un parent selon ses enfants <span class="baseline">2023</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:user-invalid" target="_blank"><code>:user-invalid</code></a> attend une saisie de l'utilisateur <span class="baseline">2023</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:nth-child" target="_blank"><code>:nth-child(2n of .is-headliner)</code></a> compte parmi les seules têtes d'affiche <span class="baseline">2023</span></li>
+            <li><code>:not()</code> accepte une liste de sélecteurs</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:focus-visible" target="_blank"><code>:focus-visible</code></a> : un contour au clavier, jamais un <code>outline: none</code> sans remplacement</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/selecteurs/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Démo : taper une adresse invalide puis quitter le champ. Naviguer au clavier (Tab) pour montrer le focus.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">04</div>
+    <h2>Variables et couleurs</h2>
+    <div class="sous-titre">Custom properties, @property, oklch()</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Pourquoi <code>oklch()</code> ?</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/oklch" target="_blank"><code>oklch(L C H)</code></a> décrit une couleur comme on la perçoit <span class="baseline">Baseline 2023</span> :</p>
+          <ul class="dense">
+            <li><strong>L</strong> : luminosité perçue, de 0 % à 100 %</li>
+            <li><strong>C</strong> : chroma, l'intensité (0 pour un gris)</li>
+            <li><strong>H</strong> : teinte, un angle (0deg rouge, 145deg vert, 265deg bleu)</li>
+          </ul>
+          <p class="dense">Deux couleurs à la même luminosité ont vraiment le même contraste, ce que <code>hsl()</code> ne garantit pas : un jaune et un bleu « à 50 % » n'ont rien à voir.</p>
+        </div>
+        <div>
+          <ul>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/color-mix" target="_blank"><code>color-mix()</code></a> mélange deux couleurs dans un espace donné <span class="baseline">2023</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/light-dark" target="_blank"><code>light-dark()</code></a> donne une valeur pour le thème clair et une pour le sombre, selon <code>color-scheme</code> <span class="baseline">2024</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@property" target="_blank"><code>@property</code></a> type une variable (<code>&lt;angle&gt;</code>, <code>&lt;color&gt;</code>…) : le navigateur sait alors l'animer <span class="baseline">2024</span></li>
+          </ul>
+          <p class="petit muet">Outil pour choisir : <a href="https://oklch.com/" target="_blank">oklch.com</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Un thème piloté par des variables</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours2/couleurs/css/style.css" data-titre="couleurs/css/style.css"><code class="language-css" data-line-numbers="">/* Une teinte de marque, les autres couleurs en découlent */
+:root {
+  color-scheme: light dark;
+
+  --brand-hue: 185deg;
+  --color-brand: oklch(72% 0.13 var(--brand-hue));
+  --color-accent: oklch(70% 0.17 35deg);
+
+  /* light-dark() : 1re valeur en clair, 2de en sombre */
+  --color-bg: light-dark(oklch(99% 0 0deg), oklch(22% 0.03 270deg));
+  --color-text: light-dark(
+    oklch(25% 0.05 270deg),
+    oklch(95% 0.01 270deg)
+  );
+
+  /* 20 % de la marque mélangés au fond */
+  --color-brand-soft: color-mix(
+    in oklch,
+    var(--color-brand) 20%,
+    var(--color-bg)
+  );
+}
+
+/* :has() sur la racine : réglages sans JavaScript */
+:root:has(#dark-mode:checked) {
+  color-scheme: dark;
+}
+
+:root:has(#hue-violet:checked) {
+  --brand-hue: 300deg;
+}
+
+/* Variable typée : le navigateur sait l'animer */
+@property --angle {
+  syntax: "&lt;angle&gt;";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.container {
+  display: grid;
+  gap: 2rem;
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+.ticket {
+  padding: 1.5rem;
+  border: 6px solid transparent;
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(var(--color-brand-soft), var(--color-brand-soft))
+      padding-box,
+    conic-gradient(
+        from var(--angle),
+        var(--color-brand),
+        var(--color-accent),
+        var(--color-brand)
+      )
+      border-box;
+  animation: spin 4s linear infinite;
+}
+
+.ticket__price {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.ticket__cta {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: oklch(20% 0.03 270deg);
+  text-decoration: none;
+  background: var(--color-brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket {
+    animation: none;
+  }
+}</code></pre>
+        <div>
+          <ul>
+            <li>Changer <code>--brand-hue</code> recalcule toute la palette : les variables sont résolues au moment du calcul, pas à l'écriture</li>
+            <li><code>:root:has(#dark-mode:checked)</code> bascule le thème sans une ligne de JavaScript</li>
+            <li>Sans <code>@property</code>, <code>--angle</code> sauterait de 0 à 360deg sans transition</li>
+            <li>L'animation s'arrête si l'utilisateur a demandé moins de mouvement</li>
+          </ul>
+          <a class="lien-demo" href="../demos/cours2/couleurs/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Cocher les deux cases dans la démo. Montrer dans les DevTools la valeur calculée de --color-brand-soft.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>À retenir</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <ul>
+          <li>La cascade compare d'abord l'origine, puis les couches, puis seulement la spécificité</li>
+          <li><code>@layer</code> range les styles du plus générique au plus spécifique. Plus besoin de gonfler un sélecteur</li>
+          <li><code>:where()</code> pour les styles par défaut, <code>@scope</code> pour les composants</li>
+        </ul>
+        <ul>
+          <li><code>:has()</code> et <code>:user-invalid</code> remplacent beaucoup de JavaScript</li>
+          <li>Une palette en <code>oklch()</code> et en variables se décline par calcul</li>
+          <li>Chaque nouveauté se vérifie sur <a href="https://web.dev/baseline" target="_blank">Baseline</a> avant de l'utiliser en production</li>
+        </ul>
+      </div>
+      <div class="encadre" style="margin-top: 20px;">
+        Dans le projet, l'ossature de votre framework sera une série de couches, par exemple <code>reset</code>, <code>tokens</code>, <code>base</code>, <code>layout</code>, <code>components</code> et <code>utilities</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chevalier@chris-freelance.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+@use "../abstracts/tools";
+
+// Une variante = un fond et une couleur de texte
+@mixin variant($background, $color) {
+  background: $background;
+  color: $color;
+
+  &:hover {
+    background: color-mix(in oklch, $background, black 15%);
+  }
+}
+
+@layer components {
+  // Un placeholder ne produit rien tant qu'on ne l'étend pas
+  %button-base {
+    display: inline-flex;
+    gap: var(--space-xs);
+    align-items: center;
+    padding: tools.rem(10px) tools.rem(20px);
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .button {
+    @extend %button-base;
+    @include variant(var(--color-primary), var(--color-on-primary));
+
+    // &--accent devient .button--accent : propre à Sass, le
+    // nesting natif ne sait pas coller un suffixe
+    &--accent {
+      @include variant(var(--color-accent), var(--color-on-primary));
+    }
+
+    &--ghost {
+      border-color: currentcolor;
+      background: transparent;
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+}

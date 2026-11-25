@@ -1,0 +1,19 @@
+@use "../abstracts/tools";
+
+@layer components {
+  .card {
+    display: grid;
+    gap: var(--space-s);
+    padding: var(--space-l);
+    border-radius: var(--radius-l);
+    background: var(--color-surface-alt);
+
+    &__title {
+      font-size: tools.rem(22px);
+    }
+
+    &__meta {
+      color: var(--color-text-muted);
+    }
+  }
+}

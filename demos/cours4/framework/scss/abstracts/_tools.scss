@@ -1,0 +1,31 @@
+// Outils Sass : ils ne produisent aucun CSS tant qu'on ne
+// les appelle pas
+@use "sass:map";
+@use "sass:math";
+
+$breakpoints: (
+  "m": 48rem,
+  "l": 64rem,
+);
+
+// Convertit une mesure de maquette en rem (16 px = 1 rem)
+@function rem($px) {
+  @return math.div($px, 16px) * 1rem;
+}
+
+// Requête média à partir du nom d'un point de rupture
+@mixin from($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Point de rupture inconnu : #{$name}";
+  }
+
+  @media (width >= map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Anneau de focus visible et contrasté (critère WCAG 2.4.7)
+@mixin focus-ring($color: var(--color-focus)) {
+  outline: 3px solid $color;
+  outline-offset: 2px;
+}

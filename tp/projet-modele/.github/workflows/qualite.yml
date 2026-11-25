@@ -1,0 +1,68 @@
+# Contrôle qualité à chaque push et pull request, puis déploiement
+# sur GitHub Pages quand main est à jour.
+name: Qualité et déploiement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      maj_captures:
+        description: "Mettre à jour les captures de référence"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Stylelint et html-validate
+        run: npm run lint
+      - name: Construction du site
+        run: npm run build
+      - name: Navigateur des tests
+        run: npx playwright install --with-deps chromium
+      - name: Mise à jour des captures (sur demande)
+        if: inputs.maj_captures
+        run: |
+          npm run test:maj-captures
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add tests/captures
+          git commit -m "Mise à jour des captures de référence" || true
+          git push
+      - name: Tests (régression visuelle, axe, débordement)
+        run: npm test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: rapport-playwright
+          path: playwright-report/
+      - name: Lighthouse (seuils dans lighthouserc.json)
+        run: npm run lighthouse
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploiement:
+    if: github.ref == 'refs/heads/main'
+    needs: qualite
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

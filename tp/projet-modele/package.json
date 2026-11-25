@@ -1,0 +1,28 @@
+{
+  "name": "mon-framework",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mini-framework CSS et intégration de maquettes (projet ESGI 3AW)",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "serve": "node scripts/serve.mjs",
+    "lint:css": "stylelint \"src/**/*.scss\"",
+    "lint:html": "html-validate \"src/**/*.html\"",
+    "lint": "npm run lint:css && npm run lint:html",
+    "test": "playwright test",
+    "test:maj-captures": "playwright test --update-snapshots",
+    "lighthouse": "lhci autorun",
+    "qualite": "npm run lint && npm run build && npm test && npm run lighthouse"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@lhci/cli": "^0.15.0",
+    "@playwright/test": "^1.50.0",
+    "html-validate": "^9.0.0",
+    "sass": "^1.85.0",
+    "stylelint": "^16.14.0",
+    "stylelint-config-standard-scss": "^14.0.0"
+  }
+}

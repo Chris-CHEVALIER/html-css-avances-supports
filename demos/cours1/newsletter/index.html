@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Newsletter – Contrepoint 2027</title>
+    <link rel="stylesheet" href="../commun/base.css">
+    <script src="js/validation.js" defer></script>
+  </head>
+  <body>
+    <main id="contenu">
+      <h1>Recevoir la newsletter</h1>
+      <p>Les champs marqués d'un astérisque (*) sont obligatoires.</p>
+      <form id="newsletter" novalidate>
+        <div class="field">
+          <label for="email">Adresse e-mail *</label>
+          <p id="email-aide">Par exemple : prenom@exemple.fr</p>
+          <input id="email" name="email" type="email"
+            autocomplete="email" required
+            aria-describedby="email-aide email-erreur">
+          <p class="error" id="email-erreur"></p>
+        </div>
+        <div class="field">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" name="prenom" type="text"
+            autocomplete="given-name">
+        </div>
+        <fieldset>
+          <legend>Les genres qui vous intéressent</legend>
+          <label>
+            <input type="checkbox" name="genres" value="electro">
+            Électro
+          </label>
+          <label>
+            <input type="checkbox" name="genres" value="rock">
+            Rock
+          </label>
+          <label>
+            <input type="checkbox" name="genres" value="jazz">
+            Jazz
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Fréquence</legend>
+          <label>
+            <input type="radio" name="frequence" value="hebdo"
+              checked>
+            Chaque semaine
+          </label>
+          <label>
+            <input type="radio" name="frequence" value="mensuel">
+            Chaque mois
+          </label>
+        </fieldset>
+        <button type="submit">S'inscrire</button>
+        <p id="statut" role="status"></p>
+      </form>
+    </main>
+  </body>
+</html>

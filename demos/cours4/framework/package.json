@@ -1,0 +1,24 @@
+{
+  "name": "contrepoint-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "sass --no-source-map scss/main.scss dist/ui.css",
+    "watch": "sass --watch scss/main.scss dist/ui.css",
+    "lint:css": "stylelint \"scss/**/*.scss\"",
+    "lint:html": "html-validate \"*.html\"",
+    "lint": "npm run lint:css && npm run lint:html",
+    "test": "playwright test",
+    "serve": "http-server -p 4173 -c-1 ."
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
+    "@lhci/cli": "^0.16.1",
+    "@playwright/test": "^1.65.1",
+    "html-validate": "^11.22.1",
+    "http-server": "^14.1.1",
+    "sass": "^1.108.2",
+    "stylelint": "^18.1.0",
+    "stylelint-config-standard-scss": "^18.0.0"
+  }
+}

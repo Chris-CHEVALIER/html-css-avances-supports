@@ -1,0 +1,28 @@
+@use "../abstracts" as *;
+
+@layer components {
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-s) var(--space-l);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-m);
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    @include focus-ring;
+
+    &:hover {
+      background: color-mix(in oklch, var(--color-primary), black 15%);
+    }
+
+    &--ghost {
+      background: transparent;
+      color: var(--color-primary);
+    }
+  }
+}

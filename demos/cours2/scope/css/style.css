@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.container {
+  display: grid;
+  gap: 2rem;
+  max-width: 40rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+/* Portée en « donut » : de .card jusqu'à .card__content,
+   sans entrer dans le contenu fourni par l'artiste */
+@scope (.card) to (.card__content) {
+  :scope {
+    overflow: hidden;
+    border: 2px solid #d9dcea;
+    border-radius: 1rem;
+  }
+
+  /* Touche l'image de la carte, pas le portrait de la bio */
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  h2 {
+    margin: 1rem 1rem 0;
+  }
+}
+
+.card__content {
+  padding: 0 1rem 1rem;
+}
+
+/* Proximité : le thème le plus proche du lien gagne,
+   quel que soit l'ordre des règles */
+@scope (.theme-light) {
+  :scope {
+    padding: 1rem;
+    color: #1b1e3c;
+    background: #fff;
+  }
+
+  a {
+    color: #0b7a70;
+  }
+}
+
+@scope (.theme-dark) {
+  :scope {
+    padding: 1rem;
+    color: #fff;
+    background: #1b1e3c;
+  }
+
+  a {
+    color: #7fe3d8;
+  }
+}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Compte à rebours – Contrepoint</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/cp-countdown.js" type="module"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Contrepoint 2027</h1>
+      <!-- Le texte entre les balises remplace le slot par défaut -->
+      <cp-countdown date="2027-06-18T18:00:00+02:00">
+        Ouverture des portes dans
+      </cp-countdown>
+
+      <cp-countdown
+        class="countdown--light"
+        date="2027-03-01T10:00:00+01:00"
+      >
+        Fin de la prévente dans
+      </cp-countdown>
+    </main>
+  </body>
+</html>

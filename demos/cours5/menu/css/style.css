@@ -1,0 +1,28 @@
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.menu-toggle {
+  padding: 0.5rem 1rem;
+  border: 2px solid currentcolor;
+  border-radius: var(--radius);
+  font: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu[hidden],
+.menu--jquery:not(.is-open) {
+  display: none;
+}

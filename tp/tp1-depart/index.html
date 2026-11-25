@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Accueil</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="top">
+  <div class="logo"><img src="https://picsum.photos/id/24/80/80" width="40" height="40"> Médiathèque des Tilleuls</div>
+  <div class="menu">
+    <span class="menu-item" onclick="location.href='#'">Accueil</span>
+    <span class="menu-item" onclick="location.href='#agenda'">Agenda</span>
+    <span class="menu-item" onclick="location.href='#ateliers'">Ateliers</span>
+    <span class="menu-item" onclick="location.href='#infos'">Infos pratiques</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-title">Bienvenue à la médiathèque !</div>
+  <div class="hero-text">Livres, films, jeux vidéo et ateliers pour tous, au cœur du quartier des Tilleuls.</div>
+  <div class="btn" onclick="document.getElementById('ateliers').scrollIntoView()">Voir les ateliers</div>
+</div>
+
+<div class="content">
+  <h3 id="agenda">Agenda</h3>
+  <div class="events">
+    <div class="event">
+      <img src="https://picsum.photos/id/1073/400/250">
+      <h5>Club lecture ados</h5>
+      <div class="date">12/12 - 14h</div>
+      <div class="small">Venez partager vos coups de cœur du mois. Goûter offert.</div>
+      <a href="#">Cliquez ici</a>
+    </div>
+    <div class="event">
+      <img src="https://picsum.photos/id/96/400/250">
+      <h5>Tournoi de jeux vidéo</h5>
+      <div class="date">19/12 - 15h</div>
+      <div class="small">Course de karts en équipes de deux, dès 8 ans. Inscription sur place.</div>
+      <a href="#">Cliquez ici</a>
+    </div>
+    <div class="event">
+      <img src="https://picsum.photos/id/1080/400/250">
+      <h5>Conte de Noël</h5>
+      <div class="date">23/12 - 10h30</div>
+      <div class="small">Lecture contée pour les 3-6 ans, avec Lucie, notre bibliothécaire.</div>
+      <a href="#">Cliquez ici</a>
+    </div>
+  </div>
+
+  <h1 id="ateliers">Inscription à un atelier</h1>
+  <div class="form">
+    <input type="text" placeholder="Nom">
+    <input type="text" placeholder="Email">
+    <input type="text" placeholder="Téléphone">
+    <div class="small">Atelier :</div>
+    <input type="radio" name="atelier"> Initiation au numérique
+    <input type="radio" name="atelier"> Écriture créative
+    <input type="radio" name="atelier"> Fabrication de jeux de société
+    <div class="error" style="display:none">Erreur</div>
+    <div class="btn" onclick="envoyer()">Envoyer</div>
+  </div>
+
+  <h2 id="infos">Infos pratiques</h2>
+  <div class="infos">
+    <div class="small">Horaires :</div>
+    <div>Mardi : 10h - 18h<br>Mercredi : 10h - 19h<br>Samedi : 10h - 17h</div>
+    <div class="small">Adresse :</div>
+    <div>4 place des Tilleuls<br>31000 Toulouse</div>
+    <div class="more" onclick="this.nextElementSibling.style.display='block'">+ Plus d'infos</div>
+    <div class="more-text" style="display:none">Accès PMR par la rue Pasteur. Wi-Fi gratuit. Prêt de liseuses sur demande.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div>© Médiathèque des Tilleuls - <span onclick="location.href='#'">Mentions légales</span></div>
+  <div class="social"><img src="https://picsum.photos/id/40/32/32" width="16" height="16"> <img src="https://picsum.photos/id/64/32/32" width="16" height="16"></div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>

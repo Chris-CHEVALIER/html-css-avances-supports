@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML sémantique, accessibilité et SEO – HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal .demo-lien { display: inline-block; margin-top: 10px; font-size: 18px; font-weight: 700; }
+    .reveal .demo-lien::before { content: "▶ "; color: var(--accent-texte); }
+    .reveal table.serre code { font-size: .9em; }
+  </style>
+</head>
+<body data-pied="HTML & CSS avancés · Cours 1 · HTML sémantique, accessibilité et SEO">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>HTML sémantique, accessibilité et SEO</h1>
+    <div class="sous-titre">
+      <span class="code-module">Cours 1</span> – Langages HTML & CSS avancés<br>
+      Chris CHEVALIER
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>La structure sémantique</li>
+      <li>Des formulaires accessibles</li>
+      <li>Accessibilité, ARIA et tests</li>
+      <li>Le SEO technique</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>La structure sémantique</h2>
+    <div class="sous-titre">HTML sémantique, accessibilité et SEO</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Pourquoi la sémantique compte encore</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte accent">
+          <h3>Les humains</h3>
+          Lecteurs d'écran, navigation au clavier, loupe, mode lecture : tous lisent la structure du HTML, pas son apparence.
+        </div>
+        <div class="carte accent">
+          <h3>Les machines</h3>
+          Moteurs de recherche, aperçus des réseaux sociaux, assistants et agents d'IA qui parcourent le DOM.
+        </div>
+        <div class="carte corail">
+          <h3>L'équipe</h3>
+          Un <code>&lt;nav&gt;</code> se comprend sans commentaire. Une <code>&lt;div class="nav"&gt;</code> ne dit rien à l'outil.
+        </div>
+      </div>
+      <div class="encadre corail" style="margin-top: 28px;">
+        Selon le <a href="https://webaim.org/projects/million/" target="_blank">WebAIM Million</a>, près de <strong>95 % des pages d'accueil</strong> des sites les plus visités présentent des erreurs d'accessibilité détectables automatiquement. L'IA génère volontiers ce même HTML : savoir le juger est la compétence attendue.
+      </div>
+    </div>
+    <aside class="notes">
+      Demander qui a déjà utilisé un lecteur d'écran. Montrer en 30 secondes VoiceOver sur une page connue si le temps le permet.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les landmarks : les régions de la page</h2>
+    <div class="corps">
+      <table class="serre">
+        <tr><th>Élément</th><th>Rôle implicite</th><th>À savoir</th></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/header" target="_blank"><code>header</code></a></td><td><code>banner</code></td><td>Seulement s'il n'est pas dans un <code>article</code>, une <code>section</code> ou un <code>main</code></td></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/nav" target="_blank"><code>nav</code></a></td><td><code>navigation</code></td><td>Plusieurs menus ? Donnez à chacun un nom (<code>aria-label="Menu principal"</code>)</td></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/main" target="_blank"><code>main</code></a></td><td><code>main</code></td><td>Un seul visible par page, cible du lien d'évitement</td></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/aside" target="_blank"><code>aside</code></a></td><td><code>complementary</code></td><td>Contenu lié mais détachable (le même soir, à lire aussi)</td></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/footer" target="_blank"><code>footer</code></a></td><td><code>contentinfo</code></td><td>Même condition que <code>header</code></td></tr>
+        <tr><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/section" target="_blank"><code>section</code></a></td><td><code>region</code></td><td>Seulement si elle a un nom accessible (<code>aria-labelledby</code>)</td></tr>
+        <tr><td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search" target="_blank"><code>search</code></a></td><td><code>search</code></td><td>Élément récent (<a href="https://web.dev/baseline" target="_blank">Baseline</a> 2023) pour un formulaire de recherche</td></tr>
+      </table>
+      <p class="petit muet" style="margin-top: 14px;">Landmark : région que les lecteurs d'écran listent pour sauter directement d'une zone à l'autre (VoiceOver : rotor, NVDA : touche D).</p>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le plan de titres</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul>
+            <li>Un seul <code>h1</code> : le sujet de la page</li>
+            <li><strong>Pas de saut de niveau</strong> : un <code>h2</code> puis un <code>h3</code>, jamais un <code>h4</code> directement</li>
+            <li>Le niveau traduit la <strong>hiérarchie</strong>, pas la taille : la taille relève du CSS</li>
+            <li>Les utilisateurs de lecteur d'écran naviguent d'abord <strong>par les titres</strong> (touche H dans NVDA)</li>
+          </ul>
+        </div>
+        <div class="encadre corail">
+          <p><strong>Un mythe à oublier</strong></p>
+          <p>L'« algorithme du plan » (des <code>h1</code> partout, chaque <code>section</code> repartant au niveau 1) n'a jamais été implémenté par les navigateurs. Il a été retiré de la spécification HTML en 2022.</p>
+          <p>Les navigateurs retirent aussi le style par défaut qui réduisait ces <code>h1</code> imbriqués (<a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/Heading_Elements" target="_blank">MDN</a>).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le squelette d'une page de concert</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="demos-etapes/cours1/structure/concert/index.html" data-titre="concert/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Nova Lune en concert – Contrepoint 2027&lt;/title&gt;
+    &lt;link rel="stylesheet" href="../commun/base.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;a class="skip-link" href="#contenu"&gt;Aller au contenu&lt;/a&gt;
+    &lt;header class="site-header"&gt;
+      &lt;p class="logo"&gt;Contrepoint&lt;/p&gt;
+      &lt;nav aria-label="Menu principal"&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Programme&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="../newsletter/"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+    &lt;main id="contenu"&gt;
+      &lt;h1&gt;Nova Lune&lt;/h1&gt;
+      &lt;section aria-labelledby="titre-infos"&gt;
+        &lt;h2 id="titre-infos"&gt;Infos pratiques&lt;/h2&gt;
+      &lt;/section&gt;
+      &lt;section aria-labelledby="titre-autres"&gt;
+        &lt;h2 id="titre-autres"&gt;Le même soir&lt;/h2&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+    &lt;footer class="site-footer"&gt;
+      &lt;p&gt;Contrepoint, festival de musiques actuelles&lt;/p&gt;
+    &lt;/footer&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Le <strong>lien d'évitement</strong> est le premier élément focalisable</li>
+            <li>Le <code>nav</code> porte un nom : il y en aura d'autres (pied de page)</li>
+            <li>Chaque <code>section</code> est nommée par son titre via <code>aria-labelledby</code></li>
+            <li><code>lang="fr"</code> règle la voix du lecteur d'écran et la césure</li>
+          </ul>
+          <a class="demo-lien" href="../demos/cours1/concert/" target="_blank">Ouvrir la démo finale</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2><code>article</code>, <code>section</code> ou <code>div</code> ?</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte accent">
+          <h3><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/article" target="_blank">article</a></h3>
+          Un contenu <strong>autonome</strong>, qui garde son sens hors de la page : un concert, un billet de blog, un commentaire, une carte produit.
+        </div>
+        <div class="carte accent">
+          <h3>section</h3>
+          Une <strong>partie thématique</strong> d'un tout, qui a un titre. Sans titre, ce n'est pas une section.
+        </div>
+        <div class="carte">
+          <h3>div</h3>
+          Aucun sens : un <strong>conteneur de mise en page</strong>. Elle reste utile, mais seulement pour le CSS.
+        </div>
+      </div>
+      <div class="encadre neutre" style="margin-top: 26px;">
+        Le test : « Pourrais-je publier ce bloc seul dans un flux RSS ? » Oui, c'est un <code>article</code>. Sinon, « A-t-il un titre naturel ? » Oui, c'est une <code>section</code>. Sinon, c'est une <code>div</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le contenu : figure, time, dl et address</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-surligne="concert__genre..&lt;/address&gt;+&lt;aside..&lt;/aside&gt;" data-fichier="demos-etapes/cours1/contenu/concert/index.html" data-titre="concert/index.html"><code class="language-html" data-line-numbers="23-50,53-59">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Nova Lune en concert – Contrepoint 2027&lt;/title&gt;
+    &lt;link rel="stylesheet" href="../commun/base.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;a class="skip-link" href="#contenu"&gt;Aller au contenu&lt;/a&gt;
+    &lt;header class="site-header"&gt;
+      &lt;p class="logo"&gt;Contrepoint&lt;/p&gt;
+      &lt;nav aria-label="Menu principal"&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Programme&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="../newsletter/"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+    &lt;main id="contenu"&gt;
+      &lt;article class="concert"&gt;
+        &lt;h1&gt;Nova Lune&lt;/h1&gt;
+        &lt;p class="concert__genre"&gt;Électro-pop · Création 2027&lt;/p&gt;
+        &lt;figure&gt;
+          &lt;img src="https://picsum.photos/id/1082/800/450"
+            width="800" height="450"
+            alt="Les mains de la pianiste de Nova Lune sur le clavier"&gt;
+          &lt;figcaption&gt;Nova Lune au Trianon, en 2026.&lt;/figcaption&gt;
+        &lt;/figure&gt;
+        &lt;p&gt;
+          Le duo lyonnais revient avec un spectacle pensé pour
+          le festival : voix, synthétiseurs et quatuor à cordes.
+        &lt;/p&gt;
+        &lt;section aria-labelledby="titre-infos"&gt;
+          &lt;h2 id="titre-infos"&gt;Infos pratiques&lt;/h2&gt;
+          &lt;dl class="infos"&gt;
+            &lt;dt&gt;Date&lt;/dt&gt;
+            &lt;dd&gt;
+              &lt;time datetime="2027-07-09T21:30"&gt;
+                Vendredi 9 juillet, 21 h 30
+              &lt;/time&gt;
+            &lt;/dd&gt;
+            &lt;dt&gt;Scène&lt;/dt&gt;
+            &lt;dd&gt;La Grande Halle&lt;/dd&gt;
+            &lt;dt&gt;Tarif&lt;/dt&gt;
+            &lt;dd&gt;32 €, 25 € pour les moins de 26 ans&lt;/dd&gt;
+          &lt;/dl&gt;
+          &lt;address&gt;
+            La Grande Halle, 12 quai des Arts, 69002 Lyon
+          &lt;/address&gt;
+        &lt;/section&gt;
+      &lt;/article&gt;
+      &lt;aside aria-labelledby="titre-autres"&gt;
+        &lt;h2 id="titre-autres"&gt;Le même soir&lt;/h2&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Les Gammes Sauvages, 19 h&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Orage Doux, 23 h 30&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/aside&gt;
+    &lt;/main&gt;
+    &lt;footer class="site-footer"&gt;
+      &lt;p&gt;Contrepoint, festival de musiques actuelles&lt;/p&gt;
+    &lt;/footer&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/figure" target="_blank"><code>figure</code></a> et <code>figcaption</code> : une image et sa légende</li>
+            <li><code>alt</code> décrit l'information utile. Une image décorative a <code>alt=""</code></li>
+            <li><code>width</code> et <code>height</code> réservent la place (pas de saut de mise en page)</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/time" target="_blank"><code>time</code></a> : une date lisible par les machines</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/dl" target="_blank"><code>dl</code></a> : des paires terme et valeur</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/address" target="_blank"><code>address</code></a> : des coordonnées</li>
+          </ul>
+          <a class="demo-lien" href="../demos/cours1/concert/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>Des formulaires accessibles</h2>
+    <div class="sous-titre">HTML sémantique, accessibilité et SEO</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les règles d'un champ accessible</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <ul>
+          <li>Chaque champ a un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/label" target="_blank"><code>label</code></a> visible relié par <code>for</code> et <code>id</code>. Cliquer sur le label active le champ</li>
+          <li>Le <code>placeholder</code> n'est <strong>pas</strong> un label : il disparaît à la saisie et son contraste est faible</li>
+          <li>Un groupe de cases ou de boutons radio est un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/fieldset" target="_blank"><code>fieldset</code></a> titré par sa <code>legend</code></li>
+        </ul>
+        <ul>
+          <li>Le bon <code>type</code> (<code>email</code>, <code>tel</code>, <code>url</code>) affiche le bon clavier sur mobile</li>
+          <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Attributes/autocomplete" target="_blank"><code>autocomplete</code></a> (<code>email</code>, <code>given-name</code>, <code>postal-code</code>) est exigé par le critère WCAG 1.3.5</li>
+          <li><code>required</code> suffit : <code>aria-required</code> fait doublon sur un champ natif</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le formulaire de la newsletter</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours1/newsletter/index.html" data-titre="newsletter/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Newsletter – Contrepoint 2027&lt;/title&gt;
+    &lt;link rel="stylesheet" href="../commun/base.css"&gt;
+    &lt;script src="js/validation.js" defer&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main id="contenu"&gt;
+      &lt;h1&gt;Recevoir la newsletter&lt;/h1&gt;
+      &lt;p&gt;Les champs marqués d'un astérisque (*) sont obligatoires.&lt;/p&gt;
+      &lt;form id="newsletter" novalidate&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="email"&gt;Adresse e-mail *&lt;/label&gt;
+          &lt;p id="email-aide"&gt;Par exemple : prenom@exemple.fr&lt;/p&gt;
+          &lt;input id="email" name="email" type="email"
+            autocomplete="email" required
+            aria-describedby="email-aide email-erreur"&gt;
+          &lt;p class="error" id="email-erreur"&gt;&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="field"&gt;
+          &lt;label for="prenom"&gt;Prénom&lt;/label&gt;
+          &lt;input id="prenom" name="prenom" type="text"
+            autocomplete="given-name"&gt;
+        &lt;/div&gt;
+        &lt;fieldset&gt;
+          &lt;legend&gt;Les genres qui vous intéressent&lt;/legend&gt;
+          &lt;label&gt;
+            &lt;input type="checkbox" name="genres" value="electro"&gt;
+            Électro
+          &lt;/label&gt;
+          &lt;label&gt;
+            &lt;input type="checkbox" name="genres" value="rock"&gt;
+            Rock
+          &lt;/label&gt;
+          &lt;label&gt;
+            &lt;input type="checkbox" name="genres" value="jazz"&gt;
+            Jazz
+          &lt;/label&gt;
+        &lt;/fieldset&gt;
+        &lt;fieldset&gt;
+          &lt;legend&gt;Fréquence&lt;/legend&gt;
+          &lt;label&gt;
+            &lt;input type="radio" name="frequence" value="hebdo"
+              checked&gt;
+            Chaque semaine
+          &lt;/label&gt;
+          &lt;label&gt;
+            &lt;input type="radio" name="frequence" value="mensuel"&gt;
+            Chaque mois
+          &lt;/label&gt;
+        &lt;/fieldset&gt;
+        &lt;button type="submit"&gt;S'inscrire&lt;/button&gt;
+        &lt;p id="statut" role="status"&gt;&lt;/p&gt;
+      &lt;/form&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>novalidate</code> désactive les bulles natives, peu accessibles : le script prend le relais</li>
+            <li><code>aria-describedby</code> fait lire l'aide <strong>puis</strong> l'erreur à l'arrivée sur le champ</li>
+            <li>Le paragraphe <code>role="status"</code> annonce le message de succès sans déplacer le focus</li>
+          </ul>
+          <a class="demo-lien" href="../demos/cours1/newsletter/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Signaler une erreur</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours1/newsletter/js/validation.js" data-titre="newsletter/js/validation.js"><code class="language-javascript" data-line-numbers="">// Validation accessible : message lié au champ, focus sur l'erreur
+const form = document.querySelector("#newsletter");
+const email = document.querySelector("#email");
+const emailError = document.querySelector("#email-erreur");
+const status = document.querySelector("#statut");
+
+function checkEmail() {
+  let message = "";
+  if (email.validity.valueMissing) {
+    message = "Saisissez votre adresse e-mail.";
+  } else if (email.validity.typeMismatch) {
+    message = "L'adresse doit contenir un @, comme nom@exemple.fr.";
+  }
+  emailError.textContent = message;
+  email.setAttribute("aria-invalid", String(message !== ""));
+  return message === "";
+}
+
+form.addEventListener("submit", (event) =&gt; {
+  event.preventDefault();
+  status.textContent = "";
+  if (!checkEmail()) {
+    email.focus();
+    return;
+  }
+  status.textContent = "Merci, votre inscription est enregistrée.";
+  form.reset();
+});
+
+// Une fois signalée, l'erreur se corrige pendant la saisie
+email.addEventListener("input", () =&gt; {
+  if (email.getAttribute("aria-invalid") === "true") checkEmail();
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Le message dit <strong>quoi corriger</strong> (WCAG 3.3.1 et 3.3.3), pas seulement « champ invalide »</li>
+            <li><code>aria-invalid</code> signale l'état au lecteur d'écran. Le CSS s'en sert pour la bordure rouge</li>
+            <li>Le focus va sur le champ en erreur</li>
+            <li>La couleur seule ne suffit jamais (WCAG 1.4.1) : le texte du message est indispensable</li>
+          </ul>
+          <p class="petit muet"><a href="https://developer.mozilla.org/fr/docs/Web/API/ValidityState" target="_blank"><code>validity</code></a> : l'état de validation natif du champ (<code>valueMissing</code>, <code>typeMismatch</code>…).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>Accessibilité, ARIA et tests</h2>
+    <div class="sous-titre">HTML sémantique, accessibilité et SEO</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>WCAG 2.2, RGAA et la loi</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte">
+          <h3><a href="https://www.w3.org/TR/WCAG22/" target="_blank">WCAG 2.2</a></h3>
+          La norme internationale du W3C (2023) : 4 principes (perceptible, utilisable, compréhensible, robuste), 3 niveaux. On vise le niveau <strong>AA</strong>.
+        </div>
+        <div class="carte">
+          <h3><a href="https://accessibilite.numerique.gouv.fr/" target="_blank">RGAA 4.1</a></h3>
+          Sa déclinaison française : 106 critères testables, avec une méthode de test pour chacun.
+        </div>
+        <div class="carte corail">
+          <h3>La loi</h3>
+          L'<a href="https://ec.europa.eu/social/main.jsp?catId=1202" target="_blank">European Accessibility Act</a> s'applique depuis le <strong>28 juin 2025</strong> : e-commerce, banque, transport, billetterie… Un festival qui vend ses billets en ligne est concerné.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les critères à connaître par cœur</h2>
+    <div class="corps">
+      <table class="serre">
+        <tr><th>Critère</th><th>Exigence (niveau AA)</th></tr>
+        <tr><td>1.4.3 et 1.4.11 Contrastes</td><td>Texte : 4,5:1 (3:1 en grand). Composants et icônes utiles : 3:1</td></tr>
+        <tr><td>1.4.10 Redistribution</td><td>Utilisable à 320 px de large sans défilement horizontal</td></tr>
+        <tr><td>2.1.1 Clavier</td><td>Tout se fait au clavier, sans piège</td></tr>
+        <tr><td>2.4.1 Contourner des blocs</td><td>Un lien d'évitement ou des landmarks</td></tr>
+        <tr><td>2.4.7 et <span class="etiquette accent">2.2</span> 2.4.11 Focus</td><td>Le focus est visible et jamais entièrement masqué (bandeau collant, cookies)</td></tr>
+        <tr><td><span class="etiquette accent">2.2</span> 2.5.8 Taille des cibles</td><td>Au moins 24 × 24 px, ou assez d'espace autour</td></tr>
+        <tr><td><span class="etiquette accent">2.2</span> 3.3.8 Authentification</td><td>Pas de test cognitif imposé : le copier-coller et les gestionnaires de mots de passe restent permis</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le CSS au service de l'accessibilité</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours1/commun/base.css" data-titre="commun/base.css"><code class="language-css" data-line-numbers="">/* Styles communs des démos du cours 1 (Contrepoint) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+  background: #fff;
+}
+
+main,
+.site-header,
+.site-footer {
+  max-width: 60rem;
+  margin-inline: auto;
+  padding: 1rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-header ul {
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.logo {
+  font-weight: 800;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Lien d'évitement : visible dès qu'il reçoit le focus */
+.skip-link {
+  position: absolute;
+  top: -10rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  background: #1b1e3c;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Focus visible au clavier, jamais supprimé sans remplacement */
+:focus-visible {
+  outline: 3px solid #c2410c;
+  outline-offset: 3px;
+}
+
+/* Masqué à l'écran, lu par les lecteurs d'écran */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Cibles d'au moins 24 × 24 px (WCAG 2.5.8) */
+a,
+button,
+input,
+select {
+  min-height: 24px;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  margin-block: 1rem;
+}
+
+.field input {
+  padding: 0.5rem;
+  font: inherit;
+  border: 2px solid #5a5f80;
+  border-radius: 0.25rem;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: #b42318;
+}
+
+.error {
+  margin: 0;
+  color: #b42318;
+  font-weight: 600;
+}
+
+button {
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  color: #fff;
+  background: #0b7a70;
+  border: 0;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:focus-visible" target="_blank"><code>:focus-visible</code></a> : un contour au clavier, pas au clic</li>
+            <li><code>outline: none</code> sans remplacement est une faute (2.4.7)</li>
+            <li><code>.visually-hidden</code> masque à l'écran mais garde le texte lisible par les lecteurs d'écran. <code>display: none</code> le cache à tous</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@media/prefers-reduced-motion" target="_blank"><code>prefers-reduced-motion</code></a> coupe les animations. C'est l'un des rares usages légitimes de <code>!important</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>ARIA : d'abord ne pas s'en servir</h2>
+    <div class="corps">
+      <div class="encadre corail" style="margin-bottom: 18px;">
+        <strong>Première règle d'<a href="https://www.w3.org/TR/using-aria/" target="_blank">ARIA</a></strong> : si un élément HTML natif fait l'affaire, utilisez-le. Les pages qui emploient ARIA comptent en moyenne <strong>plus</strong> d'erreurs que les autres (WebAIM Million).
+      </div>
+      <table class="serre">
+        <tr><th>Au lieu de…</th><th>Préférez…</th><th>Pourquoi</th></tr>
+        <tr><td><code>div role="button" tabindex="0"</code></td><td><code>button type="button"</code></td><td>Focus, Entrée et Espace offerts</td></tr>
+        <tr><td><code>div role="navigation"</code></td><td><code>nav</code></td><td>Même rôle, sans attribut</td></tr>
+        <tr><td>Un accordéon avec <code>aria-expanded</code></td><td><code>details</code> et <code>summary</code></td><td>Ouvert et fermé au clavier, sans JavaScript</td></tr>
+        <tr><td>Une modale <code>role="dialog"</code></td><td><code>dialog</code> et <code>showModal()</code></td><td>Focus piégé, Échap et fond <code>inert</code> natifs</td></tr>
+      </table>
+      <p class="petit muet" style="margin-top: 14px;">ARIA reste indispensable pour ce que HTML ne sait pas dire : <code>aria-expanded</code> d'un bouton de menu, <code>aria-live</code>, <code>aria-current="page"</code>, un nom accessible (<code>aria-label</code>, <code>aria-labelledby</code>).</p>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'arbre d'accessibilité</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p>Le navigateur dérive du DOM un <strong>arbre d'accessibilité</strong> : pour chaque nœud, un <strong>rôle</strong>, un <strong>nom</strong>, un <strong>état</strong>. C'est lui que lisent les technologies d'assistance.</p>
+          <ul class="dense">
+            <li>Chrome : DevTools, onglet <em>Elements</em>, panneau <em>Accessibility</em>, option <em>Full-page accessibility tree</em></li>
+            <li>Firefox : <a href="https://firefox-source-docs.mozilla.org/devtools-user/accessibility_inspector/" target="_blank">inspecteur d'accessibilité</a>, qui simule aussi les daltonismes</li>
+          </ul>
+        </div>
+        <div class="carte accent">
+          <h3>D'où vient le nom accessible ?</h3>
+          Par ordre de priorité (<a href="https://www.w3.org/TR/accname-1.2/" target="_blank">accname</a>) :
+          <ol style="margin-top: 8px;">
+            <li><code>aria-labelledby</code></li>
+            <li><code>aria-label</code></li>
+            <li>le <code>label</code>, le <code>alt</code>, la <code>legend</code>…</li>
+            <li>le contenu texte (boutons, liens)</li>
+            <li><code>title</code>, en dernier recours</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Tester pour de vrai</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte">
+          <h3>Au clavier</h3>
+          <kbd>Tab</kbd> et <kbd>Maj+Tab</kbd> pour avancer et reculer, <kbd>Entrée</kbd> et <kbd>Espace</kbd> pour activer, <kbd>Échap</kbd> pour fermer. Le focus est-il toujours visible ? L'ordre est-il logique ?
+        </div>
+        <div class="carte">
+          <h3>Au lecteur d'écran</h3>
+          <a href="https://support.apple.com/fr-fr/guide/voiceover/welcome/mac" target="_blank">VoiceOver</a> (macOS : <kbd>Cmd+F5</kbd>, rotor <kbd>Ctrl+Option+U</kbd>) ou <a href="https://www.nvaccess.org/download/" target="_blank">NVDA</a> (Windows, gratuit). Fermez les yeux et suivez le parcours d'achat.
+        </div>
+        <div class="carte">
+          <h3>Avec des outils</h3>
+          <a href="https://www.deque.com/axe/devtools/" target="_blank">axe DevTools</a>, <a href="https://developer.chrome.com/docs/lighthouse/overview?hl=fr" target="_blank">Lighthouse</a>, <a href="https://html-validate.org/" target="_blank">html-validate</a>, le contrôle des contrastes des DevTools.
+        </div>
+      </div>
+      <div class="encadre corail" style="margin-top: 24px;">
+        Un score Lighthouse de 100 ne prouve pas l'accessibilité. Les outils automatiques ne repèrent qu'une partie des problèmes (<a href="https://www.deque.com/blog/automated-testing-study-identifies-57-percent-of-digital-accessibility-issues/" target="_blank">environ 57 % en volume selon Deque</a>) : un <code>alt</code> présent mais faux passe inaperçu.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">04</div>
+    <h2>Le SEO technique</h2>
+    <div class="sous-titre">HTML sémantique, accessibilité et SEO</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La page finale : un <code>head</code> complet</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours1/concert/index.html" data-titre="concert/index.html"><code class="language-html" data-line-numbers="7-21,23-53">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Nova Lune en concert – Contrepoint 2027&lt;/title&gt;
+    &lt;meta name="description"
+      content="Nova Lune en concert le 9 juillet 2027 à 21 h 30,
+      Grande Halle de Lyon. Électro-pop et quatuor à cordes."&gt;
+    &lt;link rel="canonical"
+      href="https://contrepoint.example/concerts/nova-lune/"&gt;
+    &lt;link rel="alternate" hreflang="en"
+      href="https://contrepoint.example/en/concerts/nova-lune/"&gt;
+    &lt;meta property="og:type" content="website"&gt;
+    &lt;meta property="og:title" content="Nova Lune – Contrepoint 2027"&gt;
+    &lt;meta property="og:description"
+      content="Le 9 juillet à 21 h 30, Grande Halle de Lyon."&gt;
+    &lt;meta property="og:image"
+      content="https://picsum.photos/id/1082/1200/630"&gt;
+    &lt;meta property="og:url"
+      content="https://contrepoint.example/concerts/nova-lune/"&gt;
+    &lt;link rel="stylesheet" href="../commun/base.css"&gt;
+    &lt;script type="application/ld+json"&gt;
+      {
+        "@context": "https://schema.org",
+        "@type": "MusicEvent",
+        "name": "Nova Lune en concert",
+        "startDate": "2027-07-09T21:30+02:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode":
+          "https://schema.org/OfflineEventAttendanceMode",
+        "image": "https://picsum.photos/id/1082/1200/630",
+        "performer": { "@type": "MusicGroup", "name": "Nova Lune" },
+        "location": {
+          "@type": "Place",
+          "name": "La Grande Halle",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "12 quai des Arts",
+            "postalCode": "69002",
+            "addressLocality": "Lyon",
+            "addressCountry": "FR"
+          }
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "32",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://contrepoint.example/billetterie/"
+        }
+      }
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;a class="skip-link" href="#contenu"&gt;Aller au contenu&lt;/a&gt;
+    &lt;header class="site-header"&gt;
+      &lt;p class="logo"&gt;Contrepoint&lt;/p&gt;
+      &lt;nav aria-label="Menu principal"&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Programme&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="../newsletter/"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+    &lt;main id="contenu"&gt;
+      &lt;article class="concert"&gt;
+        &lt;h1&gt;Nova Lune&lt;/h1&gt;
+        &lt;p class="concert__genre"&gt;Électro-pop · Création 2027&lt;/p&gt;
+        &lt;figure&gt;
+          &lt;img src="https://picsum.photos/id/1082/800/450"
+            width="800" height="450"
+            alt="Les mains de la pianiste de Nova Lune sur le clavier"&gt;
+          &lt;figcaption&gt;Nova Lune au Trianon, en 2026.&lt;/figcaption&gt;
+        &lt;/figure&gt;
+        &lt;p&gt;
+          Le duo lyonnais revient avec un spectacle pensé pour
+          le festival : voix, synthétiseurs et quatuor à cordes.
+        &lt;/p&gt;
+        &lt;section aria-labelledby="titre-infos"&gt;
+          &lt;h2 id="titre-infos"&gt;Infos pratiques&lt;/h2&gt;
+          &lt;dl class="infos"&gt;
+            &lt;dt&gt;Date&lt;/dt&gt;
+            &lt;dd&gt;
+              &lt;time datetime="2027-07-09T21:30"&gt;
+                Vendredi 9 juillet, 21 h 30
+              &lt;/time&gt;
+            &lt;/dd&gt;
+            &lt;dt&gt;Scène&lt;/dt&gt;
+            &lt;dd&gt;La Grande Halle&lt;/dd&gt;
+            &lt;dt&gt;Tarif&lt;/dt&gt;
+            &lt;dd&gt;32 €, 25 € pour les moins de 26 ans&lt;/dd&gt;
+          &lt;/dl&gt;
+          &lt;address&gt;
+            La Grande Halle, 12 quai des Arts, 69002 Lyon
+          &lt;/address&gt;
+        &lt;/section&gt;
+      &lt;/article&gt;
+      &lt;aside aria-labelledby="titre-autres"&gt;
+        &lt;h2 id="titre-autres"&gt;Le même soir&lt;/h2&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Les Gammes Sauvages, 19 h&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="../concert/"&gt;Orage Doux, 23 h 30&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/aside&gt;
+    &lt;/main&gt;
+    &lt;footer class="site-footer"&gt;
+      &lt;p&gt;Contrepoint, festival de musiques actuelles&lt;/p&gt;
+    &lt;/footer&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>title</code> unique et descriptif : le titre du résultat de recherche et de l'onglet</li>
+            <li><code>meta description</code> : le résumé souvent repris sous le lien</li>
+            <li><code>canonical</code> : l'adresse de référence si la page existe sous plusieurs URL</li>
+            <li><code>hreflang</code> : la version de la page dans une autre langue</li>
+            <li><a href="https://ogp.me/" target="_blank">Open Graph</a> : l'aperçu partagé sur les réseaux et les messageries</li>
+          </ul>
+          <a class="demo-lien" href="../demos/cours1/concert/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les données structurées</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p>Le bloc <code>application/ld+json</code> décrit le concert dans le vocabulaire <a href="https://schema.org/MusicEvent" target="_blank">schema.org</a>, au format <strong>JSON-LD</strong> : nom, date, lieu, artiste, prix.</p>
+          <ul class="dense">
+            <li>Google peut en tirer un <strong>résultat enrichi</strong> (date et lieu sous le lien)</li>
+            <li>Les assistants et agents d'IA s'en servent pour répondre « Quand joue Nova Lune ? »</li>
+            <li>Les données doivent correspondre au contenu visible de la page</li>
+          </ul>
+        </div>
+        <div>
+          <div class="carte accent">
+            <h3>Pour vérifier</h3>
+            <ul class="dense" style="margin-top: 8px;">
+              <li><a href="https://search.google.com/test/rich-results?hl=fr" target="_blank">Test des résultats enrichis</a> de Google</li>
+              <li><a href="https://validator.schema.org/" target="_blank">Validateur schema.org</a></li>
+              <li>L'onglet <em>Lighthouse</em>, catégorie SEO</li>
+            </ul>
+          </div>
+          <p class="petit muet" style="margin-top: 16px;">JSON-LD (<em>JSON for Linked Data</em>) : du JSON dont les clés renvoient à un vocabulaire partagé, ici schema.org.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>À retenir</h2>
+    <div class="corps">
+      <ul>
+        <li>La structure se choisit pour son <strong>sens</strong> : landmarks, plan de titres sans saut, <code>article</code> pour l'autonome, <code>div</code> pour la mise en page</li>
+        <li>Un champ a un <strong>label visible</strong>, un <code>autocomplete</code> et une erreur reliée par <code>aria-describedby</code></li>
+        <li><strong>HTML natif d'abord</strong>, ARIA seulement pour ce que HTML ne sait pas dire</li>
+        <li>On vise <strong>WCAG 2.2 AA</strong> : contrastes, clavier, focus visible, cibles de 24 px</li>
+        <li>On teste au <strong>clavier</strong> et au <strong>lecteur d'écran</strong>, les outils automatiques ne suffisent pas</li>
+        <li>Le <code>head</code> et le JSON-LD décrivent la page aux moteurs et aux agents</li>
+      </ul>
+      <div class="encadre corail" style="margin-top: 18px;">
+        Place à la pratique : le <strong>TP1</strong> vous fait auditer puis refondre une page mal construite.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chevalier@chris-freelance.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

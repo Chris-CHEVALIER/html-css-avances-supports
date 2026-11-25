@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+.layout {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+@media (width >= 50rem) {
+  .layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Chaque zone devient un conteneur interrogeable
+   sur sa largeur (axe inline) */
+.card-zone {
+  container: card-zone / inline-size;
+}
+
+/* La même carte, empilée par défaut */
+.artist-card {
+  display: grid;
+  overflow: hidden;
+  border: 2px solid #d9dcea;
+  border-radius: 1rem;
+}
+
+.artist-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.artist-card__body {
+  padding: 1rem;
+}
+
+.artist-card h2 {
+  margin: 0;
+
+  /* 1cqi = 1 % de la largeur du conteneur */
+  font-size: clamp(1.25rem, 5cqi, 2.5rem);
+}
+
+/* Quand SA zone dépasse 30rem, la carte passe à l'horizontale,
+   quelle que soit la taille de l'écran */
+@container card-zone (width > 30rem) {
+  .artist-card {
+    grid-template-columns: 2fr 3fr;
+    align-items: center;
+  }
+
+  .artist-card img {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+}

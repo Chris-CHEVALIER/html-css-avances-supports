@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Billetterie – Contrepoint</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dialog.css" />
+    <script src="js/billetterie.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <h1>Billetterie</h1>
+      <p>Pass 3 jours, du 18 au 20 juin 2027 : 89 €.</p>
+      <button type="button" class="button" id="open-ticket">
+        Réserver mon pass
+      </button>
+      <p id="message" role="status"></p>
+
+      <dialog id="ticket-dialog" aria-labelledby="ticket-title">
+        <!-- method="dialog" : envoyer le formulaire ferme la modale -->
+        <form method="dialog">
+          <h2 id="ticket-title">Réserver un pass</h2>
+          <label for="quantity">Nombre de pass (6 au plus)</label>
+          <input
+            id="quantity"
+            name="quantity"
+            type="number"
+            min="1"
+            max="6"
+            value="1"
+          />
+          <div class="actions">
+            <button type="submit" value="cancel" formnovalidate>
+              Annuler
+            </button>
+            <button type="submit" value="confirm" class="button">
+              Confirmer
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+      <h2>Questions fréquentes</h2>
+      <!-- Même attribut name : un seul panneau ouvert à la fois -->
+      <details name="faq">
+        <summary>Puis-je revendre mon pass ?</summary>
+        <p>Oui, sur la bourse officielle, jusqu'au 10 juin.</p>
+      </details>
+      <details name="faq">
+        <summary>Le site est-il accessible en fauteuil ?</summary>
+        <p>Oui : plateformes surélevées et toilettes adaptées.</p>
+      </details>
+      <details name="faq">
+        <summary>Les enfants paient-ils ?</summary>
+        <p>L'entrée est gratuite pour les moins de 12 ans.</p>
+      </details>
+    </main>
+  </body>
+</html>

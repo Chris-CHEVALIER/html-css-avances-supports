@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Guide de style – Mon framework</title>
+    <meta name="description" content="Documentation des tokens et des composants du framework.">
+    <link rel="stylesheet" href="css/main.css">
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <a class="visually-hidden" href="#contenu">Aller au contenu</a>
+    <header class="container">
+      <nav aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="style-guide.html" aria-current="page">Guide de style</a>
+      </nav>
+    </header>
+    <main id="contenu" class="container stack">
+      <h1>Guide de style</h1>
+
+      <section class="stack" aria-labelledby="titre-boutons">
+        <h2 id="titre-boutons">Bouton</h2>
+        <p>Classe <code>.button</code>, variante <code>.button--ghost</code>.</p>
+        <p>
+          <button class="button" type="button">Action principale</button>
+          <button class="button button--ghost" type="button">Action secondaire</button>
+        </p>
+      </section>
+
+      <section class="stack" aria-labelledby="titre-cartes">
+        <h2 id="titre-cartes">Carte</h2>
+        <p>Classe <code>.card</code> : sa mise en page dépend de la largeur de son conteneur.</p>
+        <div class="grid">
+          <article class="card">
+            <div class="card__body">
+              <h3 class="card__title">Titre de la carte</h3>
+              <p>Texte de la carte.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="stack" aria-labelledby="titre-repliable">
+        <h2 id="titre-repliable">Bloc repliable</h2>
+        <p>Web Component <code>&lt;fw-disclosure&gt;</code>, utilisable au clavier.</p>
+        <fw-disclosure>
+          <button class="button button--ghost" type="button">Afficher le détail</button>
+          <div><p>Contenu affiché au clic ou avec Entrée.</p></div>
+        </fw-disclosure>
+      </section>
+    </main>
+  </body>
+</html>

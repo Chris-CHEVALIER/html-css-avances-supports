@@ -1,0 +1,25 @@
+[role="tablist"] {
+  display: flex;
+  gap: 0.25rem;
+  border-block-end: 2px solid var(--color-ink);
+}
+
+[role="tab"] {
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  font: inherit;
+  background: oklch(93% 0.02 275deg);
+  cursor: pointer;
+}
+
+/* L'état visuel suit l'état ARIA : impossible de les désynchroniser */
+[role="tab"][aria-selected="true"] {
+  font-weight: 700;
+  color: white;
+  background: var(--color-ink);
+}
+
+[role="tabpanel"] {
+  padding: 1rem;
+}

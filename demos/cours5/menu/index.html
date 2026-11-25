@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Menu en JS natif – Contrepoint</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/menu.js" defer></script>
+  </head>
+  <body>
+    <nav aria-label="Menu principal">
+      <button
+        type="button"
+        class="menu-toggle"
+        aria-expanded="false"
+        aria-controls="main-menu"
+      >
+        Menu
+      </button>
+      <ul id="main-menu" class="menu" hidden>
+        <li><a href="#programme">Programme</a></li>
+        <li><a href="#billetterie">Billetterie</a></li>
+        <li><a href="#infos">Infos pratiques</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h1>Contrepoint</h1>
+      <p><a href="jquery.html">Même menu avec jQuery</a></p>
+    </main>
+  </body>
+</html>

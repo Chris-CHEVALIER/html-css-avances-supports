@@ -1,0 +1,35 @@
+:root {
+  --color-ink: oklch(25% 0.05 275deg);
+  --color-surface: oklch(99% 0.005 275deg);
+  --color-primary: oklch(55% 0.2 25deg);
+  --color-accent: oklch(72% 0.13 185deg);
+  --radius: 12px;
+
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
+body {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  padding: 2rem 1rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.button {
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 700;
+  color: white;
+  background: var(--color-primary);
+  cursor: pointer;
+}

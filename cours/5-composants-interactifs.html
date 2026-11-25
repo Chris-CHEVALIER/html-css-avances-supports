@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Composants interactifs et performance – HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal a.ouvrir { display: inline-block; margin-top: 6px; padding: 6px 14px; border-radius: 8px; background: var(--nuit); color: var(--blanc); text-decoration: none; font-weight: 700; font-size: 18px; }
+    .reveal a.ouvrir::after { content: " ↗"; color: var(--accent); }
+    .reveal .baseline { display: inline-block; font-size: 15px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent-clair); color: var(--accent-texte); }
+    .reveal .baseline.partiel { background: var(--corail-clair); color: var(--corail-texte); }
+    .reveal .colonnes.code-texte .dense { font-size: 19px; }
+  </style>
+</head>
+<body data-pied="HTML & CSS avancés · Composants interactifs et performance">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Composants interactifs et performance</h1>
+    <div class="sous-titre">
+      <span class="code-module">Langages HTML & CSS avancés</span> – Cours 5<br>
+      Chris CHEVALIER · <a href="mailto:chevalier@chris-freelance.com" style="color: inherit;">chevalier@chris-freelance.com</a>
+    </div>
+    <aside class="notes">
+      Objectif : construire les composants interactifs du framework (modale, infobulle, onglets, composant réutilisable) avec le moins de JavaScript possible, puis vérifier que la page reste rapide.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Interactions sans JavaScript</li>
+      <li>JavaScript natif</li>
+      <li>Web Components</li>
+      <li>Performance</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>Interactions sans JavaScript</h2>
+    <div class="sous-titre">Le navigateur sait déjà faire beaucoup de choses</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>HTML d'abord, JavaScript ensuite</h2>
+    <div class="corps">
+      <table class="serre">
+        <tr><th>Besoin</th><th>Solution native</th><th>Compatibilité</th></tr>
+        <tr><td>Accordéon, FAQ</td><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/details" target="_blank"><code>&lt;details&gt;</code></a> et <code>&lt;summary&gt;</code>, attribut <code>name</code> pour n'en ouvrir qu'un</td><td><span class="baseline">Baseline 2024</span> pour <code>name</code></td></tr>
+        <tr><td>Fenêtre modale</td><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/dialog" target="_blank"><code>&lt;dialog&gt;</code></a> et <code>showModal()</code></td><td><span class="baseline">Baseline</span> depuis 2022</td></tr>
+        <tr><td>Menu déroulant, infobulle</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/Popover_API" target="_blank">Popover API</a> : attributs <code>popover</code> et <code>popovertarget</code></td><td><span class="baseline">Baseline 2024</span></td></tr>
+        <tr><td>Placer un élément contre un autre</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">Anchor positioning</a> en CSS</td><td><span class="baseline partiel">Récent</span> avec repli</td></tr>
+        <tr><td>Animer un changement d'état</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/View_Transition_API" target="_blank">View Transitions</a>, <a href="https://developer.mozilla.org/fr/docs/Web/CSS/@starting-style" target="_blank"><code>@starting-style</code></a></td><td><span class="baseline">Baseline 2025</span> dans une page</td></tr>
+      </table>
+      <div class="encadre" style="margin-top: 22px;">
+        Un élément natif apporte gratuitement le clavier, le focus et l'annonce au lecteur d'écran. Votre JavaScript ne fait plus que le relier au reste de la page. <span class="petit muet"><a href="https://web.dev/baseline?hl=fr" target="_blank">Baseline</a> : fonctionnalité prise en charge par Chrome, Edge, Firefox et Safari.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La billetterie : une modale et une FAQ</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/billetterie/index.html" data-titre="billetterie/index.html"><code class="language-html" data-line-numbers="">&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /&gt;
+    &lt;title&gt;Billetterie – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/base.css" /&gt;
+    &lt;link rel="stylesheet" href="css/style.css" /&gt;
+    &lt;link rel="stylesheet" href="css/dialog.css" /&gt;
+    &lt;script src="js/billetterie.js" defer&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Billetterie&lt;/h1&gt;
+      &lt;p&gt;Pass 3 jours, du 18 au 20 juin 2027 : 89 €.&lt;/p&gt;
+      &lt;button type="button" class="button" id="open-ticket"&gt;
+        Réserver mon pass
+      &lt;/button&gt;
+      &lt;p id="message" role="status"&gt;&lt;/p&gt;
+
+      &lt;dialog id="ticket-dialog" aria-labelledby="ticket-title"&gt;
+        &lt;!-- method="dialog" : envoyer le formulaire ferme la modale --&gt;
+        &lt;form method="dialog"&gt;
+          &lt;h2 id="ticket-title"&gt;Réserver un pass&lt;/h2&gt;
+          &lt;label for="quantity"&gt;Nombre de pass (6 au plus)&lt;/label&gt;
+          &lt;input
+            id="quantity"
+            name="quantity"
+            type="number"
+            min="1"
+            max="6"
+            value="1"
+          /&gt;
+          &lt;div class="actions"&gt;
+            &lt;button type="submit" value="cancel" formnovalidate&gt;
+              Annuler
+            &lt;/button&gt;
+            &lt;button type="submit" value="confirm" class="button"&gt;
+              Confirmer
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/dialog&gt;
+
+      &lt;h2&gt;Questions fréquentes&lt;/h2&gt;
+      &lt;!-- Même attribut name : un seul panneau ouvert à la fois --&gt;
+      &lt;details name="faq"&gt;
+        &lt;summary&gt;Puis-je revendre mon pass ?&lt;/summary&gt;
+        &lt;p&gt;Oui, sur la bourse officielle, jusqu'au 10 juin.&lt;/p&gt;
+      &lt;/details&gt;
+      &lt;details name="faq"&gt;
+        &lt;summary&gt;Le site est-il accessible en fauteuil ?&lt;/summary&gt;
+        &lt;p&gt;Oui : plateformes surélevées et toilettes adaptées.&lt;/p&gt;
+      &lt;/details&gt;
+      &lt;details name="faq"&gt;
+        &lt;summary&gt;Les enfants paient-ils ?&lt;/summary&gt;
+        &lt;p&gt;L'entrée est gratuite pour les moins de 12 ans.&lt;/p&gt;
+      &lt;/details&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>&lt;dialog&gt;</code> est fermé par défaut. Son contenu est un vrai <code>&lt;form&gt;</code></li>
+            <li><code>method="dialog"</code> : envoyer le formulaire <strong>ferme la modale</strong> sans requête au serveur</li>
+            <li><code>aria-labelledby</code> donne son nom à la modale, lu à l'ouverture</li>
+            <li>Les <code>&lt;details&gt;</code> qui partagent le même <code>name</code> forment un <strong>accordéon exclusif</strong>. Aucune ligne de JavaScript</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/billetterie/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Ouvrir la modale : trois lignes utiles</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/billetterie/js/billetterie.js" data-titre="billetterie/js/billetterie.js"><code class="language-javascript" data-line-numbers="">const dialog = document.querySelector("#ticket-dialog");
+const opener = document.querySelector("#open-ticket");
+const message = document.querySelector("#message");
+
+opener.addEventListener("click", () =&gt; {
+  dialog.returnValue = "";
+  dialog.showModal(); // modale : le reste de la page devient inerte
+});
+
+// Le bouton qui envoie le formulaire donne sa value à returnValue
+dialog.addEventListener("close", () =&gt; {
+  if (dialog.returnValue !== "confirm") return;
+  const quantity = dialog.querySelector("#quantity").value;
+  message.textContent = `${quantity} pass ajouté(s) au panier.`;
+});
+
+// Clic sur le fond : la cible est l'élément dialog lui-même,
+// car le formulaire occupe tout l'intérieur de la modale
+dialog.addEventListener("click", (event) =&gt; {
+  if (event.target === dialog) dialog.close("cancel");
+});</code></pre>
+        <div>
+          <p class="dense"><strong>Ce que <a href="https://developer.mozilla.org/fr/docs/Web/API/HTMLDialogElement/showModal" target="_blank"><code>showModal()</code></a> fait pour vous</strong></p>
+          <ul class="dense">
+            <li>Affiche la modale dans la <em>top layer</em>, au-dessus de tout, sans <code>z-index</code></li>
+            <li>Rend le reste de la page <strong>inerte</strong> : ni clic ni tabulation derrière</li>
+            <li>Place le focus dans la modale. <kbd>Échap</kbd> la ferme et le focus revient au bouton</li>
+            <li><code>returnValue</code> dit quel bouton l'a fermée</li>
+            <li>L'attribut <code>closedby="any"</code> ferme au clic sur le fond. <span class="baseline partiel">Pas encore dans Safari</span> : le dernier écouteur sert de repli</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Animer l'ouverture… et la fermeture</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/billetterie/css/dialog.css" data-titre="billetterie/css/dialog.css"><code class="language-css" data-line-numbers="">/* État fermé : l'élément dialog est en display: none */
+dialog {
+  opacity: 0;
+  translate: 0 1rem;
+  transition:
+    opacity 0.25s,
+    translate 0.25s,
+    overlay 0.25s allow-discrete,
+    display 0.25s allow-discrete;
+}
+
+dialog[open] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Point de départ de l'animation, à l'ouverture */
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+    translate: 0 1rem;
+  }
+}
+
+/* Le fond assombri, propre aux modales */
+dialog::backdrop {
+  background-color: rgb(20 18 40 / 0%);
+  transition:
+    background-color 0.25s,
+    overlay 0.25s allow-discrete,
+    display 0.25s allow-discrete;
+}
+
+dialog[open]::backdrop {
+  background-color: rgb(20 18 40 / 60%);
+}
+
+@starting-style {
+  dialog[open]::backdrop {
+    background-color: rgb(20 18 40 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog,
+  dialog::backdrop {
+    transition: none;
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Une modale fermée est en <code>display: none</code>. Jusqu'ici, impossible de l'animer</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/transition-behavior" target="_blank"><code>allow-discrete</code></a> retarde le passage à <code>display: none</code> jusqu'à la fin de la transition. <code>overlay</code> garde la modale dans la top layer pendant ce temps</li>
+            <li><code>@starting-style</code> décrit l'état de départ, juste à l'ouverture</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@media/prefers-reduced-motion" target="_blank"><code>prefers-reduced-motion</code></a> : on coupe l'animation pour les personnes que le mouvement gêne</li>
+          </ul>
+          <span class="baseline">Baseline 2024</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une infobulle avec la Popover API</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/infobulle/index.html" data-titre="infobulle/index.html"><code class="language-html" data-line-numbers="">&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /&gt;
+    &lt;title&gt;Les pass – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/base.css" /&gt;
+    &lt;link rel="stylesheet" href="css/style.css" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Les pass&lt;/h1&gt;
+      &lt;p&gt;
+        Le &lt;strong&gt;pass nuit&lt;/strong&gt; ouvre les concerts après 23 h.
+        &lt;button
+          type="button"
+          class="hint-trigger"
+          popovertarget="night-hint"
+          aria-label="En savoir plus sur le pass nuit"
+        &gt;
+          ?
+        &lt;/button&gt;
+      &lt;/p&gt;
+      &lt;!-- popover (auto) : Échap ou un clic ailleurs le ferme --&gt;
+      &lt;div id="night-hint" class="hint" popover&gt;
+        Valable du vendredi au dimanche, de 23 h à 4 h. Navettes
+        gratuites vers la gare.
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>popover</code> : l'élément est caché puis affiché dans la top layer</li>
+            <li><code>popovertarget</code> relie le bouton à son popover. Le clic l'ouvre et le referme, sans JavaScript</li>
+            <li>Le navigateur gère <code>aria-expanded</code> sur le bouton, <kbd>Échap</kbd> et le clic à l'extérieur (<em>light dismiss</em>)</li>
+            <li><code>popover="manual"</code> : seule une action explicite le ferme (une notification, par exemple)</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/infobulle/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Ancrer l'infobulle à son bouton</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/infobulle/css/style.css" data-titre="infobulle/css/style.css"><code class="language-css" data-line-numbers="">main {
+  padding-block-start: 6rem;
+}
+
+.hint-trigger {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 2px solid currentcolor;
+  border-radius: 50%;
+  font: inherit;
+  font-weight: 700;
+  background: none;
+  cursor: pointer;
+}
+
+/* Sans anchor positioning : popover centré (style par défaut) */
+.hint {
+  max-inline-size: 18rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  color: white;
+  background: var(--color-ink);
+}
+
+/* Avec anchor positioning : l'infobulle suit son bouton */
+@supports (anchor-name: --a) {
+  .hint-trigger {
+    anchor-name: --night-hint;
+  }
+
+  .hint {
+    position-anchor: --night-hint;
+    position-area: block-start;
+    position-try-fallbacks: flip-block;
+    inset: auto;
+    margin: 0.5rem;
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/anchor-name" target="_blank"><code>anchor-name</code></a> nomme l'ancre. <code>position-anchor</code> s'y accroche</li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position-area" target="_blank"><code>position-area</code></a> : la zone autour de l'ancre (ici au-dessus)</li>
+            <li><code>position-try-fallbacks: flip-block</code> : pas de place en haut ? L'infobulle passe dessous</li>
+            <li><code>inset: auto</code> annule le centrage par défaut des popovers</li>
+            <li>Chrome et Edge 125, Safari 26. <span class="baseline partiel">Pas encore Baseline</span> : <code>@supports</code> garde un popover centré ailleurs</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/infobulle/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>View Transitions : animer un changement</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/galerie/js/galerie.js" data-titre="galerie/js/galerie.js"><code class="language-javascript" data-line-numbers="">const stage = document.querySelector(".stage img");
+const caption = document.querySelector(".stage figcaption");
+const thumbs = document.querySelector(".thumbs");
+
+async function show(button) {
+  const thumb = button.querySelector("img");
+  stage.src = `https://picsum.photos/id/${button.dataset.id}/960/540`;
+  stage.alt = thumb.alt;
+  caption.textContent = button.dataset.caption;
+  thumbs
+    .querySelector("[aria-current]")
+    .removeAttribute("aria-current");
+  button.setAttribute("aria-current", "true");
+  // Attendre l'image : la capture « après » la montre chargée
+  await stage.decode().catch(() =&gt; {});
+}
+
+// Délégation : un seul écouteur pour toutes les miniatures
+thumbs.addEventListener("click", (event) =&gt; {
+  const button = event.target.closest("button");
+  if (!button) return;
+  // Repli : sans l'API, on change l'image sans animation
+  if (!document.startViewTransition) {
+    show(button);
+    return;
+  }
+  document.startViewTransition(() =&gt; show(button));
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/API/Document/startViewTransition" target="_blank"><code>startViewTransition()</code></a> photographie la page, applique la modification puis anime de l'ancien état vers le nouveau</li>
+            <li>La fonction peut être <code>async</code> : ici on attend que la nouvelle image soit décodée</li>
+            <li><strong>Amélioration progressive</strong> : sans l'API, la galerie fonctionne sans animation</li>
+            <li><code>aria-current</code> signale la miniature active, au lecteur d'écran comme au CSS</li>
+          </ul>
+          <span class="baseline">Baseline 2025</span><br>
+          <a class="ouvrir" href="../demos/cours5/galerie/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>View Transitions : le CSS</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/galerie/css/style.css" data-titre="galerie/css/style.css"><code class="language-css" data-line-numbers="">/* Transition entre deux pages du même site (les deux l'activent) */
+@view-transition {
+  navigation: auto;
+}
+
+.stage {
+  margin: 0 0 1rem;
+}
+
+.stage img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--radius);
+  view-transition-name: stage; /* animée à part du reste */
+}
+
+::view-transition-old(stage),
+::view-transition-new(stage) {
+  animation-duration: 0.4s;
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.thumbs button {
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+}
+
+.thumbs button[aria-current="true"] {
+  border-color: var(--color-primary);
+}
+
+.thumbs img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: calc(var(--radius) - 3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/view-transition-name" target="_blank"><code>view-transition-name</code></a> isole un élément : il est animé à part, d'une position à l'autre</li>
+            <li><code>::view-transition-old()</code> et <code>::view-transition-new()</code> : les deux captures, stylables comme des pseudo-éléments</li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@view-transition" target="_blank"><code>@view-transition</code></a> anime aussi la navigation entre deux pages du même site, sans JavaScript. Chrome et Safari 18.2 : <span class="baseline partiel">pas encore Firefox</span></li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/galerie/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>JavaScript natif</h2>
+    <div class="sous-titre">Quand le HTML ne suffit plus</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Hier : jQuery</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/menu/js/menu-jquery.js" data-titre="menu/js/menu-jquery.js"><code class="language-javascript" data-line-numbers="">// jQuery (2006) : sélectionner, écouter, modifier en une ligne
+// À ne plus reproduire : rien ne dit au lecteur d'écran que le
+// menu est ouvert (pas d'aria-expanded)
+$(function () {
+  $(".menu-toggle").on("click", function () {
+    $(".menu").toggleClass("is-open");
+  });
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://jquery.com/" target="_blank">jQuery</a> (2006) a gommé les différences entre navigateurs et rendu le DOM agréable : <code>$(".menu")</code>, <code>.on()</code>, <code>.toggleClass()</code></li>
+            <li>Ses idées sont devenues des standards : <a href="https://developer.mozilla.org/fr/docs/Web/API/Document/querySelector" target="_blank"><code>querySelector</code></a>, <a href="https://developer.mozilla.org/fr/docs/Web/API/Element/classList" target="_blank"><code>classList</code></a>, <a href="https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener" target="_blank"><code>addEventListener</code></a>, <code>fetch</code></li>
+            <li>Aujourd'hui, c'est 30 Ko à télécharger pour ce que le navigateur fait déjà. Vous le croiserez encore dans des sites existants</li>
+          </ul>
+          <div class="encadre corail">Ce code ne dit pas au lecteur d'écran que le menu est ouvert.</div>
+          <a class="ouvrir" href="../demos/cours5/menu/jquery.html" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Aujourd'hui : le même menu en JS natif</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/menu/js/menu.js" data-titre="menu/js/menu.js"><code class="language-javascript" data-line-numbers="">// JS natif : un seul écouteur sur le document (délégation),
+// valable pour tous les boutons qui pilotent un autre élément
+document.addEventListener("click", (event) =&gt; {
+  const button = event.target.closest("button[aria-controls]");
+  if (!button) return;
+  const id = button.getAttribute("aria-controls");
+  const target = document.getElementById(id);
+  const expanded = button.getAttribute("aria-expanded") === "true";
+  // L'état est lu dans le HTML et annoncé au lecteur d'écran
+  button.setAttribute("aria-expanded", String(!expanded));
+  target.hidden = expanded;
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><strong>Délégation d'événements</strong> : un seul écouteur sur le document. <a href="https://developer.mozilla.org/fr/docs/Web/API/Element/closest" target="_blank"><code>closest()</code></a> retrouve le bouton cliqué, même ajouté plus tard</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/Accessibility/ARIA/Attributes/aria-expanded" target="_blank"><code>aria-expanded</code></a> porte l'état. Il est lu par le lecteur d'écran et sert de sélecteur au CSS</li>
+            <li><code>aria-controls</code> désigne l'élément piloté : le même script sert à tous les boutons de ce type</li>
+            <li>L'attribut <code>hidden</code> cache le menu, pour tout le monde</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/menu/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Des onglets accessibles : le HTML</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/programme/index.html" data-titre="programme/index.html"><code class="language-html" data-line-numbers="">&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /&gt;
+    &lt;title&gt;Programme – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/base.css" /&gt;
+    &lt;link rel="stylesheet" href="css/style.css" /&gt;
+    &lt;script src="js/tabs.js" defer&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Programme&lt;/h1&gt;
+      &lt;div role="tablist" aria-label="Jours du festival"&gt;
+        &lt;button
+          id="tab-fri"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-fri"
+        &gt;
+          Vendredi
+        &lt;/button&gt;
+        &lt;button
+          id="tab-sat"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-sat"
+          tabindex="-1"
+        &gt;
+          Samedi
+        &lt;/button&gt;
+        &lt;button
+          id="tab-sun"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-sun"
+          tabindex="-1"
+        &gt;
+          Dimanche
+        &lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div
+        id="panel-fri"
+        role="tabpanel"
+        aria-labelledby="tab-fri"
+        tabindex="0"
+      &gt;
+        &lt;ul&gt;
+          &lt;li&gt;19 h · Les Ondes Courtes&lt;/li&gt;
+          &lt;li&gt;21 h · Nadia Ferrant&lt;/li&gt;
+          &lt;li&gt;23 h · Kilomètre Zéro&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;div
+        id="panel-sat"
+        role="tabpanel"
+        aria-labelledby="tab-sat"
+        tabindex="0"
+        hidden
+      &gt;
+        &lt;ul&gt;
+          &lt;li&gt;18 h · Fanfare Bric-à-Brac&lt;/li&gt;
+          &lt;li&gt;20 h 30 · Solène et les Cordes&lt;/li&gt;
+          &lt;li&gt;23 h · DJ Marée Basse&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;div
+        id="panel-sun"
+        role="tabpanel"
+        aria-labelledby="tab-sun"
+        tabindex="0"
+        hidden
+      &gt;
+        &lt;ul&gt;
+          &lt;li&gt;15 h · Chorale du Canal&lt;/li&gt;
+          &lt;li&gt;17 h · Trio Lune Rousse&lt;/li&gt;
+          &lt;li&gt;19 h · Clôture : Les Ondes Courtes&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Pas d'élément natif pour des onglets. On suit le motif <a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/" target="_blank">Tabs</a> de l'APG <span class="petit muet">(ARIA Authoring Practices Guide, recettes d'accessibilité du W3C)</span></li>
+            <li>Rôles <code>tablist</code>, <code>tab</code> et <code>tabpanel</code>, reliés par <code>aria-controls</code> et <code>aria-labelledby</code></li>
+            <li><code>aria-selected</code> indique l'onglet actif</li>
+            <li><code>tabindex="-1"</code> : un seul onglet dans l'ordre de tabulation</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/programme/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Des onglets accessibles : le clavier</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/programme/js/tabs.js" data-titre="programme/js/tabs.js"><code class="language-javascript" data-line-numbers="">// Motif « Tabs » de l'APG du W3C : un seul onglet dans l'ordre
+// de tabulation, les flèches passent d'un onglet à l'autre
+const tablist = document.querySelector('[role="tablist"]');
+const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+
+function select(tab) {
+  for (const other of tabs) {
+    const selected = other === tab;
+    other.setAttribute("aria-selected", String(selected));
+    other.tabIndex = selected ? 0 : -1;
+    const panelId = other.getAttribute("aria-controls");
+    document.getElementById(panelId).hidden = !selected;
+  }
+  tab.focus();
+}
+
+tablist.addEventListener("click", (event) =&gt; {
+  const tab = event.target.closest('[role="tab"]');
+  if (tab) select(tab);
+});
+
+tablist.addEventListener("keydown", (event) =&gt; {
+  const index = tabs.indexOf(document.activeElement);
+  const targets = {
+    ArrowRight: index + 1,
+    ArrowLeft: index - 1,
+    Home: 0,
+    End: tabs.length - 1,
+  };
+  if (!(event.key in targets)) return;
+  event.preventDefault();
+  // at() accepte -1 (dernier) ; le modulo revient au premier
+  select(tabs.at(targets[event.key] % tabs.length));
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><kbd>Tab</kbd> entre dans la liste puis passe au panneau. Les <strong>flèches</strong> changent d'onglet, <kbd>Début</kbd> et <kbd>Fin</kbd> vont aux extrémités</li>
+            <li>Technique du <em>roving tabindex</em> : l'onglet actif a <code>tabIndex = 0</code>, les autres <code>-1</code></li>
+            <li><code>tab.focus()</code> : le focus suit la sélection. Ne jamais le perdre</li>
+            <li>Testez-le au clavier puis avec <a href="https://support.apple.com/fr-fr/guide/voiceover/welcome/mac" target="_blank">VoiceOver</a> ou <a href="https://www.nvaccess.org/download/" target="_blank">NVDA</a></li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/programme/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>Web Components</h2>
+    <div class="sous-titre">Vos propres éléments HTML, sans framework</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Quatre standards du navigateur</h2>
+    <div class="corps">
+      <div class="colonnes c4">
+        <div class="carte accent">
+          <h3>Custom elements</h3>
+          <a href="https://developer.mozilla.org/fr/docs/Web/API/Web_components/Using_custom_elements" target="_blank"><code>customElements.define()</code></a> crée une balise comme <code>&lt;cp-countdown&gt;</code>. Son nom contient toujours un tiret
+        </div>
+        <div class="carte accent">
+          <h3>Shadow DOM</h3>
+          Un DOM privé : son CSS ne fuit pas vers la page et le CSS de la page n'y entre pas
+        </div>
+        <div class="carte accent">
+          <h3>Template et slots</h3>
+          <code>&lt;template&gt;</code> : du HTML cloné à chaque instance. <code>&lt;slot&gt;</code> : là où s'affiche le contenu fourni par la page
+        </div>
+        <div class="carte corail">
+          <h3>Thème</h3>
+          Deux portes vers l'intérieur : <code>::part()</code> et les <strong>custom properties</strong>, qui traversent le Shadow DOM
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 26px;">
+        Un Web Component fonctionne dans n'importe quelle page, avec ou sans React, Vue ou Angular. <span class="baseline">Baseline</span> depuis 2020.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le composant <code>&lt;cp-countdown&gt;</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/composant/js/cp-countdown.js" data-titre="composant/js/cp-countdown.js"><code class="language-javascript" data-line-numbers="">const template = document.createElement("template");
+template.innerHTML = `
+  &lt;style&gt;
+    :host { display: inline-block; }
+    .box {
+      display: flex;
+      gap: var(--cp-gap, 1rem);
+      padding: 1rem 1.5rem;
+      border-radius: var(--cp-radius, 12px);
+      color: var(--cp-on-surface, white);
+      background: var(--cp-surface, #1b1e3c);
+    }
+    .unit { display: grid; text-align: center; }
+    .value {
+      font-size: 2rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+  &lt;/style&gt;
+  &lt;p part="label"&gt;&lt;slot&gt;Début du festival dans&lt;/slot&gt;&lt;/p&gt;
+  &lt;div class="box" part="box" role="timer"&gt;
+    &lt;span class="unit"&gt;&lt;span class="value" id="days"&gt;&lt;/span&gt;jours&lt;/span&gt;
+    &lt;span class="unit"&gt;&lt;span class="value" id="hours"&gt;&lt;/span&gt;h&lt;/span&gt;
+    &lt;span class="unit"&gt;&lt;span class="value" id="minutes"&gt;&lt;/span&gt;min&lt;/span&gt;
+    &lt;span class="unit"&gt;&lt;span class="value" id="seconds"&gt;&lt;/span&gt;s&lt;/span&gt;
+  &lt;/div&gt;
+`;
+
+class CpCountdown extends HTMLElement {
+  static observedAttributes = ["date"];
+  #timer;
+
+  constructor() {
+    super();
+    const root = this.attachShadow({ mode: "open" });
+    root.append(template.content.cloneNode(true));
+  }
+
+  connectedCallback() {
+    this.#render();
+    this.#timer = setInterval(() =&gt; this.#render(), 1000);
+  }
+
+  disconnectedCallback() {
+    clearInterval(this.#timer);
+  }
+
+  attributeChangedCallback() {
+    this.#render();
+  }
+
+  #render() {
+    const end = new Date(this.getAttribute("date")).getTime();
+    const rest = Math.max(0, (end - Date.now()) / 1000) || 0;
+    const values = {
+      days: rest / 86400,
+      hours: (rest % 86400) / 3600,
+      minutes: (rest % 3600) / 60,
+      seconds: rest % 60,
+    };
+    for (const [id, value] of Object.entries(values)) {
+      const cell = this.shadowRoot.getElementById(id);
+      cell.textContent = String(Math.floor(value)).padStart(2, "0");
+    }
+  }
+}
+
+customElements.define("cp-countdown", CpCountdown);</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>attachShadow()</code> crée le Shadow DOM, rempli par un clone du template</li>
+            <li><code>:host</code> : l'élément lui-même vu de l'intérieur. <code>var(--cp-surface, #1b1e3c)</code> : un réglage avec sa valeur par défaut</li>
+            <li><strong>Cycle de vie</strong> : <code>connectedCallback</code> à l'insertion dans la page, <code>disconnectedCallback</code> au retrait (on arrête le minuteur), <code>attributeChangedCallback</code> quand un attribut de <code>observedAttributes</code> change</li>
+            <li><code>part="label"</code> expose un élément au CSS de la page</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/composant/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Utiliser le composant</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/composant/index.html" data-titre="composant/index.html"><code class="language-html" data-line-numbers="">&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /&gt;
+    &lt;title&gt;Compte à rebours – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/base.css" /&gt;
+    &lt;link rel="stylesheet" href="css/style.css" /&gt;
+    &lt;script src="js/cp-countdown.js" type="module"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Contrepoint 2027&lt;/h1&gt;
+      &lt;!-- Le texte entre les balises remplace le slot par défaut --&gt;
+      &lt;cp-countdown date="2027-06-18T18:00:00+02:00"&gt;
+        Ouverture des portes dans
+      &lt;/cp-countdown&gt;
+
+      &lt;cp-countdown
+        class="countdown--light"
+        date="2027-03-01T10:00:00+01:00"
+      &gt;
+        Fin de la prévente dans
+      &lt;/cp-countdown&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Une balise comme une autre : l'attribut <code>date</code> la configure</li>
+            <li>Le texte entre les balises s'affiche dans le <code>&lt;slot&gt;</code>. Sans texte, le slot montre son contenu par défaut</li>
+            <li><code>type="module"</code> : le script est différé et isolé dans son propre module</li>
+            <li>Inspectez-le dans les DevTools : le <code>#shadow-root</code> apparaît sous la balise</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/composant/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Thématiser le composant depuis la page</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/composant/css/style.css" data-titre="composant/css/style.css"><code class="language-css" data-line-numbers="">main {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+/* Avant la définition du composant : rien ne clignote */
+cp-countdown:not(:defined) {
+  visibility: hidden;
+}
+
+/* ::part cible les éléments exposés par le composant */
+cp-countdown::part(label) {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+}
+
+/* Les custom properties traversent le Shadow DOM : un thème */
+.countdown--light {
+  --cp-surface: oklch(93% 0.05 185deg);
+  --cp-on-surface: var(--color-ink);
+  --cp-radius: 999px;
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/:defined" target="_blank"><code>:defined</code></a> : vrai une fois le composant enregistré. On évite l'affichage du contenu brut</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/::part" target="_blank"><code>::part(label)</code></a> stylise l'élément exposé. Rien d'autre n'est atteignable</li>
+            <li>Changer <code>--cp-surface</code> sur une classe suffit à créer une variante. C'est ainsi que les design tokens de votre framework entreront dans vos composants</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/composant/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Shadow DOM ou Light DOM pour un framework CSS ?</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><strong>Shadow DOM</strong> : un composant fermé</p>
+          <ul class="dense">
+            <li>Style isolé, impossible à casser par la page</li>
+            <li>Idéal pour un widget autonome (lecteur audio, compte à rebours)</li>
+            <li>Dans un formulaire, il faut <a href="https://developer.mozilla.org/fr/docs/Web/API/ElementInternals" target="_blank"><code>ElementInternals</code></a> : <code>static formAssociated = true</code>, puis <code>attachInternals()</code>, <code>setFormValue()</code> et <code>setValidity()</code> pour que la valeur soit envoyée et validée <span class="baseline">Baseline 2023</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Light DOM</strong> : un composant qui enrichit du HTML</p>
+          <ul class="dense">
+            <li>Sans <code>attachShadow()</code> : le JS ajoute le comportement, vos classes CSS s'appliquent</li>
+            <li>Le HTML reste lisible sans JS (amélioration progressive), indexable et stylable par vos tokens</li>
+            <li><strong>Pour votre framework</strong>, c'est souvent le bon choix : <code>&lt;cp-tabs&gt;</code> qui entoure des onglets en HTML ordinaire</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">04</div>
+    <h2>Performance</h2>
+    <div class="sous-titre">Un beau CSS ne sert à rien sur une page qui saute</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les Core Web Vitals</h2>
+    <div class="corps">
+      <div class="colonnes c3">
+        <div class="carte accent">
+          <h3>LCP ≤ 2,5 s</h3>
+          <a href="https://web.dev/articles/lcp?hl=fr" target="_blank">Largest Contentful Paint</a> : temps d'affichage du plus grand élément visible, souvent l'image d'en-tête
+        </div>
+        <div class="carte accent">
+          <h3>CLS ≤ 0,1</h3>
+          <a href="https://web.dev/articles/cls?hl=fr" target="_blank">Cumulative Layout Shift</a> : les sauts de mise en page. Causes : images sans dimensions, polices qui changent de taille, contenu injecté
+        </div>
+        <div class="carte accent">
+          <h3>INP ≤ 200 ms</h3>
+          <a href="https://web.dev/articles/inp?hl=fr" target="_blank">Interaction to Next Paint</a> : délai entre un clic et l'affichage qui suit. Ennemi : le JavaScript long
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 26px;">
+        Ces trois mesures, relevées chez de vrais visiteurs, comptent dans le référencement de Google. Le seuil doit être tenu pour 75 % des visites.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Des images et une police qui ne font pas sauter la page</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/performance/index.html" data-titre="performance/index.html"><code class="language-html" data-line-numbers="">&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /&gt;
+    &lt;title&gt;Contrepoint 2027 – Festival de musiques actuelles&lt;/title&gt;
+    &lt;!-- La police est demandée tout de suite, avant le CSS --&gt;
+    &lt;link
+      rel="preload"
+      href="../../../assets/fonts/outfit-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    /&gt;
+    &lt;link rel="stylesheet" href="css/style.css" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;header class="hero"&gt;
+      &lt;!-- Image LCP : prioritaire, jamais en lazy --&gt;
+      &lt;picture&gt;
+        &lt;source
+          type="image/webp"
+          srcset="
+            https://picsum.photos/id/452/800/450.webp   800w,
+            https://picsum.photos/id/452/1600/900.webp 1600w
+          "
+          sizes="(min-width: 60rem) 60rem, 100vw"
+        /&gt;
+        &lt;img
+          src="https://picsum.photos/id/452/1600/900"
+          srcset="
+            https://picsum.photos/id/452/800/450   800w,
+            https://picsum.photos/id/452/1600/900 1600w
+          "
+          sizes="(min-width: 60rem) 60rem, 100vw"
+          width="1600"
+          height="900"
+          alt="La foule devant la grande scène"
+          fetchpriority="high"
+        /&gt;
+      &lt;/picture&gt;
+      &lt;h1&gt;Contrepoint 2027&lt;/h1&gt;
+    &lt;/header&gt;
+    &lt;main&gt;
+      &lt;h2&gt;Têtes d'affiche&lt;/h2&gt;
+      &lt;ul class="lineup"&gt;
+        &lt;li&gt;
+          &lt;!-- Sous la ligne de flottaison : chargée à l'approche --&gt;
+          &lt;img
+            src="https://picsum.photos/id/145/400/400"
+            width="400"
+            height="400"
+            alt="La guitare de Nadia Ferrant"
+            loading="lazy"
+          /&gt;
+          Nadia Ferrant
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;img
+            src="https://picsum.photos/id/453/400/400"
+            width="400"
+            height="400"
+            alt="Les Ondes Courtes sur scène"
+            loading="lazy"
+          /&gt;
+          Les Ondes Courtes
+        &lt;/li&gt;
+      &lt;/ul&gt;
+      &lt;section class="archives"&gt;
+        &lt;h2&gt;Les éditions précédentes&lt;/h2&gt;
+        &lt;p&gt;
+          Depuis 2015, Contrepoint réunit chaque année plus de 30 000
+          spectateurs sur les bords du canal.
+        &lt;/p&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>width</code> et <code>height</code> sur chaque image : la place est réservée (CLS)</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Responsive_images" target="_blank"><code>srcset</code> et <code>sizes</code></a> : le navigateur choisit le fichier adapté à l'écran. <code>&lt;picture&gt;</code> propose un format moderne (WebP, AVIF) avec repli</li>
+            <li><code>fetchpriority="high"</code> sur l'image LCP, <code>loading="lazy"</code> sur les images plus bas</li>
+            <li><code>preload</code> demande la police avant même de lire le CSS</li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/performance/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Polices et rendu différé en CSS</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours5/performance/css/style.css" data-titre="performance/css/style.css"><code class="language-css" data-line-numbers="">/* La police web ; swap : le texte s'affiche tout de suite */
+@font-face {
+  font-family: Outfit;
+  src: url("../../../../assets/fonts/outfit-latin.woff2")
+    format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Police de repli ajustée à Outfit : pas de saut au swap (CLS) */
+@font-face {
+  font-family: "Outfit fallback";
+  src: local("Arial");
+  size-adjust: 102%;
+  ascent-override: 98%;
+  descent-override: 26%;
+}
+
+body {
+  max-inline-size: 60rem;
+  margin: 0 auto;
+  font-family: Outfit, "Outfit fallback", sans-serif;
+}
+
+/* width et height du HTML donnent le ratio : la place est
+   réservée avant le chargement de l'image */
+img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.hero h1 {
+  margin: 1rem;
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+main {
+  padding: 1rem;
+}
+
+.lineup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+/* Hors de l'écran : rendu différé, place estimée à 30rem */
+.archives {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 30rem;
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@font-face/font-display" target="_blank"><code>font-display: swap</code></a> : le texte s'affiche tout de suite dans la police de repli</li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust" target="_blank"><code>size-adjust</code></a> et les <code>*-override</code> calent Arial sur les dimensions d'Outfit : le texte ne bouge plus quand la vraie police arrive. Valeurs calculées avec un outil comme <a href="https://github.com/unjs/fontaine" target="_blank">Fontaine</a></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/content-visibility" target="_blank"><code>content-visibility: auto</code></a> : une section hors de l'écran n'est mise en page qu'à l'approche <span class="baseline">Baseline 2024</span></li>
+          </ul>
+          <a class="ouvrir" href="../demos/cours5/performance/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Mesurer, puis alléger</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><strong>Mesurer</strong></p>
+          <ul class="dense">
+            <li><a href="https://developer.chrome.com/docs/lighthouse/overview?hl=fr" target="_blank">Lighthouse</a> (DevTools) : un score et une liste de corrections, en navigation privée, en simulant un mobile</li>
+            <li>Panneau <a href="https://developer.chrome.com/docs/devtools/performance?hl=fr" target="_blank">Performance</a> : les Core Web Vitals en direct. L'élément LCP et les décalages y sont surlignés</li>
+            <li>En CI, Lighthouse CI fait échouer une pull request qui dégrade le score</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Alléger le CSS</strong></p>
+          <ul class="dense">
+            <li>Le CSS <strong>bloque l'affichage</strong> : la page attend toutes les feuilles du <code>&lt;head&gt;</code></li>
+            <li><strong>CSS critique</strong> : les règles du haut de page en ligne dans le <code>&lt;head&gt;</code>, le reste chargé ensuite</li>
+            <li>Un seul fichier minifié et compressé, sans règles mortes. Pas de <code>@import</code> en cascade dans le CSS final</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>À retenir</h2>
+    <div class="corps">
+      <ul>
+        <li><strong>HTML, puis CSS, puis JavaScript</strong> : <code>&lt;details&gt;</code>, <code>&lt;dialog&gt;</code> et la Popover API couvrent la plupart des composants, avec le clavier et l'accessibilité compris</li>
+        <li><strong>Amélioration progressive</strong> : anchor positioning et View Transitions embellissent, <code>@supports</code> et un test de l'API assurent le repli</li>
+        <li><strong>JS natif</strong> : délégation d'événements et état porté par les attributs ARIA, que le CSS réutilise</li>
+        <li><strong>Web Components</strong> : réutilisables partout. Shadow DOM pour un widget isolé, Light DOM pour enrichir le HTML de votre framework</li>
+        <li><strong>Performance</strong> : dimensions des images, police de repli ajustée, image LCP prioritaire. Mesurez avec Lighthouse</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

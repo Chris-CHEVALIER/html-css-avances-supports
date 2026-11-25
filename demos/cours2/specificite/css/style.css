@@ -1,0 +1,61 @@
+/* APRÈS : :where() rend les styles du menu faciles à surcharger */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1b1e3c;
+}
+
+main {
+  padding: 2rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #1b1e3c;
+}
+
+.logo {
+  margin: 0;
+  font-weight: 800;
+  color: #fff;
+}
+
+.menu ul {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* (0,0,1) : :where() compte pour zéro */
+:where(.menu) a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* (0,1,1) : seul l'attribut compte, :where() vaut zéro */
+:where(.menu) a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* (0,2,1) : :is() prend son argument le plus fort (.menu) */
+:is(.menu, .site-footer) a:hover {
+  text-decoration: underline;
+}
+
+/* (0,1,0) : gagne désormais contre :where(.menu) a */
+.button {
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1b1e3c;
+  background: #fff;
+}

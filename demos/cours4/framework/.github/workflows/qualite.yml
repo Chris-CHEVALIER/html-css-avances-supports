@@ -1,0 +1,51 @@
+# Contrôle qualité à chaque push et pull request,
+# déploiement sur GitHub Pages depuis main
+name: Qualité et déploiement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - run: npx lhci autorun
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: rapports
+          path: |
+            playwright-report/
+            lhci/
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: .
+
+  deploiement:
+    needs: qualite
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

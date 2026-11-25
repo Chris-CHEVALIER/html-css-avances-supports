@@ -1,0 +1,949 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sass, design tokens et qualité – HTML &amp; CSS avancés</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .reveal .demo { display: inline-block; margin-top: 10px; font-size: 18px; font-weight: 700; }
+    .reveal .couches { display: flex; flex-direction: column; gap: 6px; }
+    .reveal .couches div { padding: 7px 16px; border-radius: 8px; font-size: 19px; background: var(--clair); border-left: 6px solid var(--accent); }
+    .reveal .couches div:last-child { border-left-color: var(--corail); background: var(--corail-clair); }
+    .reveal .fleche { text-align: center; font-size: 30px; color: var(--accent-texte); line-height: 1; padding-top: 50px; }
+  </style>
+</head>
+<body data-pied="HTML &amp; CSS avancés · Cours 4 · Sass, design tokens et qualité">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Sass, design tokens et chaîne qualité</h1>
+    <div class="sous-titre">
+      <span class="code-module">HTML &amp; CSS avancés</span> – Cours 4<br>
+      Chris CHEVALIER · chevalier@chris-freelance.com
+    </div>
+    <aside class="notes">
+      Le cours prépare directement le projet de l'après-midi : chaque groupe démarre son framework avec cette architecture et cette chaîne qualité.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Sass moderne</li>
+      <li>Design tokens et architecture</li>
+      <li>La chaîne qualité</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">01</div>
+    <h2>Sass moderne</h2>
+    <div class="sous-titre">Ce que le préprocesseur apporte encore en 2026</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Sass a-t-il encore sa place ?</h2>
+    <div class="corps">
+      <p><a href="https://sass-lang.com/documentation/" target="_blank">Sass</a> est un <strong>préprocesseur</strong> : on écrit du SCSS, un compilateur produit le CSS que lit le navigateur. Depuis, le CSS natif a rattrapé une partie de son retard.</p>
+      <div class="colonnes" style="margin-top: 18px;">
+        <div class="carte accent">
+          <h3>Devenu natif</h3>
+          <ul class="dense">
+            <li>Variables : <a href="https://developer.mozilla.org/fr/docs/Web/CSS/Using_CSS_custom_properties" target="_blank">custom properties</a></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_nesting" target="_blank">Imbrication</a> des règles <span class="petit muet">(Baseline 2023)</span></li>
+            <li>Calculs : <code>calc()</code>, <code>clamp()</code>, <code>min()</code></li>
+            <li>Couleurs dérivées : <a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/color-mix" target="_blank"><code>color-mix()</code></a></li>
+          </ul>
+        </div>
+        <div class="carte corail">
+          <h3>Propre à Sass</h3>
+          <ul class="dense">
+            <li><strong>Modules</strong> : un fichier par composant, des noms isolés</li>
+            <li><strong>Maps</strong> et <strong>boucles</strong> pour générer des classes</li>
+            <li><strong>Fonctions</strong> et <strong>mixins</strong> réutilisables</li>
+            <li>Erreurs <strong>à la compilation</strong>, avant la mise en ligne</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 20px;">
+        Notre règle : ce qui doit vivre dans le navigateur (thème, valeurs modifiables en JS) passe par le CSS natif. Ce qui sert à <strong>écrire</strong> le CSS passe par Sass.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Variable Sass ou custom property ?</h2>
+    <div class="corps">
+      <table>
+        <tr><th></th><th>Variable Sass <code style="background:none;color:#fff">$space-m</code></th><th>Custom property <code style="background:none;color:#fff">--space-m</code></th></tr>
+        <tr><td><strong>Existe</strong></td><td>À la compilation, puis disparaît</td><td>Dans le navigateur, à l'exécution</td></tr>
+        <tr><td><strong>Cascade</strong></td><td>Aucune : une valeur par portée Sass</td><td>Héritée et redéfinissable par sélecteur ou media query</td></tr>
+        <tr><td><strong>JavaScript</strong></td><td>Inaccessible</td><td>Lisible et modifiable (<code>style.setProperty</code>)</td></tr>
+        <tr><td><strong>Dans <code>@media</code></strong></td><td>Oui : <code>(width &gt;= $bp-m)</code></td><td>Non : <code>var()</code> est refusé dans une condition</td></tr>
+        <tr><td><strong>Idéale pour</strong></td><td>Points de rupture, listes à parcourir</td><td>Couleurs, espaces, thèmes clair et sombre</td></tr>
+      </table>
+      <div class="encadre neutre" style="margin-top: 20px;">
+        Les deux se complètent : nos tokens sont <strong>déclarés en Sass</strong> (maps) puis <strong>publiés en custom properties</strong> par une boucle.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les modules : <code>@use</code> et <code>@forward</code></h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul>
+            <li><a href="https://sass-lang.com/documentation/at-rules/use/" target="_blank"><code>@use "chemin"</code></a> charge un fichier <strong>une seule fois</strong> et range ses membres sous un <strong>espace de noms</strong> : <code>tools.rem()</code></li>
+            <li><a href="https://sass-lang.com/documentation/at-rules/forward/" target="_blank"><code>@forward</code></a> réexporte les membres d'un fichier, par exemple depuis un <code>_index.scss</code></li>
+            <li>Un <strong>partial</strong> commence par <code>_</code> : il n'est jamais compilé seul, seulement chargé</li>
+            <li>Modules intégrés : <code>sass:map</code>, <code>sass:math</code>, <code>sass:color</code>…</li>
+          </ul>
+        </div>
+        <div>
+          <div class="encadre corail">
+            <strong><code>@import</code> est déprécié</strong> dans <a href="https://sass-lang.com/documentation/breaking-changes/import/" target="_blank">Dart Sass</a> et disparaîtra en version 3. Il chargeait tout dans un espace global : collisions de noms, CSS dupliqué, ordre fragile.
+          </div>
+          <div class="encadre neutre" style="margin-top: 14px;">
+            Pour migrer un ancien projet : <a href="https://sass-lang.com/documentation/cli/migrator/" target="_blank"><code>npx sass-migrator module</code></a>. LibSass et node-sass sont abandonnés : seul <strong>Dart Sass</strong> (paquet <code>sass</code>) est maintenu.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Fonctions et mixins</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/abstracts/_tools.scss" data-titre="framework/scss/abstracts/_tools.scss"><code class="language-scss" data-line-numbers="">// Outils Sass : ils ne produisent aucun CSS tant qu'on ne
+// les appelle pas
+@use "sass:map";
+@use "sass:math";
+
+$breakpoints: (
+  "m": 48rem,
+  "l": 64rem,
+);
+
+// Convertit une mesure de maquette en rem (16 px = 1 rem)
+@function rem($px) {
+  @return math.div($px, 16px) * 1rem;
+}
+
+// Requête média à partir du nom d'un point de rupture
+@mixin from($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Point de rupture inconnu : #{$name}";
+  }
+
+  @media (width &gt;= map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Anneau de focus visible et contrasté (critère WCAG 2.4.7)
+@mixin focus-ring($color: var(--color-focus)) {
+  outline: 3px solid $color;
+  outline-offset: 2px;
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://sass-lang.com/documentation/at-rules/function/" target="_blank"><code>@function</code></a> renvoie une <strong>valeur</strong> : <code>rem(24px)</code> donne <code>1.5rem</code></li>
+            <li><code>math.div</code> remplace le <code>/</code>, réservé aux séparateurs CSS (<code>grid-area: 1 / 3</code>)</li>
+            <li><a href="https://sass-lang.com/documentation/at-rules/mixin/" target="_blank"><code>@mixin</code></a> produit des <strong>déclarations</strong>, insérées par <code>@include</code></li>
+            <li><code>@content</code> reçoit le bloc écrit à l'appel</li>
+            <li><code>@error</code> arrête la compilation sur un nom inconnu</li>
+          </ul>
+          <a class="demo" href="../demos/cours4/framework/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Placeholders, <code>@extend</code> et suffixes</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/components/_button.scss" data-titre="framework/scss/components/_button.scss"><code class="language-scss" data-line-numbers="">@use "../abstracts/tools";
+
+// Une variante = un fond et une couleur de texte
+@mixin variant($background, $color) {
+  background: $background;
+  color: $color;
+
+  &amp;:hover {
+    background: color-mix(in oklch, $background, black 15%);
+  }
+}
+
+@layer components {
+  // Un placeholder ne produit rien tant qu'on ne l'étend pas
+  %button-base {
+    display: inline-flex;
+    gap: var(--space-xs);
+    align-items: center;
+    padding: tools.rem(10px) tools.rem(20px);
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .button {
+    @extend %button-base;
+    @include variant(var(--color-primary), var(--color-on-primary));
+
+    // &amp;--accent devient .button--accent : propre à Sass, le
+    // nesting natif ne sait pas coller un suffixe
+    &amp;--accent {
+      @include variant(var(--color-accent), var(--color-on-primary));
+    }
+
+    &amp;--ghost {
+      border-color: currentcolor;
+      background: transparent;
+      color: var(--color-primary);
+    }
+
+    &amp;:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Un <strong>placeholder</strong> <code>%button-base</code> n'existe pas dans le CSS final</li>
+            <li><a href="https://sass-lang.com/documentation/at-rules/extend/" target="_blank"><code>@extend</code></a> ajoute <code>.button</code> à son sélecteur</li>
+            <li><code>&amp;--accent</code> colle un suffixe : pratique pour le nommage <a href="https://getbem.com/naming/" target="_blank">BEM</a></li>
+          </ul>
+          <div class="encadre corail" style="margin-top: 10px;">
+            <strong>Avec prudence</strong> : <code>@extend</code> regroupe des sélecteurs éloignés et ne traverse pas les <code>@media</code>. Dans le doute, préférez un mixin.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Générer des classes avec <code>@each</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/utilities/_utilities.scss" data-titre="framework/scss/utilities/_utilities.scss"><code class="language-scss" data-line-numbers="">@use "sass:map";
+@use "../tokens";
+
+@layer utilities {
+  // Une classe de marge par espace : .mt-2xs, .mt-xs… .mt-xl
+  @each $name in map.keys(tokens.$spaces) {
+    .mt-#{$name} {
+      margin-block-start: var(--space-#{$name});
+    }
+  }
+
+  // Masque un texte à l'écran sans le cacher aux lecteurs
+  // d'écran
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://sass-lang.com/documentation/at-rules/control/each/" target="_blank"><code>@each</code></a> parcourt une liste ou une map</li>
+            <li><code>map.keys</code> donne les noms des espaces : six classes produites</li>
+            <li><code>#{$name}</code> : l'<strong>interpolation</strong> insère une valeur dans un sélecteur ou un nom</li>
+            <li>Ajouter un espace dans la map ajoute la classe, sans rien recopier</li>
+          </ul>
+          <div class="encadre neutre" style="margin-top: 10px;">
+            <code>.visually-hidden</code> masque un texte à l'écran mais le laisse aux <strong>lecteurs d'écran</strong>, contrairement à <code>display: none</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Compiler</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <pre class="compact" data-titre="Terminal"><code class="language-bash">npm install --save-dev sass
+npx sass scss/main.scss dist/ui.css
+npx sass --watch scss/main.scss dist/ui.css</code></pre>
+          <ul class="dense">
+            <li><code>--watch</code> recompile à chaque enregistrement</li>
+            <li><code>--style=compressed</code> minifie pour la production</li>
+            <li>Une erreur de compilation donne le fichier et la ligne</li>
+          </ul>
+        </div>
+        <div>
+          <div class="carte accent">
+            <h3>Avec Vite</h3>
+            <a href="https://vite.dev/guide/features.html#css-pre-processors" target="_blank">Vite</a> compile le SCSS dès qu'on installe <code>sass</code> : on écrit <code>&lt;link rel="stylesheet" href="/scss/main.scss"&gt;</code> et le serveur de développement recharge la page à chaud.
+          </div>
+          <div class="encadre corail" style="margin-top: 16px;">
+            Ne modifiez jamais <code>dist/</code> à la main : il est écrasé à la compilation suivante.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les scripts du projet</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/package.json" data-titre="framework/package.json"><code class="language-json" data-line-numbers="">{
+  "name": "contrepoint-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "sass --no-source-map scss/main.scss dist/ui.css",
+    "watch": "sass --watch scss/main.scss dist/ui.css",
+    "lint:css": "stylelint \"scss/**/*.scss\"",
+    "lint:html": "html-validate \"*.html\"",
+    "lint": "npm run lint:css &amp;&amp; npm run lint:html",
+    "test": "playwright test",
+    "serve": "http-server -p 4173 -c-1 ."
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
+    "@lhci/cli": "^0.16.1",
+    "@playwright/test": "^1.65.1",
+    "html-validate": "^11.22.1",
+    "http-server": "^14.1.1",
+    "sass": "^1.108.2",
+    "stylelint": "^18.1.0",
+    "stylelint-config-standard-scss": "^18.0.0"
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>npm run build</code> : une compilation</li>
+            <li><code>npm run watch</code> : compilation continue pendant le développement</li>
+            <li><code>npm run lint</code> : Stylelint puis html-validate</li>
+            <li><code>npm test</code> : tests Playwright</li>
+            <li>Toutes les dépendances sont de <strong>développement</strong> : rien n'est envoyé au navigateur</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">02</div>
+    <h2>Design tokens et architecture</h2>
+    <div class="sous-titre">Des décisions de design nommées, partagées et versionnées</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Trois niveaux de tokens</h2>
+    <div class="corps">
+      <p>Un <strong>design token</strong> est une décision de design nommée : une couleur, un espace, un rayon. Designers et développeurs utilisent <strong>le même nom</strong>.</p>
+      <div class="colonnes c3" style="margin-top: 14px;">
+        <div class="carte">
+          <h3>Primitifs</h3>
+          Les valeurs brutes de la charte<br><code>--palette-teal-700</code><br><span class="petit muet">« quelle valeur ? »</span>
+        </div>
+        <div class="carte accent">
+          <h3>Sémantiques</h3>
+          Un rôle dans l'interface<br><code>--color-primary</code><br><span class="petit muet">« à quoi sert-elle ? »</span>
+        </div>
+        <div class="carte corail">
+          <h3>De composant</h3>
+          Un réglage local<br><code>--button-background</code><br><span class="petit muet">« où l'utilise-t-on ? »</span>
+        </div>
+      </div>
+      <ul style="margin-top: 22px;">
+        <li>Un composant n'utilise <strong>jamais un primitif</strong> : passer en thème sombre ne change que les sémantiques</li>
+        <li>Dans Figma, ce sont les <strong>variables</strong> : relevez leurs noms dans la maquette de votre projet</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Un format commun : DTCG</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/tokens.json" data-titre="framework/tokens.json"><code class="language-json" data-line-numbers="">{
+  "color": {
+    "palette": {
+      "teal-700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.48, 0.1, 185]
+        }
+      }
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "{color.palette.teal-700}",
+      "$description": "Liens et boutons principaux"
+    }
+  },
+  "space": {
+    "m": {
+      "$type": "dimension",
+      "$value": { "value": 1, "unit": "rem" }
+    }
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Le <a href="https://www.designtokens.org/" target="_blank">Design Tokens Community Group</a> du W3C a publié en 2025 la première version stable de son <strong>format JSON</strong></li>
+            <li><code>$type</code> et <code>$value</code> décrivent chaque token</li>
+            <li><code>{color.palette.teal-700}</code> est un <strong>alias</strong> : le token sémantique pointe vers le primitif</li>
+            <li>Des outils comme <a href="https://styledictionary.com/" target="_blank">Style Dictionary</a> le transforment en CSS, Sass, iOS ou Android</li>
+          </ul>
+          <div class="encadre neutre" style="margin-top: 8px;">Nous écrivons nos tokens en Sass. Ce fichier montre le format d'échange.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les primitifs dans une map</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/tokens/_primitives.scss" data-titre="framework/scss/tokens/_primitives.scss"><code class="language-scss" data-line-numbers="">// Primitifs : les valeurs brutes de la charte, sans intention
+
+// Couleurs
+$colors: (
+  "ink-900": oklch(22% 0.03 280deg),
+  "ink-600": oklch(45% 0.03 280deg),
+  "paper-50": oklch(98% 0.01 90deg),
+  "paper-100": oklch(94% 0.02 90deg),
+  "teal-700": oklch(48% 0.1 185deg),
+  "coral-500": oklch(68% 0.17 40deg),
+  "coral-700": oklch(52% 0.17 40deg),
+);
+
+// Espacements
+$spaces: (
+  "2xs": 0.25rem,
+  "xs": 0.5rem,
+  "s": 0.75rem,
+  "m": 1rem,
+  "l": 1.5rem,
+  "xl": 2.5rem,
+);
+
+// Rayons des angles
+$radii: (
+  "s": 0.25rem,
+  "m": 0.5rem,
+  "l": 1rem,
+  "pill": 999px,
+);</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Une <a href="https://sass-lang.com/documentation/values/maps/" target="_blank">map</a> associe des clés à des valeurs</li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/oklch" target="_blank"><code>oklch()</code></a> : luminosité, chroma, teinte. Même luminosité = même contraste perçu d'une teinte à l'autre</li>
+            <li>Les noms décrivent la valeur (<code>teal-700</code>), pas l'usage</li>
+          </ul>
+          <a class="demo" href="../demos/cours4/framework/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Les tokens sémantiques</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/tokens/_semantic.scss" data-titre="framework/scss/tokens/_semantic.scss"><code class="language-scss" data-line-numbers="">// Sémantiques : un rôle dans l'interface, relié à un primitif
+$colors: (
+  "text": "ink-900",
+  "text-muted": "ink-600",
+  "surface": "paper-50",
+  "surface-alt": "paper-100",
+  "primary": "teal-700",
+  "on-primary": "paper-50",
+  "accent": "coral-700",
+  "focus": "coral-500",
+);</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Chaque rôle désigne un primitif <strong>par son nom</strong></li>
+            <li>Un thème sombre serait une seconde map avec les mêmes rôles</li>
+            <li><code>on-primary</code> : la couleur du texte posé <strong>sur</strong> la couleur primaire. Vérifiez son contraste (4,5:1 pour du texte, <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" target="_blank">critère 1.4.3</a>)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Réexporter avec <code>_index.scss</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/tokens/_index.scss" data-titre="framework/scss/tokens/_index.scss"><code class="language-scss" data-line-numbers="">// Point d'entrée du dossier : @use "tokens" charge ce fichier
+@forward "primitives";
+@forward "semantic" as semantic-*;</code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>@use "tokens"</code> charge <code>tokens/_index.scss</code></li>
+            <li>Les deux fichiers déclarent <code>$colors</code> : <code>as semantic-*</code> préfixe ceux du second pour éviter la collision</li>
+            <li>On écrit ensuite <code>tokens.$colors</code> et <code>tokens.$semantic-colors</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Publier les tokens en custom properties</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/tokens/_custom-properties.scss" data-titre="framework/scss/tokens/_custom-properties.scss"><code class="language-scss" data-line-numbers="">// Génère les custom properties à partir des maps de tokens
+@use "index" as tokens;
+
+@layer tokens {
+  :root {
+    @each $name, $value in tokens.$colors {
+      --palette-#{$name}: #{$value};
+    }
+
+    @each $name, $value in tokens.$spaces {
+      --space-#{$name}: #{$value};
+    }
+
+    @each $name, $value in tokens.$radii {
+      --radius-#{$name}: #{$value};
+    }
+
+    // Un token sémantique pointe vers un primitif : var(), pas
+    // de valeur recopiée
+    @each $role, $palette in tokens.$semantic-colors {
+      --color-#{$role}: var(--palette-#{$palette});
+    }
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Quatre boucles produisent toutes les variables de <code>:root</code></li>
+            <li><code>#{$value}</code> est obligatoire : une custom property reçoit son texte tel quel</li>
+            <li>Le sémantique pointe vers le primitif avec <code>var()</code> : changer un primitif dans le navigateur met à jour ses rôles</li>
+            <li>Ouvrez les DevTools sur la démo : onglet <strong>Éléments</strong>, sélectionnez <code>html</code></li>
+          </ul>
+          <a class="demo" href="../demos/cours4/framework/dist/ui.css" target="_blank">Voir le CSS compilé</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'architecture en couches</h2>
+    <div class="corps">
+      <div class="colonnes" style="grid-template-columns: 1fr 1.2fr;">
+        <div class="couches">
+          <div><strong>reset</strong> · remise à zéro</div>
+          <div><strong>tokens</strong> · custom properties</div>
+          <div><strong>base</strong> · éléments HTML nus</div>
+          <div><strong>layout</strong> · conteneurs, piles, grilles</div>
+          <div><strong>components</strong> · bouton, carte…</div>
+          <div><strong>utilities</strong> · classes d'appoint, gagnent toujours</div>
+        </div>
+        <div>
+          <ul class="dense">
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@layer" target="_blank"><code>@layer</code></a> range les règles dans des couches ordonnées</li>
+            <li>Entre deux couches, la <strong>dernière déclarée gagne</strong>, quelle que soit la spécificité : <code>.mt-l</code> l'emporte sur <code>.card p</code></li>
+            <li>Fini les <code>!important</code> et les sélecteurs à rallonge pour « gagner »</li>
+            <li>Les styles hors couche l'emportent sur toutes les couches : pratique pour un correctif local</li>
+          </ul>
+          <div class="encadre neutre" style="margin-top: 8px;">Inspirée d'<a href="https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/" target="_blank">ITCSS</a> : du plus générique au plus spécifique.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Déclarer l'ordre des couches</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/base/_reset.scss" data-titre="framework/scss/base/_reset.scss"><code class="language-scss" data-line-numbers="">// Premier fichier chargé : il fixe l'ordre des couches.
+// Une couche déclarée plus loin l'emporte, quelle que soit
+// la spécificité de ses sélecteurs.
+@layer reset, tokens, base, layout, components, utilities;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  figure,
+  ul {
+    margin: 0;
+  }
+
+  img {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li>La première ligne fixe l'ordre une fois pour toutes</li>
+            <li>Le reset est chargé en premier : l'ordre est connu avant toute règle</li>
+            <li><code>prefers-reduced-motion</code> coupe les animations pour les personnes sensibles au mouvement</li>
+          </ul>
+          <div class="encadre corail" style="margin-top: 10px;">
+            Les deux <code>!important</code> sont <strong>voulus</strong> : un réglage d'accessibilité doit l'emporter partout. C'est la seule exception autorisée par notre Stylelint.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le point d'entrée</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/scss/main.scss" data-titre="framework/scss/main.scss"><code class="language-scss" data-line-numbers="">// Point d'entrée du framework, compilé en dist/ui.css
+@use "base/reset";
+@use "tokens/custom-properties";
+@use "base/base";
+@use "layout/layout";
+@use "components/button";
+@use "components/card";
+@use "utilities/utilities";</code></pre>
+        <div>
+          <ul class="dense">
+            <li>Un seul fichier compilé : <code>main.scss</code>, sans <code>_</code></li>
+            <li>Un <code>@use</code> par partial, dans l'ordre des couches</li>
+            <li>Chaque partial range ses règles dans <strong>sa</strong> couche : <code>@layer components { … }</code></li>
+            <li>Les mixins et fonctions sont chargés là où on les utilise, pas ici</li>
+          </ul>
+          <a class="demo" href="../demos/cours4/framework/" target="_blank">Ouvrir la démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">03</div>
+    <h2>La chaîne qualité</h2>
+    <div class="sous-titre">Vérifier automatiquement ce qu'un œil fatigué laisse passer</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Six contrôles à chaque push</h2>
+    <div class="corps">
+      <div class="frise" style="grid-template-columns: repeat(6, 1fr);">
+        <div class="etape"><div class="date">Stylelint</div>Erreurs et conventions du CSS et du SCSS</div>
+        <div class="etape"><div class="date">html-validate</div>HTML valide et règles d'accessibilité statiques</div>
+        <div class="etape"><div class="date">Playwright</div>Régression visuelle : la page a-t-elle changé ?</div>
+        <div class="etape"><div class="date">axe</div>Accessibilité de la page rendue</div>
+        <div class="etape"><div class="date">Lighthouse</div>Performance, accessibilité, bonnes pratiques, SEO</div>
+        <div class="etape corail"><div class="date">Pages</div>Déploiement si tout est vert</div>
+      </div>
+      <div class="colonnes" style="margin-top: 30px;">
+        <div class="encadre">Une <strong>intégration continue</strong> (CI) lance ces contrôles sur un serveur à chaque push. Une pull request rouge ne se fusionne pas.</div>
+        <div class="encadre corail">Les outils ne détectent qu'<strong>une partie</strong> des problèmes d'accessibilité. Le test au clavier et au lecteur d'écran reste indispensable.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Stylelint</h2>
+    <div class="corps">
+      <div class="colonnes code-large">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/.stylelintrc.json" data-titre="framework/.stylelintrc.json"><code class="language-json" data-line-numbers="">{
+  "extends": ["stylelint-config-standard-scss"],
+  "ignoreFiles": ["dist/**"],
+  "rules": {
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9-]+)?(--[a-z0-9-]+)?$",
+      { "message": "Classes en BEM : bloc__element--modificateur" }
+    ],
+    "declaration-no-important": true
+  },
+  "overrides": [
+    {
+      "files": ["scss/base/_reset.scss"],
+      "rules": { "declaration-no-important": null }
+    }
+  ]
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://stylelint.io/" target="_blank">Stylelint</a> repère les erreurs (propriété inconnue, doublon) et impose les conventions</li>
+            <li>La config <code>standard-scss</code> : les règles communes, adaptées au SCSS</li>
+            <li>Une expression régulière impose le nommage BEM</li>
+            <li><code>overrides</code> lève une règle pour un seul fichier</li>
+            <li><code>--fix</code> corrige une partie automatiquement</li>
+            <li><a href="https://html-validate.org/" target="_blank">html-validate</a> se règle de même dans <code>.htmlvalidate.json</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Playwright : la configuration</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/playwright.config.js" data-titre="framework/playwright.config.js"><code class="language-javascript" data-line-numbers="">import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "tests",
+  // Une seule capture de référence par test, quel que soit le
+  // système (sinon Playwright ajoute -darwin, -linux…)
+  snapshotPathTemplate: "{testDir}/captures/{arg}{ext}",
+  expect: {
+    toHaveScreenshot: { maxDiffPixelRatio: 0.01 },
+  },
+  use: { baseURL: "http://localhost:4173" },
+  projects: [
+    { name: "ordinateur", use: { ...devices["Desktop Chrome"] } },
+    { name: "mobile", use: { ...devices["Pixel 7"] } },
+  ],
+  // Lance un serveur local avant les tests, l'arrête après
+  webServer: {
+    command: "npm run serve",
+    url: "http://localhost:4173",
+    reuseExistingServer: !process.env.CI,
+  },
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://playwright.dev/docs/test-snapshots" target="_blank">Playwright</a> pilote un vrai navigateur</li>
+            <li>Deux <strong>projets</strong> : chaque test tourne sur ordinateur et sur mobile</li>
+            <li><code>webServer</code> lance le site avant les tests</li>
+            <li><code>maxDiffPixelRatio</code> tolère 1 % de pixels différents</li>
+          </ul>
+          <div class="encadre corail" style="margin-top: 8px;">Le rendu des polices varie d'un système à l'autre. Générez les captures de référence là où tournent les tests (la CI Linux) avec <code>--update-snapshots</code>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Playwright : les tests</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/tests/qualite.spec.js" data-titre="framework/tests/qualite.spec.js"><code class="language-javascript" data-line-numbers="">import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("la page n'a pas changé d'apparence", async ({ page }, info) =&gt; {
+  await page.goto("/");
+  // Une capture par projet : programme-ordinateur.png…
+  await expect(page).toHaveScreenshot(
+    `programme-${info.project.name}.png`,
+    { fullPage: true },
+  );
+});
+
+test("aucune erreur d'accessibilité détectée par axe", async ({
+  page,
+}) =&gt; {
+  await page.goto("/");
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://playwright.dev/docs/api/class-pageassertions#page-assertions-to-have-screenshot-1" target="_blank"><code>toHaveScreenshot</code></a> compare la page à une capture enregistrée. La première exécution la crée</li>
+            <li>Un token modifié par erreur ? Le test échoue et le rapport montre la différence</li>
+            <li><a href="https://github.com/dequelabs/axe-core-npm/tree/develop/packages/playwright" target="_blank"><code>@axe-core/playwright</code></a> audite la page rendue selon WCAG 2.2 AA</li>
+          </ul>
+          <pre class="compact" data-titre="Terminal"><code class="language-bash">npx playwright install chromium
+npm test
+npx playwright show-report</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Lighthouse CI</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/lighthouserc.json" data-titre="framework/lighthouserc.json"><code class="language-json" data-line-numbers="">{
+  "ci": {
+    "collect": {
+      "staticDistDir": ".",
+      "url": ["http://localhost/index.html"],
+      "numberOfRuns": 1
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["error", { "minScore": 0.9 }],
+        "categories:performance": ["warn", { "minScore": 0.9 }],
+        "categories:seo": ["warn", { "minScore": 0.9 }]
+      }
+    },
+    "upload": { "target": "filesystem", "outputDir": "lhci" }
+  }
+}</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://github.com/GoogleChrome/lighthouse-ci" target="_blank">Lighthouse CI</a> lance l'audit Lighthouse de Chrome sans intervention</li>
+            <li><code>staticDistDir</code> : il sert lui-même les fichiers</li>
+            <li><code>error</code> fait échouer la CI, <code>warn</code> se contente d'un avertissement</li>
+            <li>Les rapports restent dans le dossier <code>lhci/</code> au lieu d'être publiés sur un stockage public</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Le workflow GitHub Actions</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours4/framework/.github/workflows/qualite.yml" data-titre="framework/.github/workflows/qualite.yml"><code class="language-yaml" data-line-numbers=""># Contrôle qualité à chaque push et pull request,
+# déploiement sur GitHub Pages depuis main
+name: Qualité et déploiement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - run: npx lhci autorun
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: rapports
+          path: |
+            playwright-report/
+            lhci/
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: .
+
+  deploiement:
+    needs: qualite
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4</code></pre>
+        <div>
+          <ul class="dense">
+            <li><a href="https://docs.github.com/fr/actions" target="_blank">GitHub Actions</a> lit les fichiers de <code>.github/workflows/</code></li>
+            <li>Un <strong>job</strong> enchaîne des <strong>étapes</strong> sur une machine Ubuntu neuve</li>
+            <li>En cas d'échec, les rapports sont téléchargeables dans l'onglet <strong>Actions</strong></li>
+            <li>Sur <code>main</code>, le second job publie le site sur <a href="https://docs.github.com/fr/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow" target="_blank">GitHub Pages</a></li>
+          </ul>
+          <div class="encadre neutre" style="margin-top: 8px;">Dans le dépôt : <strong>Settings → Pages → Source : GitHub Actions</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>À retenir</h2>
+    <div class="corps">
+      <ul>
+        <li><strong>Dart Sass</strong> et ses modules : <code>@use</code>, <code>@forward</code>, partials. <code>@import</code> est déprécié</li>
+        <li>Sass sert à <strong>écrire</strong> le CSS (maps, boucles, fonctions, mixins). Les custom properties le font <strong>vivre</strong> dans le navigateur</li>
+        <li>Tokens en trois niveaux : <strong>primitifs → sémantiques → composants</strong>. Un composant n'utilise jamais un primitif</li>
+        <li><code>@layer</code> ordonne la cascade : la couche déclarée en dernier gagne, quelle que soit la spécificité</li>
+        <li>Une CI verte à chaque push : Stylelint, html-validate, régression visuelle, axe, Lighthouse, puis déploiement</li>
+        <li>Les outils ne remplacent pas le test au clavier et au lecteur d'écran</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chevalier@chris-freelance.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/theme.js"></script>
+</body>
+</html>

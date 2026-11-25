@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Programme – Contrepoint</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/tabs.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <h1>Programme</h1>
+      <div role="tablist" aria-label="Jours du festival">
+        <button
+          id="tab-fri"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-fri"
+        >
+          Vendredi
+        </button>
+        <button
+          id="tab-sat"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-sat"
+          tabindex="-1"
+        >
+          Samedi
+        </button>
+        <button
+          id="tab-sun"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-sun"
+          tabindex="-1"
+        >
+          Dimanche
+        </button>
+      </div>
+      <div
+        id="panel-fri"
+        role="tabpanel"
+        aria-labelledby="tab-fri"
+        tabindex="0"
+      >
+        <ul>
+          <li>19 h · Les Ondes Courtes</li>
+          <li>21 h · Nadia Ferrant</li>
+          <li>23 h · Kilomètre Zéro</li>
+        </ul>
+      </div>
+      <div
+        id="panel-sat"
+        role="tabpanel"
+        aria-labelledby="tab-sat"
+        tabindex="0"
+        hidden
+      >
+        <ul>
+          <li>18 h · Fanfare Bric-à-Brac</li>
+          <li>20 h 30 · Solène et les Cordes</li>
+          <li>23 h · DJ Marée Basse</li>
+        </ul>
+      </div>
+      <div
+        id="panel-sun"
+        role="tabpanel"
+        aria-labelledby="tab-sun"
+        tabindex="0"
+        hidden
+      >
+        <ul>
+          <li>15 h · Chorale du Canal</li>
+          <li>17 h · Trio Lune Rousse</li>
+          <li>19 h · Clôture : Les Ondes Courtes</li>
+        </ul>
+      </div>
+    </main>
+  </body>
+</html>

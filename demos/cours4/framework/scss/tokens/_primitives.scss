@@ -1,0 +1,30 @@
+// Primitifs : les valeurs brutes de la charte, sans intention
+
+// Couleurs
+$colors: (
+  "ink-900": oklch(22% 0.03 280deg),
+  "ink-600": oklch(45% 0.03 280deg),
+  "paper-50": oklch(98% 0.01 90deg),
+  "paper-100": oklch(94% 0.02 90deg),
+  "teal-700": oklch(48% 0.1 185deg),
+  "coral-500": oklch(68% 0.17 40deg),
+  "coral-700": oklch(52% 0.17 40deg),
+);
+
+// Espacements
+$spaces: (
+  "2xs": 0.25rem,
+  "xs": 0.5rem,
+  "s": 0.75rem,
+  "m": 1rem,
+  "l": 1.5rem,
+  "xl": 2.5rem,
+);
+
+// Rayons des angles
+$radii: (
+  "s": 0.25rem,
+  "m": 0.5rem,
+  "l": 1rem,
+  "pill": 999px,
+);

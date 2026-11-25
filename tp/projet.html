@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projet – Langages HTML & CSS avancés</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="titre">
+    <h1>Projet – Votre framework CSS</h1>
+    <p><span class="code-module">HTML & CSS avancés</span> · En groupe · Du 7 au 13 décembre</p>
+  </div>
+</header>
+
+<main>
+
+  <p>
+    En groupe, vous créez <strong>votre propre mini-framework CSS</strong> : des design tokens, une architecture en couches, des composants
+    documentés et accessibles. Puis vous l'utilisez pour intégrer <strong>trois pages</strong> d'une maquette Figma. Chaque livraison passe
+    une chaîne qualité automatique, comme dans une équipe front-end professionnelle.
+  </p>
+
+  <div class="encadre neutre">
+    <span class="intitule">Le projet en bref</span>
+    <ul>
+      <li><strong>Groupes de trois</strong>, formés le lundi 7 décembre. Deux binômes sont possibles pour tenir compte de l'effectif, jamais une personne seule.</li>
+      <li><strong>Une maquette Figma Community par groupe</strong>, choisie dans la liste de la partie 3.</li>
+      <li>Il donne la <strong>note de projet</strong>, qui compte pour <strong>50 %</strong> de la note du module. C'est la moyenne de deux notes sur 20 : la <strong>production</strong> du groupe et votre <strong>soutenance individuelle</strong>.</li>
+      <li><strong>Répartition libre</strong> : chacun écrit une part réelle du code, dont au moins deux composants du framework.</li>
+      <li>Soutenance le <strong>jeudi 10 décembre à 17h30</strong>. Rendu : dernier commit poussé sur <code>main</code> le <strong>dimanche 13 décembre avant 23h59</strong>.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#livrables"><span class="n">1</span><br>Ce que vous livrez</a>
+    <a href="#exigences"><span class="n">2</span><br>Les exigences techniques</a>
+    <a href="#maquettes"><span class="n">3</span><br>Choisir sa maquette</a>
+    <a href="#modele"><span class="n">4</span><br>Le dépôt modèle</a>
+    <a href="#calendrier"><span class="n">5</span><br>Le calendrier</a>
+    <a href="#rendu"><span class="n">6</span><br>Le dépôt et le rendu</a>
+    <a href="#evaluation"><span class="n">7</span><br>L'évaluation</a>
+    <a href="#ia"><span class="n">8</span><br>L'IA générative</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="livrables">
+    <h2><span class="num">1</span> Ce que vous livrez</h2>
+    <table>
+      <tr><th>Livrable</th><th>Contenu</th></tr>
+      <tr><td><strong>Le framework</strong></td><td>Ses tokens, ses couches, ses composants et ses utilitaires, écrits en Sass et compilés en un seul fichier CSS. Donnez-lui un nom.</td></tr>
+      <tr><td><strong>Le guide de style</strong></td><td>Une page <code>style-guide.html</code> qui documente les tokens (couleurs, typographie, espacements) et chaque composant : un exemple affiché, le code HTML à copier, ses variantes et ses règles d'accessibilité.</td></tr>
+      <tr><td><strong>Trois pages intégrées</strong></td><td>Trois pages de votre maquette, construites <strong>uniquement</strong> avec votre framework, fidèles à la maquette sur ordinateur et adaptées au mobile.</td></tr>
+      <tr><td><strong>La chaîne qualité</strong></td><td>Lint, tests et audits lancés à chaque push par GitHub Actions, puis déploiement automatique sur GitHub Pages.</td></tr>
+      <tr><td><strong>Le README</strong></td><td>Exécutable et complet (partie 6).</td></tr>
+    </table>
+    <div class="encadre">
+      Un framework se juge à sa <strong>réutilisation</strong>. Si une page a besoin d'un style que le framework n'offre pas, ajoutez un composant ou une variante au framework, documentez-le, puis utilisez-le. Évitez le CSS propre à une page.
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="exigences">
+    <h2><span class="num">2</span> Les exigences techniques</h2>
+
+    <h3>Le framework</h3>
+    <ul>
+      <li><strong>Design tokens</strong> relevés dans la maquette et définis en Sass (maps), puis exposés en <a href="https://developer.mozilla.org/fr/docs/Web/CSS/Using_CSS_custom_properties" target="_blank">custom properties</a> (<code>--color-primary</code>, <code>--space-m</code>…). Les couleurs sont écrites en <a href="https://developer.mozilla.org/fr/docs/Web/CSS/color_value/oklch" target="_blank"><code>oklch()</code></a>. Aucune valeur de couleur ni d'espacement en dur dans les composants.</li>
+      <li><strong>Architecture en couches</strong> avec <a href="https://developer.mozilla.org/fr/docs/Web/CSS/@layer" target="_blank"><code>@layer</code></a> : au minimum <code>reset</code>, <code>tokens</code>, <code>base</code>, <code>layout</code>, <code>components</code>, <code>utilities</code>.</li>
+      <li><strong>Sass moderne</strong> : modules avec <a href="https://sass-lang.com/documentation/at-rules/use/" target="_blank"><code>@use</code></a> et <a href="https://sass-lang.com/documentation/at-rules/forward/" target="_blank"><code>@forward</code></a>, aucun <code>@import</code> (obsolète depuis Dart Sass 1.80).</li>
+      <li><strong>Au moins 6 composants</strong> documentés dans le guide de style (bouton, carte, navigation, formulaire, alerte, onglets, modale…). Nommage <a href="https://getbem.com/naming/" target="_blank">BEM</a>, vérifié par Stylelint.</li>
+      <li><strong>Au moins 2 composants interactifs</strong> en JavaScript natif ou en <a href="https://developer.mozilla.org/fr/docs/Web/API/Web_components" target="_blank">Web Components</a> (menu mobile, onglets, modale avec <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/dialog" target="_blank"><code>&lt;dialog&gt;</code></a>, accordéon, carrousel…). Ils s'utilisent entièrement au clavier et exposent les bons attributs ARIA. Aucune bibliothèque JavaScript : ni jQuery, ni Bootstrap.</li>
+      <li><strong>Un thème sombre</strong> obtenu en redéfinissant les custom properties (<a href="https://developer.mozilla.org/fr/docs/Web/CSS/@media/prefers-color-scheme" target="_blank"><code>prefers-color-scheme</code></a>, avec ou sans bouton de bascule).</li>
+      <li>Au moins un composant qui s'adapte à son conteneur avec une <a href="https://developer.mozilla.org/fr/docs/Web/CSS/CSS_containment/Container_queries" target="_blank">container query</a>.</li>
+    </ul>
+
+    <h3>L'intégration</h3>
+    <ul>
+      <li><strong>HTML sémantique</strong> : régions (<code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>), un seul <code>h1</code> par page, titres sans saut de niveau, formulaires étiquetés, images avec un texte alternatif pertinent (ou vide si elles sont décoratives).</li>
+      <li><strong>Fidélité</strong> à la maquette sur ordinateur : couleurs, typographie, espacements, alignements.</li>
+      <li><strong>Responsive</strong> du mobile (320 px) au grand écran, sans défilement horizontal. Typographie fluide avec <a href="https://developer.mozilla.org/fr/docs/Web/CSS/clamp" target="_blank"><code>clamp()</code></a>. Si la maquette n'a pas de version mobile, vous la concevez.</li>
+      <li><strong>Performance</strong> : images responsives (<code>srcset</code>, <code>sizes</code>, format AVIF ou WebP), polices auto-hébergées en WOFF2, aucune ressource bloquante inutile.</li>
+      <li>Le pied de page cite la maquette : son titre, son auteur, son lien et sa licence.</li>
+    </ul>
+
+    <h3>L'accessibilité et la qualité</h3>
+    <ul>
+      <li>Niveau <a href="https://www.w3.org/Translations/WCAG22-fr/" target="_blank">WCAG 2.2 AA</a> : contrastes suffisants, focus toujours visible, lien d'évitement, navigation complète au clavier, <a href="https://developer.mozilla.org/fr/docs/Web/CSS/@media/prefers-reduced-motion" target="_blank"><code>prefers-reduced-motion</code></a> respecté.</li>
+      <li>Une page testée au lecteur d'écran (VoiceOver sur macOS, NVDA sur Windows) : notez dans le README ce que vous avez vérifié.</li>
+      <li><strong>Chaîne qualité</strong> lancée à chaque push par GitHub Actions et verte sur <code>main</code> :
+        <ul>
+          <li><a href="https://stylelint.io/" target="_blank">Stylelint</a> et <a href="https://html-validate.org/" target="_blank">html-validate</a> sans erreur ;</li>
+          <li>tests <a href="https://playwright.dev/docs/test-snapshots" target="_blank">Playwright</a> : régression visuelle (<code>toHaveScreenshot</code>) de chaque page sur mobile, tablette et ordinateur, aucune violation <a href="https://github.com/dequelabs/axe-core" target="_blank">axe</a>, aucun débordement horizontal ;</li>
+          <li><a href="https://github.com/GoogleChrome/lighthouse-ci" target="_blank">Lighthouse CI</a> avec ces seuils : performance 90, accessibilité 95, bonnes pratiques 90, SEO 90.</li>
+        </ul>
+      </li>
+      <li>Déploiement automatique sur <a href="https://docs.github.com/fr/pages" target="_blank">GitHub Pages</a> après chaque push sur <code>main</code>.</li>
+    </ul>
+    <p class="muet">Les seuils et les tests sont déjà configurés dans le dépôt modèle. Vous ne les abaissez pas : vous améliorez votre code jusqu'à ce qu'ils passent.</p>
+
+    <h3>Valorisé (bonus)</h3>
+    <ul>
+      <li>Des transitions de page avec l'<a href="https://developer.mozilla.org/fr/docs/Web/API/View_Transition_API" target="_blank">API View Transitions</a>.</li>
+      <li>Une infobulle ou un menu positionné avec l'<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">anchor positioning</a> et l'<a href="https://developer.mozilla.org/fr/docs/Web/API/Popover_API" target="_blank">API Popover</a>.</li>
+      <li>Des tests Playwright du comportement des composants interactifs (clavier, ARIA).</li>
+      <li>Le framework publié comme paquet npm, utilisable dans un autre projet.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="maquettes">
+    <h2><span class="num">3</span> Choisir sa maquette</h2>
+    <p>
+      Les fichiers de la <a href="https://www.figma.com/community" target="_blank">Figma Community</a> ci-dessous sont gratuits et publiés sous licence
+      <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank">CC BY 4.0</a> : vous pouvez les reproduire en citant leur auteur.
+      Ouvrez le fichier avec un compte Figma gratuit (« Ouvrir dans Figma ») pour lire les couleurs, les polices et les espacements dans le panneau d'inspection.
+    </p>
+    <table>
+      <tr><th>Maquette</th><th>Auteur</th><th>Type de site</th></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1421395419356418751/restaurant-website-template" target="_blank">Restaurant Website Template</a></td><td>Saad Uzair</td><td>Restaurant, 6 pages</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1643638758686893585/restaurant-website-template" target="_blank">Restaurant Website Template (L'Eclipse)</a></td><td>Bhavesh Bhakta</td><td>Restaurant gastronomique</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1169920613484168416/elite-food-restaurant-coffee-free-figma-template-community" target="_blank">Elite – Food Restaurant & Coffee</a></td><td>Templatecookie</td><td>Restaurant et café</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1458122252010911211/easymart-e-commerce-100-free-online-store-ui-ux-design-complete-responsive-website" target="_blank">EasyMart – E-Commerce</a></td><td>dizora_creatives</td><td>Boutique en ligne, responsive</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1314498533056907094/modern-e-commerce-ui-kit" target="_blank">Modern E-Commerce UI Kit</a></td><td>Sanjna</td><td>Boutique : accueil, liste, fiche produit, panier, paiement</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1319249020214335196/website-templates-squarespace" target="_blank">Website Templates – Squarespace</a></td><td>StarDesign</td><td>Site vitrine : services, tarifs, blog</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1628154721467165855/saas-company-website-template-sustainability-startup-landing-page" target="_blank">SaaS Company Website Template</a></td><td>Anastasia</td><td>Produit SaaS, 5 pages dont tarifs et FAQ</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1295030853683103828/agency-website-template-demo" target="_blank">Agency Website Template</a></td><td>Jacek Wolszczak</td><td>Agence créative</td></tr>
+      <tr><td><a href="https://www.figma.com/community/file/1478889455717018267/portfolio-website-template-for-developer" target="_blank">Portfolio Website Template for Developer</a></td><td>Al Razi Siam</td><td>Portfolio, 6 pages, responsive</td></tr>
+    </table>
+    <ul>
+      <li><strong>Une maquette par groupe</strong> : le premier groupe qui me l'annonce le lundi la garde.</li>
+      <li>Choisissez trois pages <strong>différentes</strong> dans leur mise en page (accueil, liste, détail, formulaire…), pas trois variantes de la même.</li>
+      <li>Une autre maquette de la Figma Community est possible si je la valide : gratuite, sous CC BY 4.0, avec au moins trois pages riches.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="modele">
+    <h2><span class="num">4</span> Le dépôt modèle</h2>
+    <p>
+      Partez du <a href="projet-modele.zip" download>dépôt modèle (projet-modele.zip)</a>. Il contient la chaîne qualité complète, un squelette Sass en couches,
+      deux composants d'exemple et un Web Component. Vous le remplacez progressivement par votre framework.
+    </p>
+    <pre data-titre="Arborescence du dépôt modèle"><code class="language-plaintext">
+      .github/workflows/qualite.yml   Lint, tests, Lighthouse puis déploiement
+      scripts/build.mjs               Compile le Sass et construit dist/
+      scripts/serve.mjs               Sert dist/ sur http://localhost:4173
+      src/
+        index.html                    Première page intégrée
+        style-guide.html              Guide de style du framework
+        js/main.js                    Charge les composants interactifs
+        js/components/                Un fichier par composant interactif
+        scss/main.scss                Point d'entrée du framework
+        scss/_layer-order.scss        Ordre des couches
+        scss/abstracts/               Tokens (maps Sass) et mixins
+        scss/layers/                  reset, tokens, base, layout, utilities
+        scss/components/              Un fichier par composant
+      tests/pages.js                  La liste des pages testées
+      tests/visuel.spec.js            Régression visuelle
+      tests/accessibilite.spec.js     axe et débordement horizontal
+      lighthouserc.json               Seuils Lighthouse
+      .stylelintrc.json               Règles Stylelint (BEM, pas d'!important…)
+      .htmlvalidate.json              Règles html-validate (dont accessibilité)
+    </code></pre>
+    <ol>
+      <li>Décompressez l'archive, puis créez avec elle un dépôt GitHub <strong>public</strong> nommé <code>framework-nom1-nom2-nom3</code> (public pour publier gratuitement sur GitHub Pages).</li>
+      <li>Dans <em>Settings → Pages</em>, choisissez la source <strong>GitHub Actions</strong>.</li>
+      <li>Installez et lancez le projet :
+        <pre data-titre="Terminal"><code class="language-bash">
+          npm install
+          npx playwright install chromium
+          npm run dev
+        </code></pre>
+      </li>
+      <li>Dans l'onglet <em>Actions</em>, lancez le workflow « Qualité et déploiement » en cochant <strong>Mettre à jour les captures</strong>. Les captures de référence de la régression visuelle sont produites sur le serveur Linux de GitHub, pas sur vos ordinateurs : relancez-le ainsi après chaque changement visuel voulu.</li>
+      <li>Ajoutez chacune de vos pages dans <code>tests/pages.js</code>.</li>
+    </ol>
+    <details>
+      <summary>Le test visuel échoue alors que je n'ai rien cassé</summary>
+      <p>Si le changement est voulu, régénérez les captures avec le workflow. S'il ne l'est pas, téléchargez l'artefact <code>rapport-playwright</code> du workflow : il montre la capture attendue, la capture obtenue et leur différence.</p>
+    </details>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="calendrier">
+    <h2><span class="num">5</span> Le calendrier</h2>
+    <table>
+      <tr><th>Quand</th><th>Étape</th><th>Ce qui doit exister</th></tr>
+      <tr><td>Lun. 7 déc.</td><td><strong>Lancement</strong></td><td>Groupe formé, maquette choisie, dépôt créé à partir du modèle, Chris-CHEVALIER invité, workflow vert</td></tr>
+      <tr><td>Mer. 9 déc.</td><td><strong>Le socle</strong></td><td>Tokens relevés dans la maquette, couches, premiers composants, première page en cours, guide de style commencé</td></tr>
+      <tr><td>Jeu. 10 déc.</td><td><strong>Les composants</strong></td><td>Composants interactifs, deuxième et troisième pages. <strong>Point d'étape</strong> de 5 minutes avec chaque groupe (non noté)</td></tr>
+      <tr><td>Jeu. 10 déc. 17h30</td><td><strong>Soutenance</strong></td><td>10 minutes par groupe (partie 7)</td></tr>
+      <tr><td>Dim. 13 déc. avant 23h59</td><td><strong>Rendu final</strong></td><td>Framework, guide de style et trois pages complets, CI verte, site déployé à jour, README</td></tr>
+    </table>
+    <p class="muet">Après votre soutenance, vous pouvez encore améliorer votre projet jusqu'au dimanche soir. Je corrige la production sur le dernier commit poussé sur <code>main</code> avant 23h59.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="rendu">
+    <h2><span class="num">6</span> Le dépôt et le rendu</h2>
+    <ul>
+      <li><strong>Chris-CHEVALIER</strong> invité au dépôt dès le premier jour.</li>
+      <li><strong>Chacun commite avec son propre compte</strong>, régulièrement. Une branche par fonctionnalité et une pull request relue par un autre membre (<a href="https://docs.github.com/fr/get-started/using-github/github-flow" target="_blank">GitHub Flow</a>). La CI se lance aussi sur les pull requests : ne fusionnez que ce qui passe.</li>
+      <li>Le projet se lance avec <code>npm install</code> puis <code>npm run dev</code>, sans autre manipulation.</li>
+    </ul>
+    <h3>Le README contient</h3>
+    <ul>
+      <li>le nom du framework, les membres (prénom, nom, compte GitHub) et <strong>ce que réalise chacun</strong> ;</li>
+      <li>les liens du site déployé, du guide de style et de la maquette (titre, auteur, licence) ;</li>
+      <li>les instructions de lancement et la liste des commandes. Je les suis à la lettre sur un poste neuf ;</li>
+      <li>les tokens, l'architecture des couches et le tableau des composants ;</li>
+      <li>les vérifications d'accessibilité faites à la main (clavier, lecteur d'écran) ;</li>
+      <li>les bonus réalisés et la déclaration d'usage de l'IA.</li>
+    </ul>
+    <p>Le dépôt modèle contient un README à compléter.</p>
+    <div class="encadre neutre">
+      <span class="intitule">Rendu final</span>
+      Rien à envoyer : votre invitation me donne accès au dépôt. Je corrige le dernier commit poussé sur <code>main</code> le <strong>dimanche 13 décembre avant 23h59</strong>.
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="evaluation">
+    <h2><span class="num">7</span> L'évaluation</h2>
+    <p>Votre <strong>note de projet</strong> est la moyenne de deux notes sur 20 : la production du groupe et votre soutenance. Elle compte pour 50 % de la note du module, l'épreuve individuelle sur machine pour les 50 % restants.</p>
+
+    <h3>La production du groupe (la moitié de la note de projet)</h3>
+    <p>Chaque critère vaut 1 point : il est rempli ou il ne l'est pas. Les critères marqués <span class="etiquette ambre">script</span> sont vérifiés automatiquement sur votre dépôt et votre site déployé.</p>
+    <table>
+      <tr><th>Bloc</th><th>Critères (1 point chacun)</th><th>Points</th></tr>
+      <tr><td><strong>Socle</strong></td><td>
+        Le projet se lance en suivant le README ·
+        workflow vert sur le dernier commit de <code>main</code> <span class="etiquette ambre">script</span> ·
+        Stylelint sans erreur <span class="etiquette ambre">script</span> ·
+        html-validate sans erreur <span class="etiquette ambre">script</span> ·
+        site déployé et à jour <span class="etiquette ambre">script</span> ·
+        README complet, maquette citée</td><td>6</td></tr>
+      <tr><td><strong>Framework</strong></td><td>
+        Tokens en maps Sass exposés en custom properties, aucune valeur en dur dans les composants ·
+        couches <code>@layer</code> complètes et ordonnées <span class="etiquette ambre">script</span> ·
+        modules <code>@use</code>, aucun <code>@import</code> <span class="etiquette ambre">script</span> ·
+        6 composants documentés dans le guide de style ·
+        2 composants interactifs utilisables au clavier, ARIA correct ·
+        thème sombre par custom properties ·
+        une container query utile <span class="etiquette ambre">script</span></td><td>7</td></tr>
+      <tr><td><strong>Intégration</strong></td><td>
+        Trois pages fidèles à la maquette sur ordinateur ·
+        responsive de 320 px au grand écran, sans débordement <span class="etiquette ambre">script</span> ·
+        HTML sémantique (régions, titres, formulaires, textes alternatifs) ·
+        pages construites avec le framework, sans CSS propre à une page</td><td>4</td></tr>
+      <tr><td><strong>Accessibilité et performance</strong></td><td>
+        Lighthouse aux seuils sur chaque page <span class="etiquette ambre">script</span> ·
+        aucune violation axe <span class="etiquette ambre">script</span> ·
+        navigation clavier complète, focus visible, mouvements réduits respectés</td><td>3</td></tr>
+      <tr><td colspan="2"><strong>Bonus</strong> (1 point par bonus réalisé, dans la limite de 20)</td><td>+2</td></tr>
+    </table>
+    <p>La note de production est celle du groupe. Si la soutenance montre qu'un membre n'a pas contribué, sa note de production est réduite, jusqu'à 0.</p>
+
+    <h3>La soutenance individuelle (l'autre moitié)</h3>
+    <p>Le jeudi 10 décembre à partir de 17h30, <strong>10 minutes par groupe</strong>, sans IA :</p>
+    <ul>
+      <li><strong>4 minutes de démonstration</strong> : le guide de style, les pages sur ordinateur et sur mobile, un composant au clavier. Chacun présente ce qu'il a réalisé ;</li>
+      <li><strong>2 minutes par membre</strong> : vous m'expliquez un extrait de votre code que je choisis, puis vous répondez à une question sur le travail d'un autre membre.</li>
+    </ul>
+    <table>
+      <tr><th>Critère individuel</th><th>Absent</th><th>Partiel</th><th>Complet</th></tr>
+      <tr><td><strong>Démonstration de votre travail</strong> : elle fonctionne et vous la présentez clairement</td><td>0</td><td>2</td><td>4</td></tr>
+      <tr><td><strong>Explication d'un extrait de votre code</strong> : ce que fait le code, pourquoi il est écrit ainsi (cascade, spécificité, couches, accessibilité)</td><td>0</td><td>4</td><td>8</td></tr>
+      <tr><td><strong>Question sur le travail d'un autre membre</strong> : vous comprenez l'ensemble du framework</td><td>0</td><td>4</td><td>8</td></tr>
+    </table>
+    <p class="muet">La soutenance porte sur l'état du projet le jeudi. Les améliorations faites jusqu'au dimanche comptent dans la note de production.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="ia">
+    <h2><span class="num">8</span> L'IA générative</h2>
+    <ul>
+      <li>L'IA (ChatGPT, Claude, Copilot…) est <strong>autorisée</strong> pour le projet.</li>
+      <li>Chaque membre doit <strong>comprendre et savoir expliquer</strong> l'ensemble du code. Un composant que personne ne sait expliquer pendant la soutenance n'est pas compté.</li>
+      <li>Déclarez votre usage dans le README : quels outils, pour quelles tâches, ce que vous avez vérifié ou réécrit.</li>
+      <li>Méfiez-vous des réponses qui datent : <code>@import</code> en Sass, préfixes <code>-webkit-</code> inutiles, <code>float</code> pour la mise en page, jQuery, <code>outline: none</code> sans remplacement. Les outils de la CI en repèrent une partie.</li>
+      <li>L'IA est <strong>interdite</strong> à l'épreuve individuelle sur machine : le projet est le bon moment pour apprendre à écrire ce code vous-mêmes.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="pied">HTML & CSS avancés · Projet · Chris CHEVALIER</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

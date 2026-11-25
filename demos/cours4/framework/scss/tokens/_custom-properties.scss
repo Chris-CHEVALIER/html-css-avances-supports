@@ -1,0 +1,24 @@
+// Génère les custom properties à partir des maps de tokens
+@use "index" as tokens;
+
+@layer tokens {
+  :root {
+    @each $name, $value in tokens.$colors {
+      --palette-#{$name}: #{$value};
+    }
+
+    @each $name, $value in tokens.$spaces {
+      --space-#{$name}: #{$value};
+    }
+
+    @each $name, $value in tokens.$radii {
+      --radius-#{$name}: #{$value};
+    }
+
+    // Un token sémantique pointe vers un primitif : var(), pas
+    // de valeur recopiée
+    @each $role, $palette in tokens.$semantic-colors {
+      --color-#{$role}: var(--palette-#{$palette});
+    }
+  }
+}
