@@ -57,9 +57,9 @@
         <tr><th>Besoin</th><th>Solution native</th><th>Compatibilité</th></tr>
         <tr><td>Accordéon, FAQ</td><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/details" target="_blank"><code>&lt;details&gt;</code></a> et <code>&lt;summary&gt;</code>, attribut <code>name</code> pour n'en ouvrir qu'un</td><td><span class="baseline">Baseline 2024</span> pour <code>name</code></td></tr>
         <tr><td>Fenêtre modale</td><td><a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/dialog" target="_blank"><code>&lt;dialog&gt;</code></a> et <code>showModal()</code></td><td><span class="baseline">Baseline</span> depuis 2022</td></tr>
-        <tr><td>Menu déroulant, infobulle</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/Popover_API" target="_blank">Popover API</a> : attributs <code>popover</code> et <code>popovertarget</code></td><td><span class="baseline">Baseline 2024</span></td></tr>
-        <tr><td>Placer un élément contre un autre</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">Anchor positioning</a> en CSS</td><td><span class="baseline partiel">Récent</span> avec repli</td></tr>
-        <tr><td>Animer un changement d'état</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/View_Transition_API" target="_blank">View Transitions</a>, <a href="https://developer.mozilla.org/fr/docs/Web/CSS/@starting-style" target="_blank"><code>@starting-style</code></a></td><td><span class="baseline">Baseline 2025</span> dans une page</td></tr>
+        <tr><td>Menu déroulant, infobulle</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/Popover_API" target="_blank">Popover API</a> : attributs <code>popover</code> et <code>popovertarget</code></td><td><span class="baseline">Baseline 2025</span></td></tr>
+        <tr><td>Placer un élément contre un autre</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">Anchor positioning</a> en CSS</td><td><span class="baseline">Baseline 2026</span> pour l'essentiel</td></tr>
+        <tr><td>Animer un changement d'état</td><td><a href="https://developer.mozilla.org/fr/docs/Web/API/View_Transition_API" target="_blank">View Transitions</a>, <a href="https://developer.mozilla.org/fr/docs/Web/CSS/@starting-style" target="_blank"><code>@starting-style</code></a></td><td><span class="baseline">Baseline 2025</span> dans une page, 2024 pour <code>@starting-style</code></td></tr>
       </table>
       <div class="encadre" style="margin-top: 22px;">
         Un élément natif apporte gratuitement le clavier, le focus et l'annonce au lecteur d'écran. Votre JavaScript ne fait plus que le relier au reste de la page. <span class="petit muet"><a href="https://web.dev/baseline?hl=fr" target="_blank">Baseline</a> : fonctionnalité prise en charge par Chrome, Edge, Firefox et Safari.</span>
@@ -358,7 +358,7 @@ dialog[open]::backdrop {
             <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position-area" target="_blank"><code>position-area</code></a> : la zone autour de l'ancre (ici au-dessus)</li>
             <li><code>position-try-fallbacks: flip-block</code> : pas de place en haut ? L'infobulle passe dessous</li>
             <li><code>inset: auto</code> annule le centrage par défaut des popovers</li>
-            <li>Chrome et Edge 125, Safari 26. <span class="baseline partiel">Pas encore Baseline</span> : <code>@supports</code> garde un popover centré ailleurs</li>
+            <li>Chrome et Edge 125, Safari 26, Firefox 147 : <span class="baseline">Baseline 2026</span>. <code>@supports</code> garde un popover centré dans les navigateurs plus anciens</li>
           </ul>
           <a class="ouvrir" href="../demos/cours5/infobulle/" target="_blank">Ouvrir la démo</a>
         </div>
@@ -1134,7 +1134,7 @@ main {
           <ul class="dense">
             <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/@font-face/font-display" target="_blank"><code>font-display: swap</code></a> : le texte s'affiche tout de suite dans la police de repli</li>
             <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust" target="_blank"><code>size-adjust</code></a> et les <code>*-override</code> calent Arial sur les dimensions d'Outfit : le texte ne bouge plus quand la vraie police arrive. Valeurs calculées avec un outil comme <a href="https://github.com/unjs/fontaine" target="_blank">Fontaine</a></li>
-            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/content-visibility" target="_blank"><code>content-visibility: auto</code></a> : une section hors de l'écran n'est mise en page qu'à l'approche <span class="baseline">Baseline 2024</span></li>
+            <li><a href="https://developer.mozilla.org/fr/docs/Web/CSS/content-visibility" target="_blank"><code>content-visibility: auto</code></a> : une section hors de l'écran n'est mise en page qu'à l'approche <span class="baseline">Baseline 2025</span></li>
           </ul>
           <a class="ouvrir" href="../demos/cours5/performance/" target="_blank">Ouvrir la démo</a>
         </div>

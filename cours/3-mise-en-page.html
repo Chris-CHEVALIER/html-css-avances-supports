@@ -810,6 +810,47 @@ a {
 
   <!-- ================================================================== -->
   <section>
+    <h2>Le bandeau d'accueil</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/fluide/index.html" data-titre="fluide/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Typographie fluide – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;header class="hero"&gt;
+      &lt;img
+        class="hero__image"
+        src="https://picsum.photos/id/1057/1600/900"
+        alt=""
+        width="1600"
+        height="900"
+      &gt;
+      &lt;div class="hero__content"&gt;
+        &lt;p class="hero__dates"&gt;3 – 5 juillet · Parc des Rives&lt;/p&gt;
+        &lt;h1&gt;Contrepoint, le festival qui fait vibrer la ville&lt;/h1&gt;
+        &lt;a class="hero__cta" href="#billetterie"&gt;Prendre mon pass&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/header&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>L'image de fond est décorative : <code>alt=""</code> la fait ignorer par le lecteur d'écran</li>
+            <li>Le titre long met la typographie fluide à l'épreuve de 320 à 1600 px</li>
+            <li>L'image est dans le HTML, pas en <code>background-image</code> : elle garde ses dimensions et se charge comme une image de contenu</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
     <h2>Un bandeau fluide</h2>
     <div class="corps">
       <div class="colonnes code-texte">
@@ -893,6 +934,64 @@ body {
     <aside class="notes">
       L'image décorative a un alt vide : le titre suffit. Zoomer à 200 % pour montrer que le texte grossit.
     </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>La page d'accès</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre class="mini" data-fichier="web/demos/cours3/intrinseque/index.html" data-titre="intrinseque/index.html"><code class="language-html" data-line-numbers="">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Mise en page intrinsèque – Contrepoint&lt;/title&gt;
+    &lt;link rel="stylesheet" href="css/style.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main class="stack container"&gt;
+      &lt;h1&gt;Infos pratiques&lt;/h1&gt;
+
+      &lt;ul class="cluster" aria-label="Accès rapides"&gt;
+        &lt;li&gt;&lt;a href="#horaires"&gt;Horaires&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#acces"&gt;Accès&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#accessibilite"&gt;Accessibilité&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#faq"&gt;FAQ&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+
+      &lt;div class="with-sidebar"&gt;
+        &lt;nav class="sidebar stack" aria-label="Rubriques"&gt;
+          &lt;a href="#navettes"&gt;Navettes&lt;/a&gt;
+          &lt;a href="#velo"&gt;Vélo&lt;/a&gt;
+          &lt;a href="#parking"&gt;Parking&lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="stack"&gt;
+          &lt;h2 id="navettes"&gt;Navettes&lt;/h2&gt;
+          &lt;p&gt;
+            Départ de la gare toutes les vingt minutes de 15h à
+            2h du matin, gratuit sur présentation du billet.
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="switcher"&gt;
+        &lt;p class="box"&gt;Vendredi · 16h – 2h&lt;/p&gt;
+        &lt;p class="box"&gt;Samedi · 14h – 3h&lt;/p&gt;
+        &lt;p class="box"&gt;Dimanche · 12h – 22h&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <div>
+          <ul>
+            <li>Quatre motifs réutilisables, un par classe : <code>stack</code>, <code>cluster</code>, <code>with-sidebar</code> et <code>switcher</code></li>
+            <li>Les deux navigations ont chacune un <code>aria-label</code> distinct : le lecteur d'écran les différencie</li>
+            <li>Aucune media query ne sera nécessaire : chaque motif s'adapte à la place dont il dispose</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ================================================================== -->
